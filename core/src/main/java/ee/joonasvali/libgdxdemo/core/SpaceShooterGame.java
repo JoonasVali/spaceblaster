@@ -19,8 +19,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class SpaceShooterGame implements ApplicationListener {
-  public static final int ROCKET_DISTANCE_FROM_BOTTOM = 1;
-  public static final int MISSILE_START_SPEED = 1;
+  private static final int ROCKET_DISTANCE_FROM_BOTTOM = 1;
+  private static final float MISSILE_START_SPEED = 0.01f;
+  private static final int MISSILE_SIZE = 1;
+  private static float MISSILE_ACCELERATION = 0.01f;
+
   private Logger log = LoggerFactory.getLogger(SpaceShooterGame.class);
 
   private InputHandler inputHandler = new InputHandler();
@@ -33,15 +36,15 @@ public class SpaceShooterGame implements ApplicationListener {
   private Pool<Missile> missilePool = new Pool<Missile>() {
     @Override
     protected Missile newObject() {
-      log.info("creating new missile!!! " + System.currentTimeMillis());
       return new Missile();
     }
   };
 
   private List<Missile> activeMissiles = new ArrayList<>();
 
-  static final int WORLD_WIDTH = 100;
-  static final int WORLD_HEIGHT = 100;
+  private static final int WORLD_WIDTH = 100;
+  private static final int WORLD_HEIGHT = 100;
+
 
   private SpriteBatch batch;
   private float elapsed;
@@ -50,6 +53,7 @@ public class SpaceShooterGame implements ApplicationListener {
   private Rocket rocket;
 
   private boolean exit;
+
 
   @Override
   public void create() {
@@ -64,7 +68,7 @@ public class SpaceShooterGame implements ApplicationListener {
     Gdx.input.setInputProcessor(inputMultiplexer);
 
     inputHandler.addKeyBinding(Input.Keys.ESCAPE, () -> exit = true);
-    inputHandler.addKeyBinding(Input.Keys.SPACE, () -> createMissileAt(rocket.getX(), rocket.getY()));
+    inputHandler.addKeyBinding(Input.Keys.SPACE, () -> createMissileAt(rocket.getX() + Rocket.ROCKET_SIZE / 2, rocket.getY() + Rocket.ROCKET_SIZE / 2));
 
     mapSprite = new Sprite(new Texture(Gdx.files.internal("space.png")));
     mapSprite.setPosition(0, 0);
@@ -119,7 +123,7 @@ public class SpaceShooterGame implements ApplicationListener {
 
     rocket.draw(batch);
 
-    activeMissiles.forEach(m -> batch.draw(missile, m.getX(), m.getY(), 1, 1));
+    activeMissiles.forEach(m -> batch.draw(missile, m.getX(), m.getY(), MISSILE_SIZE, MISSILE_SIZE));
     batch.end();
     stage.draw();
   }
@@ -148,8 +152,9 @@ public class SpaceShooterGame implements ApplicationListener {
   private Missile createMissileAt(float x, float y) {
     Missile missile = missilePool.obtain();
     missile.setPosition(x, y);
-    missile.setAngle(0);
+    missile.setAngle((float) Math.random() * 10 - 5);
     missile.setSpeed(MISSILE_START_SPEED);
+    missile.setAcceleration(MISSILE_ACCELERATION);
     activeMissiles.add(missile);
     return missile;
   }
