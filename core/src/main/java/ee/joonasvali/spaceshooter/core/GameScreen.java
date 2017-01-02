@@ -27,7 +27,7 @@ public class GameScreen implements Screen, Disposable {
   private static final int MISSILE_SIZE = 1;
   private static float MISSILE_ACCELERATION = 0.01f;
 
-  private Logger log = LoggerFactory.getLogger(SpaceShooterGame.class);
+  private Logger log = LoggerFactory.getLogger(GameScreen.class);
 
   private InputHandler inputHandler = new InputHandler();
   private InputMultiplexer inputMultiplexer = new InputMultiplexer();
@@ -112,7 +112,7 @@ public class GameScreen implements Screen, Disposable {
     moveAndRemoveMissiles();
 
     batch.begin();
-    mapSprite.setOrigin(mapSprite.getWidth()/2,mapSprite.getHeight()/2);
+    mapSprite.setOrigin(mapSprite.getWidth() / 2, mapSprite.getHeight() / 2);
     mapSprite.setRotation(game.getElapsed() % 360);
     mapSprite.setScale(1.5f);
     mapSprite.draw(batch);
