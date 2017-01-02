@@ -1,4 +1,4 @@
-package ee.joonasvali.libgdxdemo.core;
+package ee.joonasvali.spaceshooter.core;
 
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector3;

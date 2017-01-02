@@ -1,4 +1,4 @@
-package ee.joonasvali.libgdxdemo.core;
+package ee.joonasvali.spaceshooter.core;
 
 import com.badlogic.gdx.utils.Pool;
 

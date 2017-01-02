@@ -9,7 +9,7 @@
 		<string>touch-icon-57x57.png</string>
 	</array>
 	<key>CFBundleIdentifier</key>
-	<string>ee.joonasvali.libgdxdemo.libgdxdemo</string>
+	<string>ee.joonasvali.spaceshooter.libgdxdemo</string>
 	<key>CFBundleVersion</key>
 	<string>1.0</string>
 	<key>MinimumOSVersion</key>

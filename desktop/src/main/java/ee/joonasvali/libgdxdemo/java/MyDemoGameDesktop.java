@@ -1,8 +1,8 @@
-package ee.joonasvali.libgdxdemo.java;
+package ee.joonasvali.spaceshooter.java;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import ee.joonasvali.libgdxdemo.core.SpaceShooterGame;
+import ee.joonasvali.spaceshooter.core.SpaceShooterGame;
 
 import java.awt.Toolkit;
 

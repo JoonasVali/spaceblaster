@@ -1,10 +1,9 @@
-package ee.joonasvali.libgdxdemo.core;
+package ee.joonasvali.spaceshooter.core;
 
-import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -18,7 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class SpaceShooterGame implements ApplicationListener {
+/**
+ * @author Joonas Vali January 2017
+ */
+public class GameScreen implements Screen {
   private static final int ROCKET_DISTANCE_FROM_BOTTOM = 1;
   private static final float MISSILE_START_SPEED = 0.01f;
   private static final int MISSILE_SIZE = 1;
@@ -29,9 +31,14 @@ public class SpaceShooterGame implements ApplicationListener {
   private InputHandler inputHandler = new InputHandler();
   private InputMultiplexer inputMultiplexer = new InputMultiplexer();
 
+  private Rocket rocket;
+
   private OrthographicCamera cam;
   private Sprite mapSprite;
   private Texture missile;
+
+  private Stage stage;
+
 
   private Pool<Missile> missilePool = new Pool<Missile>() {
     @Override
@@ -45,29 +52,18 @@ public class SpaceShooterGame implements ApplicationListener {
   private static final int WORLD_WIDTH = 100;
   private static final int WORLD_HEIGHT = 100;
 
+  private SpaceShooterGame game;
 
-  private SpriteBatch batch;
-  private float elapsed;
-  private Stage stage;
-
-  private Rocket rocket;
-
-  private boolean exit;
-
-
-  @Override
-  public void create() {
-    log.info("Starting game!!!");
+  public GameScreen(SpaceShooterGame game) {
+    this.game = game;
     rocket = new Rocket();
-    batch = new SpriteBatch();
     stage = new Stage();
-
     inputHandler = new InputHandler();
     inputMultiplexer.addProcessor(inputHandler);
     inputMultiplexer.addProcessor(stage);
     Gdx.input.setInputProcessor(inputMultiplexer);
 
-    inputHandler.addKeyBinding(Input.Keys.ESCAPE, () -> exit = true);
+    inputHandler.addKeyBinding(Input.Keys.ESCAPE, game::setExit);
     inputHandler.addKeyBinding(Input.Keys.SPACE, () -> createMissileAt(rocket.getX() + Rocket.ROCKET_SIZE / 2, rocket.getY() + Rocket.ROCKET_SIZE / 2));
 
     mapSprite = new Sprite(new Texture(Gdx.files.internal("space.png")));
@@ -77,7 +73,9 @@ public class SpaceShooterGame implements ApplicationListener {
     missile = new Texture(Gdx.files.internal("missile.png"));
 
     createCamera();
+
   }
+
 
   private void createCamera() {
     float w = Gdx.graphics.getWidth();
@@ -92,32 +90,28 @@ public class SpaceShooterGame implements ApplicationListener {
   }
 
 
-  @Override
-  public void resize(int width, int height) {
-    stage.getViewport().update(width, height, true);
-
-    cam.viewportWidth = 100f;
-    cam.viewportHeight = 100f * height / width;
-    cam.update();
+  private Missile createMissileAt(float x, float y) {
+    Missile missile = missilePool.obtain();
+    missile.setPosition(x, y);
+    missile.setAngle((float) Math.random() * 10 - 5);
+    missile.setSpeed(MISSILE_START_SPEED);
+    missile.setAcceleration(MISSILE_ACCELERATION);
+    activeMissiles.add(missile);
+    return missile;
   }
 
   @Override
-  public void render() {
-    if (exit) {
-      Gdx.app.exit();
-    }
+  public void render(float delta) {
+    cam.update();
+    SpriteBatch batch = game.getBatch();
+    batch.setProjectionMatrix(cam.combined);
+
     handleInput();
     moveAndRemoveMissiles();
-    elapsed += Gdx.graphics.getDeltaTime();
-    Gdx.gl.glClearColor(0, 0, 0, 0);
-    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-    cam.update();
-    batch.setProjectionMatrix(cam.combined);
 
     batch.begin();
     mapSprite.setOrigin(mapSprite.getWidth()/2,mapSprite.getHeight()/2);
-    mapSprite.setRotation(elapsed % 360);
+    mapSprite.setRotation(game.getElapsed() % 360);
     mapSprite.setScale(1.5f);
     mapSprite.draw(batch);
 
@@ -126,6 +120,44 @@ public class SpaceShooterGame implements ApplicationListener {
     activeMissiles.forEach(m -> batch.draw(missile, m.getX(), m.getY(), MISSILE_SIZE, MISSILE_SIZE));
     batch.end();
     stage.draw();
+  }
+
+  @Override
+  public void resize(int width, int height) {
+    stage.getViewport().update(width, height, true);
+    cam.viewportWidth = 100f;
+    cam.viewportHeight = 100f * height / width;
+    cam.update();
+  }
+
+  @Override
+  public void show() {
+
+  }
+
+  @Override
+  public void hide() {
+
+  }
+
+  @Override
+  public void pause() {
+
+  }
+
+  @Override
+  public void resume() {
+
+  }
+
+  @Override
+  public void dispose() {
+    missilePool.clear();
+    activeMissiles.clear();
+    rocket.dispose();
+    missile.dispose();
+    stage.dispose();
+    mapSprite.getTexture().dispose();
   }
 
   private void moveAndRemoveMissiles() {
@@ -147,34 +179,5 @@ public class SpaceShooterGame implements ApplicationListener {
     int mouseY = Gdx.input.getY();
     rocket.setPosition(Math.min(Util.unProjectX(cam, mouseX, mouseY), WORLD_WIDTH - Rocket.ROCKET_SIZE), ROCKET_DISTANCE_FROM_BOTTOM);
 
-  }
-
-  private Missile createMissileAt(float x, float y) {
-    Missile missile = missilePool.obtain();
-    missile.setPosition(x, y);
-    missile.setAngle((float) Math.random() * 10 - 5);
-    missile.setSpeed(MISSILE_START_SPEED);
-    missile.setAcceleration(MISSILE_ACCELERATION);
-    activeMissiles.add(missile);
-    return missile;
-  }
-
-  @Override
-  public void pause() {
-  }
-
-  @Override
-  public void resume() {
-  }
-
-  @Override
-  public void dispose() {
-    missilePool.clear();
-    activeMissiles.clear();
-    batch.dispose();
-    rocket.dispose();
-    stage.dispose();
-    missile.dispose();
-    mapSprite.getTexture().dispose();
   }
 }

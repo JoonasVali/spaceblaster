@@ -1,6 +1,6 @@
-package ee.joonasvali.libgdxdemo.android;
+package ee.joonasvali.spaceshooter.android;
 
-import ee.joonasvali.libgdxdemo.core.MyDemoGame;
+import ee.joonasvali.spaceshooter.core.MyDemoGame;
 
 import android.os.Bundle;
 

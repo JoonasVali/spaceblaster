@@ -6,7 +6,7 @@
 
 	<public path="resources" />
 
-	<entry-point class='ee.joonasvali.libgdxdemo.html.MyDemoGameHtml'/>
+	<entry-point class='ee.joonasvali.spaceshooter.html.MyDemoGameHtml'/>
 	<set-configuration-property name="gdx.assetpath" value="assets" />
 	<set-configuration-property name="gdx.assetoutputpath" value="html/target/webapp" />
 </module>
