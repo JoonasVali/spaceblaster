@@ -11,6 +11,7 @@ public class Missile implements Pool.Poolable {
   private float speed = 0;
   private float angle = 0;
   private float acceleration = 0;
+
   @Override
   public void reset() {
     x = 0;
