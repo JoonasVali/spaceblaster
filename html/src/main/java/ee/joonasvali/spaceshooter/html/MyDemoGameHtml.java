@@ -1,6 +1,6 @@
-package ee.joonasvali.libgdxdemo.html;
+package ee.joonasvali.spaceshooter.html;
 
-import ee.joonasvali.libgdxdemo.core.MyDemoGame;
+import ee.joonasvali.spaceshooter.core.MyDemoGame;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.gwt.GwtApplication;

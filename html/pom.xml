@@ -3,9 +3,9 @@
 	 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>ee.joonasvali.libgdxdemo</groupId>
-		<artifactId>libgdxdemo</artifactId>
-		<version>1.0-SNAPSHOT</version>
+		<groupId>ee.joonasvali.spaceshooter</groupId>
+		<artifactId>spaceshooter</artifactId>
+		<version>${project.version}</version>
 	</parent>
 
 	<artifactId>libgdxdemo-html</artifactId>
@@ -13,28 +13,20 @@
 	<name>MyDemoGame HTML</name>
 
 	<properties>
-		<gwt.module>ee.joonasvali.libgdxdemo.MyDemoGame</gwt.module>
-		<gwt.name>libgdxdemo</gwt.name>
+		<gwt.module>ee.joonasvali.spaceshooter.MyDemoGame</gwt.module>
+		<gwt.name>spaceshooter</gwt.name>
 	</properties>
 
 	<dependencies>
 		<dependency>
-			<groupId>ee.joonasvali.libgdxdemo</groupId>
-			<artifactId>libgdxdemo-core</artifactId>
+			<groupId>ee.joonasvali.spaceshooter</groupId>
+			<artifactId>spaceshooter-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.badlogicgames.gdx</groupId>
 			<artifactId>gdx-backend-gwt</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>ee.joonasvali.libgdxdemo</groupId>
-			<artifactId>libgdxdemo-core</artifactId>
-			<version>${project.version}</version>
-			<classifier>sources</classifier>
-			<scope>provided</scope>
 		</dependency>
 
 		<dependency>

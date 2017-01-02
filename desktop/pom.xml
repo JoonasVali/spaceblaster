@@ -3,21 +3,21 @@
 				 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>ee.joonasvali.libgdxdemo</groupId>
-		<artifactId>libgdxdemo</artifactId>
+		<groupId>ee.joonasvali.spaceshooter</groupId>
+		<artifactId>spaceshooter</artifactId>
 		<version>1.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>libgdxdemo-desktop</artifactId>
+	<artifactId>spaceshooter-desktop</artifactId>
 	<packaging>jar</packaging>
 	<name>MyDemoGame desktop</name>
 
 	<properties>
-		<mainClass>ee.joonasvali.libgdxdemo.java.MyDemoGameDesktop</mainClass>
+		<mainClass>ee.joonasvali.spaceshooter.java.MyDemoGameDesktop</mainClass>
 
-		<name>LibGdxDemo</name>
-		<name.uppercase>LIBGDXDEMO</name.uppercase>
-		<boot.class>ee.joonasvali.libgdxdemo.java.MyDemoGameDesktop</boot.class>
+		<name>SpaceShooter</name>
+		<name.uppercase>SPACESHOOTER</name.uppercase>
+		<boot.class>ee.joonasvali.spaceshooter.java.MyDemoGameDesktop</boot.class>
 		<author>Joonas Vali</author>
 		<timestamp>${maven.build.timestamp}</timestamp>
 		<maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
@@ -32,9 +32,9 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>ee.joonasvali.libgdxdemo</groupId>
-			<artifactId>libgdxdemo-core</artifactId>
-			<version>${project.version}</version>
+			<groupId>ee.joonasvali.spaceshooter</groupId>
+			<artifactId>spaceshooter-core</artifactId>
+			<version>1.0-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
@@ -199,7 +199,7 @@
 				<executions>
 					<execution>
 						<id>copy-resources</id>
-						<phase>install</phase>
+						<phase>package</phase>
 						<goals>
 							<goal>copy-resources</goal>
 						</goals>
