@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.utils.Disposable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +29,12 @@ public class SpaceShooterGame extends Game {
     log.info("Starting game!!!");
 
     batch = new SpriteBatch();
-    font = new BitmapFont();
+
+    FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/ARBONNIE.ttf"));
+    FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+    parameter.size = 14;
+    font = generator.generateFont(parameter);
+    generator.dispose();
 
     float w = Gdx.graphics.getWidth();
     float h = Gdx.graphics.getHeight();
@@ -63,11 +69,9 @@ public class SpaceShooterGame extends Game {
 
   @Override
   public void dispose() {
-    font.dispose();
-
     batch.dispose();
-
     font.dispose();
+
     disposables.forEach(Disposable::dispose);
     disposables.clear();
   }
