@@ -34,7 +34,7 @@ public class MainMenuScreen implements Screen {
     game.getFont().setColor(Color.WHITE);
     game.getFont().setUseIntegerPositions(true);
 
-    game.getFont().getData().setScale(0.1f, 0.1f);
+//    game.getFont().getData().setScale(0.1f, 0.1f);
 
     game.getFont().draw(game.getBatch(), "Welcome to Drop!!! ", 5, 10);
     game.getFont().draw(game.getBatch(), "Tap anywhere to begin!", 5, 15);

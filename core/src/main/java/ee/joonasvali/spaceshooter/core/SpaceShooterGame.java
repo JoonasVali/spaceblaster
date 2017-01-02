@@ -5,8 +5,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.utils.Disposable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class SpaceShooterGame extends Game {
 
@@ -15,6 +19,7 @@ public class SpaceShooterGame extends Game {
   private BitmapFont font;
   private SpriteBatch batch;
   private float elapsed;
+  private Set<Disposable> disposables = new HashSet<>();
 
   private boolean exit;
 
@@ -29,13 +34,6 @@ public class SpaceShooterGame extends Game {
     float h = Gdx.graphics.getHeight();
     this.setScreen(new MainMenuScreen(this, 100, 100 * (h / w)));
 
-  }
-
-
-
-  @Override
-  public void resize(int width, int height) {
-    super.resize(width, height);
   }
 
   @Override
@@ -70,7 +68,8 @@ public class SpaceShooterGame extends Game {
     batch.dispose();
 
     font.dispose();
-
+    disposables.forEach(Disposable::dispose);
+    disposables.clear();
   }
 
   public SpriteBatch getBatch() {
@@ -83,5 +82,9 @@ public class SpaceShooterGame extends Game {
 
   public void setExit() {
     exit = true;
+  }
+
+  public void registerDisposable(Disposable disposable) {
+    this.disposables.add(disposable);
   }
 }

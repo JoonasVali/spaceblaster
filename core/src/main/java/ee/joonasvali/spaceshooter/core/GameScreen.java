@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Pool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 /**
  * @author Joonas Vali January 2017
  */
-public class GameScreen implements Screen {
+public class GameScreen implements Screen, Disposable {
   private static final int ROCKET_DISTANCE_FROM_BOTTOM = 1;
   private static final float MISSILE_START_SPEED = 0.01f;
   private static final int MISSILE_SIZE = 1;
@@ -56,6 +57,7 @@ public class GameScreen implements Screen {
 
   public GameScreen(SpaceShooterGame game) {
     this.game = game;
+    this.game.registerDisposable(this);
     rocket = new Rocket();
     stage = new Stage();
     inputHandler = new InputHandler();
