@@ -17,7 +17,7 @@ public class SpaceShooterGame extends Game {
 
   private static final Logger log = LoggerFactory.getLogger(SpaceShooterGame.class);
 
-  private BitmapFont font;
+  private BitmapFont font16;
   private SpriteBatch batch;
   private float elapsed;
   private Set<Disposable> disposables = new HashSet<>();
@@ -30,10 +30,15 @@ public class SpaceShooterGame extends Game {
 
     batch = new SpriteBatch();
 
-    FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/ARBONNIE.ttf"));
+    FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/cambria.ttc"));
     FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-    parameter.size = 14;
-    font = generator.generateFont(parameter);
+
+    parameter.size = 16;
+    parameter.characters = FreeTypeFontGenerator.DEFAULT_CHARS;
+    parameter.spaceX = 1;
+
+    font16 = generator.generateFont(parameter);
+
     generator.dispose();
 
     float w = Gdx.graphics.getWidth();
@@ -70,7 +75,7 @@ public class SpaceShooterGame extends Game {
   @Override
   public void dispose() {
     batch.dispose();
-    font.dispose();
+    font16.dispose();
 
     disposables.forEach(Disposable::dispose);
     disposables.clear();
@@ -80,8 +85,8 @@ public class SpaceShooterGame extends Game {
     return batch;
   }
 
-  public BitmapFont getFont() {
-    return font;
+  public BitmapFont getFont16() {
+    return font16;
   }
 
   public void setExit() {

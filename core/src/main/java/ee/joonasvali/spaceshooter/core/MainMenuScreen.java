@@ -14,12 +14,15 @@ public class MainMenuScreen implements Screen {
   final SpaceShooterGame game;
 
   final OrthographicCamera camera;
+  private OrthographicCamera textCamera;
 
   public MainMenuScreen(SpaceShooterGame spaceShooterGame, float viewportWidth, float viewportHeight) {
     this.game = spaceShooterGame;
 
     camera = new OrthographicCamera();
+    textCamera = new OrthographicCamera();
     camera.setToOrtho(false, viewportWidth, viewportHeight);
+    textCamera.setToOrtho(false, 1000, 1000 * (viewportHeight / viewportWidth));
   }
 
   @Override
@@ -29,13 +32,16 @@ public class MainMenuScreen implements Screen {
 
     camera.update();
     game.getBatch().setProjectionMatrix(camera.combined);
+    // render behind text here
+
+    textCamera.update();
+    game.getBatch().setProjectionMatrix(textCamera.combined);
 
     game.getBatch().begin();
-    game.getFont().setColor(Color.WHITE);
-    game.getFont().setUseIntegerPositions(true);
+    game.getFont16().setColor(Color.WHITE);
 
-    game.getFont().draw(game.getBatch(), "Welcome!!! ", 5, 10);
-    game.getFont().draw(game.getBatch(), "Tap anywhere to begin!", 5, 15);
+    game.getFont16().draw(game.getBatch(), "Welcome!!! ", 5, 15);
+    game.getFont16().draw(game.getBatch(), "Tap anywhere to begin!", 5, 35);
     game.getBatch().end();
 
     if (Gdx.input.isTouched()) {
