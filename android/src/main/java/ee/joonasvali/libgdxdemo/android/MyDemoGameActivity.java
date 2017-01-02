@@ -9,10 +9,10 @@ import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 
 public class MyDemoGameActivity extends AndroidApplication {
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-			super.onCreate(savedInstanceState);
-			AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
-			initialize(new MyDemoGame(), config);
-	}
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
+    initialize(new MyDemoGame(), config);
+  }
 }

@@ -13,6 +13,7 @@ public class Rocket implements Disposable {
   public static final int ROCKET_SIZE = 5;
   private final Sprite sprite;
   private final Texture texture;
+
   public Rocket() {
     texture = new Texture(Gdx.files.internal("rocket.png"));
     sprite = new Sprite(texture);
