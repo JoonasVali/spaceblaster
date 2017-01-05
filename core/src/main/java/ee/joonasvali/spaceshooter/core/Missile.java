@@ -1,13 +1,12 @@
 package ee.joonasvali.spaceshooter.core;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Pool;
 
 /**
  * @author Joonas Vali December 2016
  */
-public class Missile implements Pool.Poolable {
-  private float x = 0;
-  private float y = 0;
+public class Missile extends Rectangle implements Pool.Poolable {
   private float speed = 0;
   private float angle = 0;
   private float acceleration = 0;
@@ -16,15 +15,13 @@ public class Missile implements Pool.Poolable {
   public void reset() {
     x = 0;
     y = 0;
+    width = 0;
+    height = 0;
     speed = 0;
     angle = 0;
     acceleration = 0;
   }
 
-  public void setPosition(float x, float y) {
-    this.x = x;
-    this.y = y;
-  }
 
   public void setSpeed(float speed) {
     this.speed = speed;
@@ -32,14 +29,6 @@ public class Missile implements Pool.Poolable {
 
   public void setAngle(float angle) {
     this.angle = angle;
-  }
-
-  public float getX() {
-    return x;
-  }
-
-  public float getY() {
-    return y;
   }
 
   public void nextPosition() {
@@ -50,5 +39,17 @@ public class Missile implements Pool.Poolable {
 
   public void setAcceleration(float acceleration) {
     this.acceleration = acceleration;
+  }
+
+  public float getSpeed() {
+    return speed;
+  }
+
+  public float getAngle() {
+    return angle;
+  }
+
+  public float getAcceleration() {
+    return acceleration;
   }
 }

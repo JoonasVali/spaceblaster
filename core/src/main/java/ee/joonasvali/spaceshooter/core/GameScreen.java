@@ -10,11 +10,9 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Disposable;
-import com.badlogic.gdx.utils.Pool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,9 +21,6 @@ import java.util.stream.Collectors;
  */
 public class GameScreen implements Screen, Disposable {
   private static final int ROCKET_DISTANCE_FROM_BOTTOM = 1;
-  private static final float MISSILE_START_SPEED = 0.01f;
-  private static final int MISSILE_SIZE = 1;
-  private static float MISSILE_ACCELERATION = 0.01f;
 
   private Logger log = LoggerFactory.getLogger(GameScreen.class);
 
@@ -36,20 +31,9 @@ public class GameScreen implements Screen, Disposable {
 
   private OrthographicCamera cam;
   private Sprite mapSprite;
-  private Texture missile;
 
   private Stage stage;
-
-
-  private Pool<Missile> missilePool = new Pool<Missile>() {
-    @Override
-    protected Missile newObject() {
-      return new Missile();
-    }
-  };
-
-  private List<Missile> activeMissiles = new ArrayList<>();
-
+  private MissileManager missileManager;
   private static final int WORLD_WIDTH = 100;
   private static final int WORLD_HEIGHT = 100;
 
@@ -63,16 +47,20 @@ public class GameScreen implements Screen, Disposable {
     inputHandler = new InputHandler();
     inputMultiplexer.addProcessor(inputHandler);
     inputMultiplexer.addProcessor(stage);
+    missileManager = new MissileManager(WORLD_WIDTH, WORLD_HEIGHT);
     Gdx.input.setInputProcessor(inputMultiplexer);
 
     inputHandler.addKeyBinding(Input.Keys.ESCAPE, game::setExit);
-    inputHandler.addKeyBinding(Input.Keys.SPACE, () -> createMissileAt(rocket.getX() + Rocket.ROCKET_SIZE / 2, rocket.getY() + Rocket.ROCKET_SIZE / 2));
+    inputHandler.addKeyBinding(
+        Input.Keys.SPACE, () ->
+          this.missileManager.createMissileAt(rocket.getX() + Rocket.ROCKET_SIZE / 2, rocket.getY() + Rocket.ROCKET_SIZE / 2,
+              (float)Math.random() * 10 - 5, rocket.getMissileAcceleration(), rocket.getMissileStartSpeed(), rocket.getMissileSize()
+          )
+    );
 
     mapSprite = new Sprite(new Texture(Gdx.files.internal("space.png")));
     mapSprite.setPosition(0, 0);
     mapSprite.setSize(WORLD_WIDTH, WORLD_HEIGHT);
-
-    missile = new Texture(Gdx.files.internal("missile.png"));
 
     createCamera();
 
@@ -92,16 +80,6 @@ public class GameScreen implements Screen, Disposable {
   }
 
 
-  private Missile createMissileAt(float x, float y) {
-    Missile missile = missilePool.obtain();
-    missile.setPosition(x, y);
-    missile.setAngle((float) Math.random() * 10 - 5);
-    missile.setSpeed(MISSILE_START_SPEED);
-    missile.setAcceleration(MISSILE_ACCELERATION);
-    activeMissiles.add(missile);
-    return missile;
-  }
-
   @Override
   public void render(float delta) {
     cam.update();
@@ -109,7 +87,7 @@ public class GameScreen implements Screen, Disposable {
     batch.setProjectionMatrix(cam.combined);
 
     handleInput();
-    moveAndRemoveMissiles();
+    missileManager.act();
 
     batch.begin();
     mapSprite.setOrigin(mapSprite.getWidth() / 2, mapSprite.getHeight() / 2);
@@ -117,9 +95,10 @@ public class GameScreen implements Screen, Disposable {
     mapSprite.setScale(1.5f);
     mapSprite.draw(batch);
 
+    missileManager.drawMissiles(batch);
     rocket.draw(batch);
 
-    activeMissiles.forEach(m -> batch.draw(missile, m.getX(), m.getY(), MISSILE_SIZE, MISSILE_SIZE));
+
     batch.end();
     stage.draw();
   }
@@ -154,27 +133,12 @@ public class GameScreen implements Screen, Disposable {
 
   @Override
   public void dispose() {
-    missilePool.clear();
-    activeMissiles.clear();
     rocket.dispose();
-    missile.dispose();
+    missileManager.dispose();
     stage.dispose();
     mapSprite.getTexture().dispose();
   }
 
-  private void moveAndRemoveMissiles() {
-    activeMissiles.forEach(Missile::nextPosition);
-
-    List<Missile> outOfBounds =
-        activeMissiles.stream().filter(
-            m -> m.getY() > WORLD_HEIGHT + 5 || m.getY() < -5 || m.getX() > WORLD_WIDTH + 5 || m.getX() < -5
-        ).collect(Collectors.toList());
-
-    outOfBounds.forEach(m -> {
-      activeMissiles.remove(m);
-      missilePool.free(m);
-    });
-  }
 
   private void handleInput() {
     int mouseX = Gdx.input.getX();
