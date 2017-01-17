@@ -10,16 +10,19 @@ import com.badlogic.gdx.utils.Disposable;
 /**
  * @author Joonas Vali December 2016
  */
-public class Rocket implements Disposable {
+public class Rocket implements Disposable, GameStepListener {
 
   private static final float MISSILE_START_SPEED = 0.01f;
   private static final float MISSILE_SIZE = 0.3f;
   private static final float MISSILE_ACCELERATION = 0.01f;
 
   public static final int ROCKET_SIZE = 5;
+  private static final float ROCKET_SPEED = 1;
   private final Sprite sprite;
   private final Rectangle rectangle;
   private final Texture texture;
+
+  private float xTarget;
 
   public Rocket() {
     texture = new Texture(Gdx.files.internal("rocket.png"));
@@ -34,8 +37,10 @@ public class Rocket implements Disposable {
   }
 
   public void setPosition(float x, float y) {
-    rectangle.setPosition(x, y);
-    sprite.setPosition(x, y);
+    xTarget = x;
+    rectangle.y = y;
+    // Y is fixed right now.
+    sprite.setY(y);
   }
 
   public void draw(SpriteBatch batch) {
@@ -64,5 +69,17 @@ public class Rocket implements Disposable {
 
   public float getMissileAcceleration() {
     return MISSILE_ACCELERATION;
+  }
+
+  @Override
+  public void onStep() {
+    float xMove = 0;
+    if (xTarget < this.getX()) {
+      xMove = -Math.min(ROCKET_SPEED, this.getX() - xTarget);
+    } else if (xTarget > this.getX()) {
+      xMove = Math.min(ROCKET_SPEED, xTarget - this.getX());
+    }
+    rectangle.x += xMove;
+    sprite.setX(rectangle.getX());
   }
 }
