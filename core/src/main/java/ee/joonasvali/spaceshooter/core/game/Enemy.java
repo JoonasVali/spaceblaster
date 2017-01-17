@@ -1,4 +1,4 @@
-package ee.joonasvali.spaceshooter.core;
+package ee.joonasvali.spaceshooter.core.game;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Pool;

@@ -1,4 +1,4 @@
-package ee.joonasvali.spaceshooter.core;
+package ee.joonasvali.spaceshooter.core.game;
 
 @FunctionalInterface
 public interface MouseMotionListener {
