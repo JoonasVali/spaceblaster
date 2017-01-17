@@ -21,13 +21,17 @@ import java.util.stream.Collectors;
  */
 public class GameScreen implements Screen, Disposable {
   private static final int ROCKET_DISTANCE_FROM_BOTTOM = 1;
+  public static final int FPS = 60;
+  public static final float BACKGROUND_ROTATION_SPEED_MODIFIER = 30f;
 
   private Logger log = LoggerFactory.getLogger(GameScreen.class);
 
   private InputHandler inputHandler = new InputHandler();
   private InputMultiplexer inputMultiplexer = new InputMultiplexer();
+  private GameSpeedController speedController = new GameSpeedController(1000 / FPS);
 
   private Rocket rocket;
+  private EnemyManager enemies;
 
   private OrthographicCamera cam;
   private Sprite mapSprite;
@@ -37,6 +41,7 @@ public class GameScreen implements Screen, Disposable {
   private static final int WORLD_WIDTH = 100;
   private static final int WORLD_HEIGHT = 100;
 
+  private int gameStepsCounted = 0;
   private SpaceShooterGame game;
 
   public GameScreen(SpaceShooterGame game) {
@@ -47,7 +52,18 @@ public class GameScreen implements Screen, Disposable {
     inputHandler = new InputHandler();
     inputMultiplexer.addProcessor(inputHandler);
     inputMultiplexer.addProcessor(stage);
-    missileManager = new MissileManager(WORLD_WIDTH, WORLD_HEIGHT);
+
+    float w = Gdx.graphics.getWidth();
+    float h = Gdx.graphics.getHeight();
+
+    missileManager = new MissileManager(WORLD_WIDTH, WORLD_HEIGHT * (h / w));
+    enemies = new EnemyManager(WORLD_WIDTH, WORLD_HEIGHT, missileManager);
+
+    speedController.registerGameStepListener(missileManager);
+    speedController.registerGameStepListener(enemies);
+    speedController.registerGameStepListener(rocket);
+    speedController.registerGameStepListener(() -> gameStepsCounted++);
+
     Gdx.input.setInputProcessor(inputMultiplexer);
 
     inputHandler.addKeyBinding(Input.Keys.ESCAPE, game::setExit);
@@ -87,15 +103,16 @@ public class GameScreen implements Screen, Disposable {
     batch.setProjectionMatrix(cam.combined);
 
     handleInput();
-    missileManager.act();
+    speedController.passTime(delta);
 
     batch.begin();
     mapSprite.setOrigin(mapSprite.getWidth() / 2, mapSprite.getHeight() / 2);
-    mapSprite.setRotation(game.getElapsed() % 360);
+    mapSprite.setRotation((gameStepsCounted / BACKGROUND_ROTATION_SPEED_MODIFIER) % 360);
     mapSprite.setScale(1.5f);
     mapSprite.draw(batch);
 
     missileManager.drawMissiles(batch);
+    enemies.drawEnemies(batch);
     rocket.draw(batch);
 
 
@@ -135,6 +152,7 @@ public class GameScreen implements Screen, Disposable {
   public void dispose() {
     rocket.dispose();
     missileManager.dispose();
+    enemies.dispose();
     stage.dispose();
     mapSprite.getTexture().dispose();
   }

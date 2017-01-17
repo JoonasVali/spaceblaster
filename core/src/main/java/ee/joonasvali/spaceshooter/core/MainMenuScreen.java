@@ -63,7 +63,6 @@ public class MainMenuScreen implements Screen {
 
     glyphLayout.setText(titlefont, "Space Shooter");
     float fwidth = glyphLayout.width;
-    System.out.println(fwidth);
     titlefont.draw(game.getBatch(), "Space Shooter", textCameraWidth / 2  - fwidth / 2, textCameraHeight / 1.4f);
     game.getFont16().draw(game.getBatch(), "Tap anywhere to begin!", 5, 35);
     game.getBatch().end();

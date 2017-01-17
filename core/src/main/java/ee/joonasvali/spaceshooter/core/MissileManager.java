@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Pool;
 
@@ -14,7 +15,7 @@ import java.util.stream.Collectors;
 /**
  * @author Joonas Vali January 2017
  */
-public class MissileManager implements Disposable {
+public class MissileManager implements Disposable, GameStepListener {
 
   private static final int MISSILE_TEXTURE_X = 12;
   private static final int MISSILE_TEXTURE_Y = 2;
@@ -87,7 +88,17 @@ public class MissileManager implements Disposable {
     missileTexture.dispose();
   }
 
-  public void act() {
+  public boolean missileCollisionWith(Rectangle r) {
+    for (Missile m : activeMissiles) {
+      if (m.overlaps(r)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  @Override
+  public void onStep() {
     moveAndRemoveMissiles();
   }
 }
