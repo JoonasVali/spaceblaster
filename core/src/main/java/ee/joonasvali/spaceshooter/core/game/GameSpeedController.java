@@ -1,4 +1,4 @@
-package ee.joonasvali.spaceshooter.core;
+package ee.joonasvali.spaceshooter.core.game;
 
 import java.util.HashSet;
 import java.util.Set;

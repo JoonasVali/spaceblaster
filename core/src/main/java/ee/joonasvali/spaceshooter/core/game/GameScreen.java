@@ -1,4 +1,4 @@
-package ee.joonasvali.spaceshooter.core;
+package ee.joonasvali.spaceshooter.core.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -10,11 +10,10 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Disposable;
+import ee.joonasvali.spaceshooter.core.SpaceShooterGame;
+import ee.joonasvali.spaceshooter.core.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author Joonas Vali January 2017
@@ -22,7 +21,7 @@ import java.util.stream.Collectors;
 public class GameScreen implements Screen, Disposable {
   private static final int ROCKET_DISTANCE_FROM_BOTTOM = 1;
   public static final int FPS = 60;
-  public static final float BACKGROUND_ROTATION_SPEED_MODIFIER = 30f;
+
 
   private Logger log = LoggerFactory.getLogger(GameScreen.class);
 
@@ -30,25 +29,29 @@ public class GameScreen implements Screen, Disposable {
   private InputMultiplexer inputMultiplexer = new InputMultiplexer();
   private GameSpeedController speedController = new GameSpeedController(1000 / FPS);
 
+  private Background background;
+
   private Rocket rocket;
   private EnemyManager enemies;
 
+
   private OrthographicCamera cam;
-  private Sprite mapSprite;
 
   private Stage stage;
   private MissileManager missileManager;
   private static final int WORLD_WIDTH = 100;
   private static final int WORLD_HEIGHT = 100;
 
-  private int gameStepsCounted = 0;
   private SpaceShooterGame game;
 
   public GameScreen(SpaceShooterGame game) {
     this.game = game;
     this.game.registerDisposable(this);
+    this.background = new Background(WORLD_WIDTH, WORLD_HEIGHT);
+
     rocket = new Rocket();
     stage = new Stage();
+
     inputHandler = new InputHandler();
     inputMultiplexer.addProcessor(inputHandler);
     inputMultiplexer.addProcessor(stage);
@@ -62,7 +65,7 @@ public class GameScreen implements Screen, Disposable {
     speedController.registerGameStepListener(missileManager);
     speedController.registerGameStepListener(enemies);
     speedController.registerGameStepListener(rocket);
-    speedController.registerGameStepListener(() -> gameStepsCounted++);
+    speedController.registerGameStepListener(background);
 
     Gdx.input.setInputProcessor(inputMultiplexer);
 
@@ -73,10 +76,6 @@ public class GameScreen implements Screen, Disposable {
               (float)Math.random() * 10 - 5, rocket.getMissileAcceleration(), rocket.getMissileStartSpeed(), rocket.getMissileSize()
           )
     );
-
-    mapSprite = new Sprite(new Texture(Gdx.files.internal("space.png")));
-    mapSprite.setPosition(0, 0);
-    mapSprite.setSize(WORLD_WIDTH, WORLD_HEIGHT);
 
     createCamera();
 
@@ -106,10 +105,7 @@ public class GameScreen implements Screen, Disposable {
     speedController.passTime(delta);
 
     batch.begin();
-    mapSprite.setOrigin(mapSprite.getWidth() / 2, mapSprite.getHeight() / 2);
-    mapSprite.setRotation((gameStepsCounted / BACKGROUND_ROTATION_SPEED_MODIFIER) % 360);
-    mapSprite.setScale(1.5f);
-    mapSprite.draw(batch);
+    background.draw(batch);
 
     missileManager.drawMissiles(batch);
     enemies.drawEnemies(batch);
@@ -154,7 +150,7 @@ public class GameScreen implements Screen, Disposable {
     missileManager.dispose();
     enemies.dispose();
     stage.dispose();
-    mapSprite.getTexture().dispose();
+    background.dispose();
   }
 
 
