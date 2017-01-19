@@ -16,7 +16,7 @@ public class Rocket implements Disposable, GameStepListener {
   private static final float MISSILE_SIZE = 0.3f;
   private static final float MISSILE_ACCELERATION = 0.01f;
 
-  public static final int ROCKET_SIZE = 5;
+  public static final int ROCKET_SIZE = 3;
   private static final float ROCKET_SPEED = 1;
   private final Sprite sprite;
   private final Rectangle rectangle;

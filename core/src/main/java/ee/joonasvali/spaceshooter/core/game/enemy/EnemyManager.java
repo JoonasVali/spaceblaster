@@ -1,4 +1,4 @@
-package ee.joonasvali.spaceshooter.core.game;
+package ee.joonasvali.spaceshooter.core.game.enemy;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -7,6 +7,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Pool;
+import ee.joonasvali.spaceshooter.core.game.GameStepListener;
+import ee.joonasvali.spaceshooter.core.game.Missile;
+import ee.joonasvali.spaceshooter.core.game.MissileManager;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -17,6 +20,8 @@ import java.util.Optional;
  * @author Joonas Vali January 2017
  */
 public class EnemyManager implements Disposable, GameStepListener {
+  public static final int ENEMY_SIZE = 3;
+  public static final float FORMATION_DROP = 0.02f;
   private final MissileManager missileManager;
   private final float worldWidth;
   private final float worldHeight;
@@ -25,6 +30,8 @@ public class EnemyManager implements Disposable, GameStepListener {
   private final Sprite explosionSprite;
   private final Texture texture;
   private final Sprite sprite;
+
+  private float formationSpeed = 0.1f;
 
   private Pool<Enemy> enemyPool = new Pool<Enemy>() {
     @Override
@@ -36,11 +43,12 @@ public class EnemyManager implements Disposable, GameStepListener {
   private Pool<Explosion> explosionPool = new Pool<Explosion>() {
     @Override
     protected Explosion newObject() {
-      return new Explosion(50);
+      return new Explosion();
     }
   };
 
-  private List<Enemy> enemies = new ArrayList<>();
+  private EnemyFormation formation;
+
   private List<Explosion> explosions = new ArrayList<>();
 
   public EnemyManager(float worldWidth, float worldHeight, MissileManager missileManager) {
@@ -51,20 +59,17 @@ public class EnemyManager implements Disposable, GameStepListener {
 
     this.explosionTexture = new Texture(Gdx.files.internal("explosion1.png"));
     this.explosionSprite = new Sprite(explosionTexture);
+    this.formation = new EnemyFormation(8, 5, () -> {
+      Enemy enemy =  enemyPool.obtain();
+      enemy.setSize(ENEMY_SIZE, ENEMY_SIZE);
+      return enemy;
+    }, 6,6);
+
+    this.formation.setX(5);
+    this.formation.setY(worldHeight - 75); // TODO
 
     this.sprite = new Sprite(texture);
     this.sprite.flip(false, true);
-    createEnemies(1);
-  }
-
-  private void createEnemies(int n) {
-    for (int i = 0; i < n; i++) {
-      Enemy e = enemyPool.obtain();
-      e.set(5, worldHeight - 50, 5, 5);
-      e.setSpeed(0.2f);
-      enemies.add(e);
-
-    }
   }
 
   public void drawEnemies(SpriteBatch batch) {
@@ -76,7 +81,7 @@ public class EnemyManager implements Disposable, GameStepListener {
       explosionSprite.setRotation((exp.expireTime * 5) % 360); // Make it rotate
       explosionSprite.draw(batch);
     }
-    for (Enemy e : enemies) {
+    for (Enemy e : formation.getEnemies()) {
       sprite.setX(e.getX());
       sprite.setY(e.getY());
       sprite.setSize(e.getWidth(), e.getHeight());
@@ -86,22 +91,6 @@ public class EnemyManager implements Disposable, GameStepListener {
 
   }
 
-  private void moveEnemy(Enemy e) {
-
-    if (e.isMovingLeft()) {
-      if (e.getX() < 5) {
-        e.setMoving(false);
-      } else {
-        e.setX(e.getX() - e.getSpeed());
-      }
-    } else {
-      if (e.getX() > worldWidth - 5) {
-        e.setMoving(true);
-      } else {
-        e.setX(e.getX() + e.getSpeed());
-      }
-    }
-  }
 
   @Override
   public void dispose() {
@@ -121,24 +110,54 @@ public class EnemyManager implements Disposable, GameStepListener {
     }
 
     List<Enemy> death = new ArrayList<>();
-    for (Enemy e : enemies) {
+    for (Enemy e : formation.getEnemies()) {
       Optional<Missile> m = missileManager.missileCollisionWith(e);
       if (m.isPresent()) {
-        Explosion exp = explosionPool.obtain();
-        exp.setX(e.getX());
-        exp.setY(e.getY());
-        exp.setWidth(e.getWidth());
-        exp.setHeight(e.getHeight());
-        explosions.add(exp);
+        createExplosion(e);
         death.add(e);
         missileManager.removeMissile(m.get());
       }
-      else {
-        moveEnemy(e);
+    }
+
+    death.forEach(e -> enemyPool.free(e));
+    formation.removeAll(death);
+
+    for (Enemy e : formation.getEnemies()) {
+      e.setX(formation.getXof(e));
+      e.setY(formation.getYof(e));
+    }
+
+    moveFormation();
+  }
+
+  private void moveFormation() {
+    if (formation.isMovesLeft()) {
+      if (formation.getMinX() <= 2) {
+        formation.setMovesLeft(false);
+        formation.setY(formation.getY() - 2);
+        formationSpeed += FORMATION_DROP;
+      } else {
+        formation.setX(formation.getX() - formationSpeed);
+      }
+    } else {
+      if (formation.getMaxX() >= (98 - ENEMY_SIZE)) {
+        formation.setMovesLeft(true);
+        formation.setY(formation.getY() - 2);
+        formationSpeed += FORMATION_DROP;
+      } else {
+        formation.setX(formation.getX() + formationSpeed);
       }
     }
-    death.forEach(e -> enemyPool.free(e));
-    enemies.removeAll(death);
+  }
+
+  private void createExplosion(Enemy e) {
+    Explosion exp = explosionPool.obtain();
+    exp.expireTime = 10;
+    exp.setX(e.getX());
+    exp.setY(e.getY());
+    exp.setWidth(e.getWidth());
+    exp.setHeight(e.getHeight());
+    explosions.add(exp);
   }
 
   @Override
@@ -148,10 +167,6 @@ public class EnemyManager implements Disposable, GameStepListener {
 
   class Explosion extends Rectangle implements Pool.Poolable {
     private int expireTime;
-
-    public Explosion(int expireTime) {
-      this.expireTime = expireTime;
-    }
 
     @Override
     public void reset() {
