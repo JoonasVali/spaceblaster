@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.Pool;
 public class Enemy extends Rectangle implements Pool.Poolable {
 
   private boolean movingLeft;
+  private float speed;
 
   public void setMoving(boolean movingLeft) {
     this.movingLeft = movingLeft;
@@ -25,5 +26,14 @@ public class Enemy extends Rectangle implements Pool.Poolable {
     this.y = 0;
     this.width = 0;
     this.height = 0;
+    this.speed = 0;
+  }
+
+  public float getSpeed() {
+    return speed;
+  }
+
+  public void setSpeed(float speed) {
+    this.speed = speed;
   }
 }
