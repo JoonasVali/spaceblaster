@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.Pool;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Joonas Vali January 2017
@@ -121,7 +122,8 @@ public class EnemyManager implements Disposable, GameStepListener {
 
     List<Enemy> death = new ArrayList<>();
     for (Enemy e : enemies) {
-      if (missileManager.missileCollisionWith(e)) {
+      Optional<Missile> m = missileManager.missileCollisionWith(e);
+      if (m.isPresent()) {
         Explosion exp = explosionPool.obtain();
         exp.setX(e.getX());
         exp.setY(e.getY());
@@ -129,6 +131,7 @@ public class EnemyManager implements Disposable, GameStepListener {
         exp.setHeight(e.getHeight());
         explosions.add(exp);
         death.add(e);
+        missileManager.removeMissile(m.get());
       }
       else {
         moveEnemy(e);
