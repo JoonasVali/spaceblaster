@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.Pool;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -50,10 +51,12 @@ public class MissileManager implements Disposable, GameStepListener {
             m -> m.getY() > worldHeight + 5 || m.getY() < -5 || m.getX() > worldWidth + 5 || m.getX() < -5
         ).collect(Collectors.toList());
 
-    outOfBounds.forEach(m -> {
-      activeMissiles.remove(m);
-      missilePool.free(m);
-    });
+    outOfBounds.forEach(this::removeMissile);
+  }
+
+  public void removeMissile(Missile m) {
+    activeMissiles.remove(m);
+    missilePool.free(m);
   }
 
 
@@ -88,17 +91,18 @@ public class MissileManager implements Disposable, GameStepListener {
     missileTexture.dispose();
   }
 
-  public boolean missileCollisionWith(Rectangle r) {
+  public Optional<Missile> missileCollisionWith(Rectangle r) {
     for (Missile m : activeMissiles) {
       if (m.overlaps(r)) {
-        return true;
+        return Optional.of(m);
       }
     }
-    return false;
+    return Optional.empty();
   }
 
   @Override
   public void onStep() {
     moveAndRemoveMissiles();
   }
+
 }
