@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Pool;
 import ee.joonasvali.spaceshooter.core.game.Explosion;
@@ -25,7 +24,7 @@ public class EnemyManager implements Disposable, GameStepListener {
   private static final int ENEMY_SIZE = 3;
   private static final float FORMATION_DROP = 0.02f;
 
-  private static final int FIRE_FREQUENCY = 100;
+  private static final int FIRE_FREQUENCY = 50;
   private final TriggerCounter fireTrigger;
 
   private final MissileManager missileManager;
@@ -55,7 +54,7 @@ public class EnemyManager implements Disposable, GameStepListener {
     this.worldWidth = worldWidth;
     this.worldHeight = worldHeight;
     this.texture = new Texture(Gdx.files.internal("rocket.png"));
-    this.fireTrigger = new TriggerCounter(this::doEnemyFire, 100, true);
+    this.fireTrigger = new TriggerCounter(this::doEnemyFire, FIRE_FREQUENCY, true);
 
     this.explosionTexture = new Texture(Gdx.files.internal("explosion1.png"));
     this.explosionSprite = new Sprite(explosionTexture);
