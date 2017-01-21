@@ -60,12 +60,13 @@ public class MissileManager implements Disposable, GameStepListener {
   }
 
 
-  public Missile createMissileAt(float x, float y, float angle, float acceleration, float startSpeed, float size) {
+  public Missile createMissileAt(Object author, float x, float y, float angle, float acceleration, float startSpeed, float size) {
     Missile missile = missilePool.obtain();
     missile.setPosition(x, y);
     missile.setAngle(angle);
     missile.setSpeed(startSpeed);
     missile.setAcceleration(acceleration);
+    missile.setAuthor(author);
     float height = size * sprite.getHeight() / sprite.getWidth();
     missile.setWidth(size);
     missile.setHeight(height);
@@ -91,9 +92,9 @@ public class MissileManager implements Disposable, GameStepListener {
     missileTexture.dispose();
   }
 
-  public Optional<Missile> missileCollisionWith(Rectangle r) {
+  public Optional<Missile> missileCollisionWith(Rectangle r, Object excludeMissilesFromAuthor) {
     for (Missile m : activeMissiles) {
-      if (m.overlaps(r)) {
+      if (m.overlaps(r) && !m.getAuthor().equals(excludeMissilesFromAuthor)) {
         return Optional.of(m);
       }
     }

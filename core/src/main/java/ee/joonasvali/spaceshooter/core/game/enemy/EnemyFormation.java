@@ -2,6 +2,7 @@ package ee.joonasvali.spaceshooter.core.game.enemy;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
@@ -94,8 +95,11 @@ public class EnemyFormation {
     return getX() + (enemy.getMatrixPosX() * horizontalDistance);
   }
 
+  /* Inverse the matrix because Y points up in the game engine, but for human readability it's better if array
+  * matches what's on screen. Otherwise the lowest row in array would be highest in screen...
+  * */
   public float getYof(Enemy enemy) {
-    return getY() + (enemy.getMatrixPosY() * verticalDistance);
+    return getY() + (height - enemy.getMatrixPosY() * verticalDistance);
   }
 
 
@@ -123,5 +127,24 @@ public class EnemyFormation {
     this.movesLeft = movesLeft;
   }
 
+  public Optional<Enemy> getRandomFromBottom() {
+    List<Enemy> candidates = new ArrayList<>();
+    for (int i = 0; i < width; i++) {
+      Enemy e = null;
+      for (int j = 0; j < height; j++) {
+        if (formation[i][j] != null) {
+          e = formation[i][j];
+        }
+      }
+      if (e != null) {
+        candidates.add(e);
+      }
+    }
+    if (!candidates.isEmpty()) {
+      return Optional.of(candidates.get((int) (Math.random() * candidates.size())));
+    } else {
+      return Optional.empty();
+    }
 
+  }
 }
