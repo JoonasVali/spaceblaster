@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Pool;
+import ee.joonasvali.spaceshooter.core.game.Explosion;
 import ee.joonasvali.spaceshooter.core.game.GameStepListener;
 import ee.joonasvali.spaceshooter.core.game.Missile;
 import ee.joonasvali.spaceshooter.core.game.MissileManager;
@@ -45,13 +46,6 @@ public class EnemyManager implements Disposable, GameStepListener {
     }
   };
 
-  private Pool<Explosion> explosionPool = new Pool<Explosion>() {
-    @Override
-    protected Explosion newObject() {
-      return new Explosion();
-    }
-  };
-
   private EnemyFormation formation;
 
   private List<Explosion> explosions = new ArrayList<>();
@@ -84,7 +78,7 @@ public class EnemyManager implements Disposable, GameStepListener {
       explosionSprite.setY(exp.getY());
       explosionSprite.setSize(exp.getWidth(), exp.getHeight());
       explosionSprite.setOrigin(exp.getWidth() / 2, exp.getHeight() / 2);
-      explosionSprite.setRotation((exp.expireTime * 5) % 360); // Make it rotate
+      explosionSprite.setRotation((exp.getExpireTime() * 5) % 360); // Make it rotate
       explosionSprite.draw(batch);
     }
     for (Enemy e : formation.getEnemies()) {
@@ -123,9 +117,9 @@ public class EnemyManager implements Disposable, GameStepListener {
     Iterator<Explosion> it = explosions.iterator();
     while (it.hasNext()) {
       Explosion e = it.next();
-      e.expireTime--;
-      if (e.expireTime <= 0) {
-        explosionPool.free(e);
+      e.setExpireTime(e.getExpireTime() - 1);
+      if (e.getExpireTime() <= 0) {
+        Explosion.free(e);
         it.remove();
       }
     }
@@ -174,8 +168,8 @@ public class EnemyManager implements Disposable, GameStepListener {
   }
 
   private void createExplosion(Enemy e) {
-    Explosion exp = explosionPool.obtain();
-    exp.expireTime = 10;
+    Explosion exp = Explosion.obtain();
+    exp.setExpireTime(10);
     exp.setX(e.getX());
     exp.setY(e.getY());
     exp.setWidth(e.getWidth());
@@ -188,12 +182,4 @@ public class EnemyManager implements Disposable, GameStepListener {
     act();
   }
 
-  class Explosion extends Rectangle implements Pool.Poolable {
-    private int expireTime;
-
-    @Override
-    public void reset() {
-      this.expireTime = 0;
-    }
-  }
 }

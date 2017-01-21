@@ -48,17 +48,18 @@ public class GameScreen implements Screen, Disposable {
     this.game.registerDisposable(this);
     this.background = new Background(WORLD_WIDTH, WORLD_HEIGHT);
 
-    rocket = new Rocket();
+    float w = Gdx.graphics.getWidth();
+    float h = Gdx.graphics.getHeight();
+
+    missileManager = new MissileManager(WORLD_WIDTH, WORLD_HEIGHT * (h / w));
+
+    rocket = new Rocket(missileManager);
     stage = new Stage();
 
     inputHandler = new InputHandler();
     inputMultiplexer.addProcessor(inputHandler);
     inputMultiplexer.addProcessor(stage);
 
-    float w = Gdx.graphics.getWidth();
-    float h = Gdx.graphics.getHeight();
-
-    missileManager = new MissileManager(WORLD_WIDTH, WORLD_HEIGHT * (h / w));
     enemies = new EnemyManager(WORLD_WIDTH, WORLD_HEIGHT, missileManager);
 
     speedController.registerGameStepListener(missileManager);
@@ -70,10 +71,7 @@ public class GameScreen implements Screen, Disposable {
 
     inputHandler.addKeyBinding(Input.Keys.ESCAPE, game::setExit);
     inputHandler.addKeyBinding(
-        Input.Keys.SPACE, () ->
-          this.missileManager.createMissileAt(rocket, rocket.getX() + Rocket.ROCKET_SIZE / 2, rocket.getY() + Rocket.ROCKET_SIZE / 2,
-              (float)Math.random() * 10 - 5, rocket.getMissileAcceleration(), rocket.getMissileStartSpeed(), rocket.getMissileSize()
-          )
+        Input.Keys.SPACE, () -> rocket.fireMissile()
     );
 
     createCamera();
