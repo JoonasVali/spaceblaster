@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.Pool;
 import ee.joonasvali.spaceshooter.core.game.GameStepListener;
 import ee.joonasvali.spaceshooter.core.game.Missile;
 import ee.joonasvali.spaceshooter.core.game.MissileManager;
+import ee.joonasvali.spaceshooter.core.game.TriggerCounter;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -20,8 +21,12 @@ import java.util.Optional;
  * @author Joonas Vali January 2017
  */
 public class EnemyManager implements Disposable, GameStepListener {
-  public static final int ENEMY_SIZE = 3;
-  public static final float FORMATION_DROP = 0.02f;
+  private static final int ENEMY_SIZE = 3;
+  private static final float FORMATION_DROP = 0.02f;
+
+  private static final int FIRE_FREQUENCY = 100;
+  private final TriggerCounter fireTrigger;
+
   private final MissileManager missileManager;
   private final float worldWidth;
   private final float worldHeight;
@@ -56,6 +61,7 @@ public class EnemyManager implements Disposable, GameStepListener {
     this.worldWidth = worldWidth;
     this.worldHeight = worldHeight;
     this.texture = new Texture(Gdx.files.internal("rocket.png"));
+    this.fireTrigger = new TriggerCounter(this::doEnemyFire, 100, true);
 
     this.explosionTexture = new Texture(Gdx.files.internal("explosion1.png"));
     this.explosionSprite = new Sprite(explosionTexture);
@@ -66,7 +72,7 @@ public class EnemyManager implements Disposable, GameStepListener {
     }, 6,6);
 
     this.formation.setX(5);
-    this.formation.setY(worldHeight - 75); // TODO
+    this.formation.setY(worldHeight - 60); // TODO what's with the height?
 
     this.sprite = new Sprite(texture);
     this.sprite.flip(false, true);
@@ -87,8 +93,23 @@ public class EnemyManager implements Disposable, GameStepListener {
       sprite.setSize(e.getWidth(), e.getHeight());
       sprite.draw(batch);
     }
+  }
 
+  public void doEnemyFire() {
+    List<Enemy> enemies = formation.getEnemies();
+    if (enemies.isEmpty()) {
+      return;
+    }
 
+    Optional<Enemy> chosen = formation.getRandomFromBottom();
+    chosen.ifPresent(enemy -> missileManager.createMissileAt(enemy,
+        formation.getXof(enemy) + ENEMY_SIZE / 2,
+        formation.getYof(enemy) + ENEMY_SIZE / 2,
+        180,
+        0.01f,
+        0.5f,
+        0.3f
+    ));
   }
 
 
@@ -98,7 +119,7 @@ public class EnemyManager implements Disposable, GameStepListener {
     explosionTexture.dispose();
   }
 
-  public void act() {
+  private void act() {
     Iterator<Explosion> it = explosions.iterator();
     while (it.hasNext()) {
       Explosion e = it.next();
@@ -111,7 +132,7 @@ public class EnemyManager implements Disposable, GameStepListener {
 
     List<Enemy> death = new ArrayList<>();
     for (Enemy e : formation.getEnemies()) {
-      Optional<Missile> m = missileManager.missileCollisionWith(e);
+      Optional<Missile> m = missileManager.missileCollisionWith(e, e);
       if (m.isPresent()) {
         createExplosion(e);
         death.add(e);
@@ -128,6 +149,8 @@ public class EnemyManager implements Disposable, GameStepListener {
     }
 
     moveFormation();
+
+    fireTrigger.countDown();
   }
 
   private void moveFormation() {

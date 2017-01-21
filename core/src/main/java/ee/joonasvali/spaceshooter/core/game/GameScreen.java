@@ -71,7 +71,7 @@ public class GameScreen implements Screen, Disposable {
     inputHandler.addKeyBinding(Input.Keys.ESCAPE, game::setExit);
     inputHandler.addKeyBinding(
         Input.Keys.SPACE, () ->
-          this.missileManager.createMissileAt(rocket.getX() + Rocket.ROCKET_SIZE / 2, rocket.getY() + Rocket.ROCKET_SIZE / 2,
+          this.missileManager.createMissileAt(rocket, rocket.getX() + Rocket.ROCKET_SIZE / 2, rocket.getY() + Rocket.ROCKET_SIZE / 2,
               (float)Math.random() * 10 - 5, rocket.getMissileAcceleration(), rocket.getMissileStartSpeed(), rocket.getMissileSize()
           )
     );

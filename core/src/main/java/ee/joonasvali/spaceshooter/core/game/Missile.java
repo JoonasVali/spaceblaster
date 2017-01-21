@@ -10,6 +10,7 @@ public class Missile extends Rectangle implements Pool.Poolable {
   private float speed = 0;
   private float angle = 0;
   private float acceleration = 0;
+  private Object author;
 
   @Override
   public void reset() {
@@ -22,6 +23,13 @@ public class Missile extends Rectangle implements Pool.Poolable {
     acceleration = 0;
   }
 
+  public Object getAuthor() {
+    return author;
+  }
+
+  public void setAuthor(Object author) {
+    this.author = author;
+  }
 
   public void setSpeed(float speed) {
     this.speed = speed;
