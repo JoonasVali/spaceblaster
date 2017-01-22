@@ -28,6 +28,7 @@ public class Rocket implements Disposable, GameStepListener {
   private final Texture explosionTexture;
   private final MissileManager missileManager;
 
+  private Effect effect;
   private boolean alive;
   private Explosion explosion;
   private int countDownToRebirth;
@@ -61,7 +62,11 @@ public class Rocket implements Disposable, GameStepListener {
 
   public void draw(SpriteBatch batch) {
     if (alive) {
-      sprite.draw(batch);
+      if (effect == null) {
+        sprite.draw(batch);
+      } else {
+        effect.draw(sprite, batch);
+      }
     } else {
       if (explosion != null && explosion.getExpireTime() > 0) {
         explosionSprite.setX(explosion.getX());
@@ -89,6 +94,12 @@ public class Rocket implements Disposable, GameStepListener {
 
   @Override
   public void onStep() {
+    if (effect != null) {
+      effect.onStep();
+      if (!effect.isActive()) {
+        effect = null;
+      }
+    }
     if (!alive) {
       if (explosion != null) {
         explosion.setExpireTime(explosion.getExpireTime() - 1);
@@ -107,20 +118,25 @@ public class Rocket implements Disposable, GameStepListener {
     }
     rectangle.x += xMove;
     sprite.setX(rectangle.getX());
-    Optional<Missile> missile = missileManager.missileCollisionWith(rectangle, this);
-    missile.ifPresent((m) -> {
-      missileManager.removeMissile(m);
-      Explosion exp = Explosion.obtain();
-      exp.setExpireTime(10);
-      exp.setX(getX());
-      exp.setY(getY());
-      exp.setWidth(getWidth());
-      exp.setHeight(getHeight());
-      this.explosion = exp;
-      this.alive = false;
-      countDownToRebirth = TIME_TO_REBIRTH;
-    });
+    if (!isInvincible()) {
+      Optional<Missile> missile = missileManager.missileCollisionWith(rectangle, this);
+      missile.ifPresent((m) -> {
+        missileManager.removeMissile(m);
+        Explosion exp = Explosion.obtain();
+        exp.setExpireTime(10);
+        exp.setX(getX());
+        exp.setY(getY());
+        exp.setWidth(getWidth());
+        exp.setHeight(getHeight());
+        this.explosion = exp;
+        this.alive = false;
+        countDownToRebirth = TIME_TO_REBIRTH;
+      });
+    }
+  }
 
+  private boolean isInvincible() {
+    return effect instanceof RebirthEffect;
   }
 
   public void fireMissile() {
@@ -135,6 +151,7 @@ public class Rocket implements Disposable, GameStepListener {
   private void rebirth() {
     alive = true;
     explosion = null;
+    effect = new RebirthEffect(200, 5);
   }
 
   public float getWidth() {
