@@ -67,7 +67,7 @@ public class GameScreen implements Screen, Disposable {
     inputMultiplexer.addProcessor(inputHandler);
     inputMultiplexer.addProcessor(stage);
 
-    enemies = new EnemyManager(WORLD_WIDTH, WORLD_HEIGHT, missileManager, score);
+    enemies = new EnemyManager(WORLD_WIDTH, WORLD_HEIGHT * (h / w), missileManager, score);
 
     speedController.registerGameStepListener(missileManager);
     speedController.registerGameStepListener(enemies);
