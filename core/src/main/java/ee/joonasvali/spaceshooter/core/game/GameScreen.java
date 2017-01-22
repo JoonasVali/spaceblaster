@@ -14,6 +14,8 @@ import ee.joonasvali.spaceshooter.core.game.enemy.EnemyManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * @author Joonas Vali January 2017
  */
@@ -28,6 +30,7 @@ public class GameScreen implements Screen, Disposable {
   private InputMultiplexer inputMultiplexer = new InputMultiplexer();
   private GameSpeedController speedController = new GameSpeedController(1000 / FPS);
 
+  private UIOverlay ui;
   private Background background;
 
   private Rocket rocket;
@@ -41,12 +44,16 @@ public class GameScreen implements Screen, Disposable {
   private static final int WORLD_WIDTH = 100;
   private static final int WORLD_HEIGHT = 100;
 
+  private final AtomicInteger score;
+
   private SpaceShooterGame game;
 
   public GameScreen(SpaceShooterGame game) {
     this.game = game;
     this.game.registerDisposable(this);
     this.background = new Background(WORLD_WIDTH, WORLD_HEIGHT);
+    this.score = new AtomicInteger();
+    this.ui = new UIOverlay(score);
 
     float w = Gdx.graphics.getWidth();
     float h = Gdx.graphics.getHeight();
@@ -60,7 +67,7 @@ public class GameScreen implements Screen, Disposable {
     inputMultiplexer.addProcessor(inputHandler);
     inputMultiplexer.addProcessor(stage);
 
-    enemies = new EnemyManager(WORLD_WIDTH, WORLD_HEIGHT, missileManager);
+    enemies = new EnemyManager(WORLD_WIDTH, WORLD_HEIGHT, missileManager, score);
 
     speedController.registerGameStepListener(missileManager);
     speedController.registerGameStepListener(enemies);
@@ -107,6 +114,8 @@ public class GameScreen implements Screen, Disposable {
     missileManager.drawMissiles(batch);
     enemies.drawEnemies(batch);
     rocket.draw(batch);
+
+    ui.draw(batch);
 
 
     batch.end();

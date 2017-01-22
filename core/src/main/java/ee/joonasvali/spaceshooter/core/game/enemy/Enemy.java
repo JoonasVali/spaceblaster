@@ -34,4 +34,8 @@ public class Enemy extends Rectangle implements Pool.Poolable {
     this.width = 0;
     this.height = 0;
   }
+
+  public int getBounty() {
+    return 100;
+  }
 }

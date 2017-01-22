@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Joonas Vali January 2017
@@ -25,6 +26,8 @@ public class EnemyManager implements Disposable, GameStepListener {
   private static final float FORMATION_DROP = 0.02f;
 
   private static final int FIRE_FREQUENCY = 50;
+  public static final int VERTICAL_DISTANCE_IN_MATRIX = 6;
+  public static final int HORIZONTAL_DISTANCE_IN_MATRIX = 6;
   private final TriggerCounter fireTrigger;
 
   private final MissileManager missileManager;
@@ -38,22 +41,24 @@ public class EnemyManager implements Disposable, GameStepListener {
 
   private float formationSpeed = 0.1f;
 
-  private Pool<Enemy> enemyPool = new Pool<Enemy>() {
+  private final Pool<Enemy> enemyPool = new Pool<Enemy>() {
     @Override
     protected Enemy newObject() {
       return new Enemy();
     }
   };
 
-  private EnemyFormation formation;
+  private final EnemyFormation formation;
 
-  private List<Explosion> explosions = new ArrayList<>();
+  private final List<Explosion> explosions = new ArrayList<>();
+  private final AtomicInteger score;
 
-  public EnemyManager(float worldWidth, float worldHeight, MissileManager missileManager) {
+  public EnemyManager(float worldWidth, float worldHeight, MissileManager missileManager, AtomicInteger score) {
     this.missileManager = missileManager;
+    this.score = score;
     this.worldWidth = worldWidth;
     this.worldHeight = worldHeight;
-    this.texture = new Texture(Gdx.files.internal("rocket.png"));
+    this.texture = new Texture(Gdx.files.internal("Gunship_mf_Sprite.png"));
     this.fireTrigger = new TriggerCounter(this::doEnemyFire, FIRE_FREQUENCY, true);
 
     this.explosionTexture = new Texture(Gdx.files.internal("explosion1.png"));
@@ -62,13 +67,12 @@ public class EnemyManager implements Disposable, GameStepListener {
       Enemy enemy =  enemyPool.obtain();
       enemy.setSize(ENEMY_SIZE, ENEMY_SIZE);
       return enemy;
-    }, 6,6);
+    }, HORIZONTAL_DISTANCE_IN_MATRIX, VERTICAL_DISTANCE_IN_MATRIX);
 
     this.formation.setX(5);
-    this.formation.setY(worldHeight - 60); // TODO what's with the height?
+    this.formation.setY(worldHeight - (formation.getHeight() * (VERTICAL_DISTANCE_IN_MATRIX + ENEMY_SIZE) + 10)); // TODO what's with the height?
 
-    this.sprite = new Sprite(texture);
-    this.sprite.flip(false, true);
+    this.sprite = new Sprite(texture, 33, 77, 190, 100);
   }
 
   public void drawEnemies(SpriteBatch batch) {
@@ -129,6 +133,7 @@ public class EnemyManager implements Disposable, GameStepListener {
       if (m.isPresent()) {
         createExplosion(e);
         death.add(e);
+        score.addAndGet(e.getBounty());
         missileManager.removeMissile(m.get());
       }
     }
