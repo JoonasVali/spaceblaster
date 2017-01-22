@@ -6,13 +6,14 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.utils.Disposable;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Joonas Vali January 2017
  */
-public class UIOverlay {
+public class UIOverlay implements Disposable {
   public static final int UNITS = 1000;
   private OrthographicCamera cam;
   private BitmapFont font;
@@ -37,7 +38,7 @@ public class UIOverlay {
 
     FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/cambria.ttc"));
     FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-    parameter.size = 16;
+    parameter.size = 20;
     parameter.color = Color.YELLOW;
     font = generator.generateFont(parameter);
   }
@@ -45,5 +46,10 @@ public class UIOverlay {
   public void draw(SpriteBatch batch) {
     batch.setProjectionMatrix(cam.combined);
     font.draw(batch, Integer.toString(score.get()), 20, height - 10);
+  }
+
+  @Override
+  public void dispose() {
+    font.dispose();
   }
 }

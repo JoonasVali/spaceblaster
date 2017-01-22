@@ -157,6 +157,7 @@ public class GameScreen implements Screen, Disposable {
     enemies.dispose();
     stage.dispose();
     background.dispose();
+    ui.dispose();
   }
 
 
