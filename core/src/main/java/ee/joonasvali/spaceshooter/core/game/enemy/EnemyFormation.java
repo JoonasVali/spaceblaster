@@ -99,7 +99,7 @@ public class EnemyFormation {
   * matches what's on screen. Otherwise the lowest row in array would be highest in screen...
   * */
   public float getYof(Enemy enemy) {
-    return getY() + (height - enemy.getMatrixPosY() * verticalDistance);
+    return getY() + (height - enemy.getMatrixPosY()) * verticalDistance;
   }
 
 

@@ -28,6 +28,8 @@ public class EnemyManager implements Disposable, GameStepListener {
   private static final int FIRE_FREQUENCY = 50;
   public static final int VERTICAL_DISTANCE_IN_MATRIX = 6;
   public static final int HORIZONTAL_DISTANCE_IN_MATRIX = 6;
+  public static final int FORMATION_HEIGHT_AMOUNT = 5;
+  public static final int FORMATION_WIDTH_AMOUNT = 8;
   private final TriggerCounter fireTrigger;
 
   private final MissileManager missileManager;
@@ -53,24 +55,24 @@ public class EnemyManager implements Disposable, GameStepListener {
   private final List<Explosion> explosions = new ArrayList<>();
   private final AtomicInteger score;
 
-  public EnemyManager(float worldWidth, float worldHeight, MissileManager missileManager, AtomicInteger score) {
+  public EnemyManager(float screenWidth, float screenHeight, MissileManager missileManager, AtomicInteger score) {
     this.missileManager = missileManager;
     this.score = score;
-    this.worldWidth = worldWidth;
-    this.worldHeight = worldHeight;
+    this.worldWidth = screenWidth;
+    this.worldHeight = screenHeight;
     this.texture = new Texture(Gdx.files.internal("Gunship_mf_Sprite.png"));
     this.fireTrigger = new TriggerCounter(this::doEnemyFire, FIRE_FREQUENCY, true);
 
     this.explosionTexture = new Texture(Gdx.files.internal("explosion1.png"));
     this.explosionSprite = new Sprite(explosionTexture);
-    this.formation = new EnemyFormation(8, 5, () -> {
+    this.formation = new EnemyFormation(FORMATION_WIDTH_AMOUNT, FORMATION_HEIGHT_AMOUNT, () -> {
       Enemy enemy =  enemyPool.obtain();
       enemy.setSize(ENEMY_SIZE, ENEMY_SIZE);
       return enemy;
     }, HORIZONTAL_DISTANCE_IN_MATRIX, VERTICAL_DISTANCE_IN_MATRIX);
 
     this.formation.setX(5);
-    this.formation.setY(worldHeight - (formation.getHeight() * (VERTICAL_DISTANCE_IN_MATRIX + ENEMY_SIZE) + 10)); // TODO what's with the height?
+    this.formation.setY(screenHeight - Math.min(50, (FORMATION_HEIGHT_AMOUNT + 2) * (VERTICAL_DISTANCE_IN_MATRIX)));
 
     this.sprite = new Sprite(texture, 33, 77, 190, 100);
   }
@@ -127,19 +129,19 @@ public class EnemyManager implements Disposable, GameStepListener {
       }
     }
 
-    List<Enemy> death = new ArrayList<>();
+    List<Enemy> dead = new ArrayList<>();
     for (Enemy e : formation.getEnemies()) {
       Optional<Missile> m = missileManager.missileCollisionWith(e, e);
       if (m.isPresent()) {
         createExplosion(e);
-        death.add(e);
+        dead.add(e);
         score.addAndGet(e.getBounty());
         missileManager.removeMissile(m.get());
       }
     }
 
-    death.forEach(e -> enemyPool.free(e));
-    formation.removeAll(death);
+    dead.forEach(enemyPool::free);
+    formation.removeAll(dead);
 
     for (Enemy e : formation.getEnemies()) {
       e.setX(formation.getXof(e));
