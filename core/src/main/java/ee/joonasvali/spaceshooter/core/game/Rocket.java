@@ -20,6 +20,7 @@ public class Rocket implements Disposable, GameStepListener {
 
   public static final int ROCKET_SIZE = 3;
   private static final float ROCKET_SPEED = 1;
+  public static final int TIME_TO_REBIRTH = 300;
   private final Sprite sprite;
   private final Sprite explosionSprite;
   private final Rectangle rectangle;
@@ -29,6 +30,7 @@ public class Rocket implements Disposable, GameStepListener {
 
   private boolean alive;
   private Explosion explosion;
+  private int countDownToRebirth;
 
   private float xTarget;
 
@@ -91,6 +93,10 @@ public class Rocket implements Disposable, GameStepListener {
       if (explosion != null) {
         explosion.setExpireTime(explosion.getExpireTime() - 1);
       }
+      countDownToRebirth--;
+      if (countDownToRebirth <= 0) {
+        rebirth();
+      }
       return;
     }
     float xMove = 0;
@@ -112,6 +118,7 @@ public class Rocket implements Disposable, GameStepListener {
       exp.setHeight(getHeight());
       this.explosion = exp;
       this.alive = false;
+      countDownToRebirth = TIME_TO_REBIRTH;
     });
 
   }
@@ -123,6 +130,11 @@ public class Rocket implements Disposable, GameStepListener {
     this.missileManager.createMissileAt(this, this.getX() + Rocket.ROCKET_SIZE / 2, this.getY() + Rocket.ROCKET_SIZE / 2,
         (float) Math.random() * 10 - 5, MISSILE_ACCELERATION, MISSILE_START_SPEED, MISSILE_SIZE
     );
+  }
+
+  private void rebirth() {
+    alive = true;
+    explosion = null;
   }
 
   public float getWidth() {
