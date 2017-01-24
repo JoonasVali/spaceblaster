@@ -8,8 +8,9 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Pool;
 import ee.joonasvali.spaceshooter.core.game.Explosion;
 import ee.joonasvali.spaceshooter.core.game.GameStepListener;
-import ee.joonasvali.spaceshooter.core.game.Missile;
-import ee.joonasvali.spaceshooter.core.game.MissileManager;
+import ee.joonasvali.spaceshooter.core.game.weapons.Missile;
+import ee.joonasvali.spaceshooter.core.game.weapons.WeaponProjectile;
+import ee.joonasvali.spaceshooter.core.game.weapons.WeaponProjectileManager;
 import ee.joonasvali.spaceshooter.core.game.TriggerCounter;
 
 import java.util.ArrayList;
@@ -32,7 +33,7 @@ public class EnemyManager implements Disposable, GameStepListener {
   public static final int FORMATION_WIDTH_AMOUNT = 8;
   private final TriggerCounter fireTrigger;
 
-  private final MissileManager missileManager;
+  private final WeaponProjectileManager weaponProjectileManager;
   private final float worldWidth;
   private final float worldHeight;
 
@@ -55,8 +56,8 @@ public class EnemyManager implements Disposable, GameStepListener {
   private final List<Explosion> explosions = new ArrayList<>();
   private final AtomicInteger score;
 
-  public EnemyManager(float screenWidth, float screenHeight, MissileManager missileManager, AtomicInteger score) {
-    this.missileManager = missileManager;
+  public EnemyManager(float screenWidth, float screenHeight, WeaponProjectileManager weaponProjectileManager, AtomicInteger score) {
+    this.weaponProjectileManager = weaponProjectileManager;
     this.score = score;
     this.worldWidth = screenWidth;
     this.worldHeight = screenHeight;
@@ -101,13 +102,10 @@ public class EnemyManager implements Disposable, GameStepListener {
     }
 
     Optional<Enemy> chosen = formation.getRandomFromBottom();
-    chosen.ifPresent(enemy -> missileManager.createMissileAt(enemy,
+    chosen.ifPresent(enemy -> weaponProjectileManager.createProjectileAt(Missile.class, enemy,
         formation.getXof(enemy) + ENEMY_SIZE / 2,
         formation.getYof(enemy) + ENEMY_SIZE / 2,
-        180,
-        0.01f,
-        0.5f,
-        0.3f
+        180
     ));
   }
 
@@ -131,12 +129,12 @@ public class EnemyManager implements Disposable, GameStepListener {
 
     List<Enemy> dead = new ArrayList<>();
     for (Enemy e : formation.getEnemies()) {
-      Optional<Missile> m = missileManager.missileCollisionWith(e, e);
+      Optional<WeaponProjectile> m = weaponProjectileManager.projectileCollisionWith(e, e);
       if (m.isPresent()) {
         createExplosion(e);
         dead.add(e);
         score.addAndGet(e.getBounty());
-        missileManager.removeMissile(m.get());
+        weaponProjectileManager.removeProjectile(m.get());
       }
     }
 
