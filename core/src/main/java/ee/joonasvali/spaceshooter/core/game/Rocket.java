@@ -6,6 +6,9 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Disposable;
+import ee.joonasvali.spaceshooter.core.game.weapons.Missile;
+import ee.joonasvali.spaceshooter.core.game.weapons.WeaponProjectile;
+import ee.joonasvali.spaceshooter.core.game.weapons.WeaponProjectileManager;
 
 import java.util.Optional;
 
@@ -13,11 +16,6 @@ import java.util.Optional;
  * @author Joonas Vali December 2016
  */
 public class Rocket implements Disposable, GameStepListener {
-
-  private static final float MISSILE_START_SPEED = 0.01f;
-  private static final float MISSILE_SIZE = 0.3f;
-  private static final float MISSILE_ACCELERATION = 0.01f;
-
   public static final int ROCKET_SIZE = 3;
   private static final float ROCKET_SPEED = 1;
   public static final int TIME_TO_REBIRTH = 300;
@@ -26,7 +24,7 @@ public class Rocket implements Disposable, GameStepListener {
   private final Rectangle rectangle;
   private final Texture texture;
   private final Texture explosionTexture;
-  private final MissileManager missileManager;
+  private final WeaponProjectileManager weaponProjectileManager;
 
   private Effect effect;
   private boolean alive;
@@ -35,8 +33,8 @@ public class Rocket implements Disposable, GameStepListener {
 
   private float xTarget;
 
-  public Rocket(MissileManager missileManager) {
-    this.missileManager = missileManager;
+  public Rocket(WeaponProjectileManager weaponProjectileManager) {
+    this.weaponProjectileManager = weaponProjectileManager;
     texture = new Texture(Gdx.files.internal("rocket.png"));
     explosionTexture = new Texture(Gdx.files.internal("explosion1.png"));
     this.explosionSprite = new Sprite(explosionTexture);
@@ -119,9 +117,9 @@ public class Rocket implements Disposable, GameStepListener {
     rectangle.x += xMove;
     sprite.setX(rectangle.getX());
     if (!isInvincible()) {
-      Optional<Missile> missile = missileManager.missileCollisionWith(rectangle, this);
+      Optional<WeaponProjectile> missile = weaponProjectileManager.projectileCollisionWith(rectangle, this);
       missile.ifPresent((m) -> {
-        missileManager.removeMissile(m);
+        weaponProjectileManager.removeProjectile(m);
         Explosion exp = Explosion.obtain();
         exp.setExpireTime(10);
         exp.setX(getX());
@@ -143,8 +141,9 @@ public class Rocket implements Disposable, GameStepListener {
     if (!alive) {
       return;
     }
-    this.missileManager.createMissileAt(this, this.getX() + Rocket.ROCKET_SIZE / 2, this.getY() + Rocket.ROCKET_SIZE / 2,
-        (float) Math.random() * 10 - 5, MISSILE_ACCELERATION, MISSILE_START_SPEED, MISSILE_SIZE
+    this.weaponProjectileManager.createProjectileAt(Missile.class, this,
+        this.getX() + Rocket.ROCKET_SIZE / 2, this.getY() + Rocket.ROCKET_SIZE / 2,
+        (float) Math.random() * 10 - 5
     );
   }
 

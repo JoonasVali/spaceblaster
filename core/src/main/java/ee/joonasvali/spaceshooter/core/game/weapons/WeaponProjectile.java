@@ -1,12 +1,12 @@
-package ee.joonasvali.spaceshooter.core.game;
+package ee.joonasvali.spaceshooter.core.game.weapons;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Pool;
 
 /**
- * @author Joonas Vali December 2016
+ * @author Joonas Vali January 2017
  */
-public class Missile extends Rectangle implements Pool.Poolable {
+public abstract class WeaponProjectile extends Rectangle implements Pool.Poolable {
   private float speed = 0;
   private float angle = 0;
   private float acceleration = 0;
@@ -60,4 +60,6 @@ public class Missile extends Rectangle implements Pool.Poolable {
   public float getAcceleration() {
     return acceleration;
   }
+
+  abstract ProjectileProvider<? extends WeaponProjectile> getProjectileProvider();
 }

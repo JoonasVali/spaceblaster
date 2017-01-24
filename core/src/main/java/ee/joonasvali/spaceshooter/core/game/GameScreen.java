@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.Disposable;
 import ee.joonasvali.spaceshooter.core.SpaceShooterGame;
 import ee.joonasvali.spaceshooter.core.Util;
 import ee.joonasvali.spaceshooter.core.game.enemy.EnemyManager;
+import ee.joonasvali.spaceshooter.core.game.weapons.WeaponProjectileManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +41,7 @@ public class GameScreen implements Screen, Disposable {
   private OrthographicCamera cam;
 
   private Stage stage;
-  private MissileManager missileManager;
+  private WeaponProjectileManager weaponProjectileManager;
   private static final int WORLD_WIDTH = 100;
   private static final int WORLD_HEIGHT = 100;
 
@@ -58,18 +59,18 @@ public class GameScreen implements Screen, Disposable {
     float w = Gdx.graphics.getWidth();
     float h = Gdx.graphics.getHeight();
 
-    missileManager = new MissileManager(WORLD_WIDTH, WORLD_HEIGHT * (h / w));
+    weaponProjectileManager = new WeaponProjectileManager(WORLD_WIDTH, WORLD_HEIGHT * (h / w));
 
-    rocket = new Rocket(missileManager);
+    rocket = new Rocket(weaponProjectileManager);
     stage = new Stage();
 
     inputHandler = new InputHandler();
     inputMultiplexer.addProcessor(inputHandler);
     inputMultiplexer.addProcessor(stage);
 
-    enemies = new EnemyManager(WORLD_WIDTH, WORLD_HEIGHT * (h / w), missileManager, score);
+    enemies = new EnemyManager(WORLD_WIDTH, WORLD_HEIGHT * (h / w), weaponProjectileManager, score);
 
-    speedController.registerGameStepListener(missileManager);
+    speedController.registerGameStepListener(weaponProjectileManager);
     speedController.registerGameStepListener(enemies);
     speedController.registerGameStepListener(rocket);
     speedController.registerGameStepListener(background);
@@ -111,7 +112,7 @@ public class GameScreen implements Screen, Disposable {
     batch.begin();
     background.draw(batch);
 
-    missileManager.drawMissiles(batch);
+    weaponProjectileManager.drawMissiles(batch);
     enemies.drawEnemies(batch);
     rocket.draw(batch);
 
@@ -153,7 +154,7 @@ public class GameScreen implements Screen, Disposable {
   @Override
   public void dispose() {
     rocket.dispose();
-    missileManager.dispose();
+    weaponProjectileManager.dispose();
     enemies.dispose();
     stage.dispose();
     background.dispose();
