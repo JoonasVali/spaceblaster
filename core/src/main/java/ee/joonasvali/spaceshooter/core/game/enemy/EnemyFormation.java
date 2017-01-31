@@ -25,7 +25,7 @@ public class EnemyFormation {
 
   private boolean movesLeft;
 
-  public EnemyFormation(int width, int height, Supplier<Enemy> generator, float horizontalDistance, float verticalDistance) {
+  public EnemyFormation(int width, int height, EnemyProvider generator, float horizontalDistance, float verticalDistance) {
     this.horizontalDistance = horizontalDistance;
     this.verticalDistance = verticalDistance;
 
@@ -34,7 +34,7 @@ public class EnemyFormation {
     this.formation = new Enemy[width][height];
     for (int i = 0; i < width; i++) {
       for (int j = 0; j < height; j++) {
-        formation[i][j] = generator.get();
+        formation[i][j] = generator.get(i, j);
         formation[i][j].setMatrixPosX(i);
         formation[i][j].setMatrixPosY(j);
       }

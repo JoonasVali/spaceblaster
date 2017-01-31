@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.Disposable;
 import ee.joonasvali.spaceshooter.core.SpaceShooterGame;
 import ee.joonasvali.spaceshooter.core.Util;
 import ee.joonasvali.spaceshooter.core.game.enemy.EnemyManager;
+import ee.joonasvali.spaceshooter.core.game.player.Rocket;
 import ee.joonasvali.spaceshooter.core.game.weapons.WeaponProjectileManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +23,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class GameScreen implements Screen, Disposable {
   private static final int ROCKET_DISTANCE_FROM_BOTTOM = 1;
-  public static final int FPS = 60;
-
+  private static final int FPS = 60;
+  private static final int INITIAL_LIVES = 3;
 
   private Logger log = LoggerFactory.getLogger(GameScreen.class);
 
@@ -46,6 +47,7 @@ public class GameScreen implements Screen, Disposable {
   private static final int WORLD_HEIGHT = 100;
 
   private final AtomicInteger score;
+  private final AtomicInteger lives;
 
   private SpaceShooterGame game;
 
@@ -54,14 +56,15 @@ public class GameScreen implements Screen, Disposable {
     this.game.registerDisposable(this);
     this.background = new Background(WORLD_WIDTH, WORLD_HEIGHT);
     this.score = new AtomicInteger();
-    this.ui = new UIOverlay(score);
+    this.lives = new AtomicInteger(INITIAL_LIVES);
+    this.ui = new UIOverlay(score, lives);
 
     float w = Gdx.graphics.getWidth();
     float h = Gdx.graphics.getHeight();
 
     weaponProjectileManager = new WeaponProjectileManager(WORLD_WIDTH, WORLD_HEIGHT * (h / w));
 
-    rocket = new Rocket(weaponProjectileManager);
+    rocket = new Rocket(weaponProjectileManager, lives);
     stage = new Stage();
 
     inputHandler = new InputHandler();
