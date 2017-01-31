@@ -46,6 +46,7 @@ public class EnemyManager implements Disposable, GameStepListener {
 
   private final Sprite sprite;
   private final Sprite sprite2;
+  private final Sprite sprite3;
 
   private final Map<Enemy, Sprite> spriteMap = new IdentityHashMap<>();
 
@@ -69,6 +70,8 @@ public class EnemyManager implements Disposable, GameStepListener {
     this.sprite = new Sprite(texture, 33, 77, 190, 100);
     this.sprite2 = new Sprite(texture, 33, 77, 190, 100);
     sprite2.setColor(Color.YELLOW);
+    this.sprite3 = new Sprite(texture, 33, 77, 190, 100);
+    sprite3.setColor(Color.BLUE);
   }
 
   public void setFormation() {
@@ -77,8 +80,10 @@ public class EnemyManager implements Disposable, GameStepListener {
 
       if (y == 0) {
         enemy = new Enemy(200, x, y);
-
         spriteMap.put(enemy, sprite2);
+      } else if (x == 0 || x == FORMATION_WIDTH_AMOUNT - 1) {
+        enemy = new Enemy(150, x, y);
+        spriteMap.put(enemy, sprite3);
       } else {
         enemy = new Enemy(100, x, y);
         spriteMap.put(enemy, sprite);
