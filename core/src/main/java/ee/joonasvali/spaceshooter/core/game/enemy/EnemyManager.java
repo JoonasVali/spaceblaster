@@ -66,7 +66,7 @@ public class EnemyManager implements Disposable, GameStepListener {
 
     this.explosionTexture = new Texture(Gdx.files.internal("explosion1.png"));
     this.explosionSprite = new Sprite(explosionTexture);
-    this.formation = new EnemyFormation(FORMATION_WIDTH_AMOUNT, FORMATION_HEIGHT_AMOUNT, () -> {
+    this.formation = new EnemyFormation(FORMATION_WIDTH_AMOUNT, FORMATION_HEIGHT_AMOUNT, (x, y) -> {
       Enemy enemy =  enemyPool.obtain();
       enemy.setSize(ENEMY_SIZE, ENEMY_SIZE);
       return enemy;
