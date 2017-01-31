@@ -16,9 +16,16 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Joonas Vali January 2017
  */
 public class UIOverlay implements Disposable {
-  public static final int UNITS = 1000;
-  public static final int LIFE_WIDTH = 20;
-  public static final int LIFE_HEIGHT = 20;
+  private static final int UNITS = 1000;
+  private static final int LIFE_WIDTH = 20;
+  private static final int LIFE_HEIGHT = 20;
+  private static final float LIVES_POSITION_X = 0.95f;
+  private static final float LIVES_POSITION_Y = 0.95f;
+  private static final int SPACE_BETWEEN_LIVES = 2;
+
+  private static final int SCORE_POS_X = 20;
+  private static final int SCORE_POS_Y_FROM_TOP = 10;
+
   private OrthographicCamera cam;
   private BitmapFont font;
 
@@ -59,13 +66,12 @@ public class UIOverlay implements Disposable {
 
   public void draw(SpriteBatch batch) {
     batch.setProjectionMatrix(cam.combined);
-    font.draw(batch, Integer.toString(score.get()), 20, height - 10);
+    font.draw(batch, Integer.toString(score.get()), SCORE_POS_X, height - SCORE_POS_Y_FROM_TOP);
     for (int i = 0; i < lives.get() - 1; i++) {
-      sprite.setX(width * 0.95f - (LIFE_WIDTH + 2) * i);
-      sprite.setY(height * 0.95f);
+      sprite.setX(width * LIVES_POSITION_X - (LIFE_WIDTH + SPACE_BETWEEN_LIVES) * i);
+      sprite.setY(height * LIVES_POSITION_Y);
       sprite.draw(batch);
     }
-
   }
 
   @Override
