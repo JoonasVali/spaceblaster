@@ -55,7 +55,7 @@ public class MissileProvider implements ProjectileProvider<Missile>, Disposable 
     float height = MISSILE_SIZE * missileSprite.getHeight() / missileSprite.getWidth();
     projectile.setWidth(MISSILE_SIZE);
     projectile.setHeight(height);
-
+    projectile.setDamage(1000);
     return projectile;
   }
 
