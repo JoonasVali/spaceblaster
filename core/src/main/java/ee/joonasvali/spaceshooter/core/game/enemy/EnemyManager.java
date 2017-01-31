@@ -1,21 +1,24 @@
 package ee.joonasvali.spaceshooter.core.game.enemy;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Disposable;
-import com.badlogic.gdx.utils.Pool;
 import ee.joonasvali.spaceshooter.core.game.Explosion;
 import ee.joonasvali.spaceshooter.core.game.GameStepListener;
+import ee.joonasvali.spaceshooter.core.game.TriggerCounter;
 import ee.joonasvali.spaceshooter.core.game.weapons.Missile;
 import ee.joonasvali.spaceshooter.core.game.weapons.WeaponProjectile;
 import ee.joonasvali.spaceshooter.core.game.weapons.WeaponProjectileManager;
-import ee.joonasvali.spaceshooter.core.game.TriggerCounter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -40,18 +43,14 @@ public class EnemyManager implements Disposable, GameStepListener {
   private final Texture explosionTexture;
   private final Sprite explosionSprite;
   private final Texture texture;
+
   private final Sprite sprite;
+  private final Sprite sprite2;
+
+  private final Map<Enemy, Sprite> spriteMap = new IdentityHashMap<>();
 
   private float formationSpeed = 0.1f;
-
-  private final Pool<Enemy> enemyPool = new Pool<Enemy>() {
-    @Override
-    protected Enemy newObject() {
-      return new Enemy();
-    }
-  };
-
-  private final EnemyFormation formation;
+  private EnemyFormation formation;
 
   private final List<Explosion> explosions = new ArrayList<>();
   private final AtomicInteger score;
@@ -66,16 +65,35 @@ public class EnemyManager implements Disposable, GameStepListener {
 
     this.explosionTexture = new Texture(Gdx.files.internal("explosion1.png"));
     this.explosionSprite = new Sprite(explosionTexture);
+
+    this.sprite = new Sprite(texture, 33, 77, 190, 100);
+    this.sprite2 = new Sprite(texture, 33, 77, 190, 100);
+    sprite2.setColor(Color.YELLOW);
+  }
+
+  public void setFormation() {
     this.formation = new EnemyFormation(FORMATION_WIDTH_AMOUNT, FORMATION_HEIGHT_AMOUNT, (x, y) -> {
-      Enemy enemy =  enemyPool.obtain();
+      Enemy enemy;
+
+      if (y == 0) {
+        enemy = new Enemy(200, x, y);
+
+        spriteMap.put(enemy, sprite2);
+      } else {
+        enemy = new Enemy(100, x, y);
+        spriteMap.put(enemy, sprite);
+      }
       enemy.setSize(ENEMY_SIZE, ENEMY_SIZE);
       return enemy;
     }, HORIZONTAL_DISTANCE_IN_MATRIX, VERTICAL_DISTANCE_IN_MATRIX);
 
     this.formation.setX(5);
-    this.formation.setY(screenHeight - Math.min(50, (FORMATION_HEIGHT_AMOUNT + 2) * (VERTICAL_DISTANCE_IN_MATRIX)));
+    this.formation.setY(worldHeight - Math.min(50, (FORMATION_HEIGHT_AMOUNT + 2) * (VERTICAL_DISTANCE_IN_MATRIX)));
 
-    this.sprite = new Sprite(texture, 33, 77, 190, 100);
+  }
+
+  public Sprite getSprite(Enemy enemy) {
+    return spriteMap.getOrDefault(enemy, sprite);
   }
 
   public void drawEnemies(SpriteBatch batch) {
@@ -88,6 +106,7 @@ public class EnemyManager implements Disposable, GameStepListener {
       explosionSprite.draw(batch);
     }
     for (Enemy e : formation.getEnemies()) {
+      Sprite sprite = getSprite(e);
       sprite.setX(e.getX());
       sprite.setY(e.getY());
       sprite.setSize(e.getWidth(), e.getHeight());
@@ -138,7 +157,6 @@ public class EnemyManager implements Disposable, GameStepListener {
       }
     }
 
-    dead.forEach(enemyPool::free);
     formation.removeAll(dead);
 
     for (Enemy e : formation.getEnemies()) {

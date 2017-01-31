@@ -35,8 +35,6 @@ public class EnemyFormation {
     for (int i = 0; i < width; i++) {
       for (int j = 0; j < height; j++) {
         formation[i][j] = generator.get(i, j);
-        formation[i][j].setMatrixPosX(i);
-        formation[i][j].setMatrixPosY(j);
       }
     }
     this.enemies = new ArrayList<>();

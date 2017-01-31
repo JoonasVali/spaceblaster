@@ -6,36 +6,27 @@ import com.badlogic.gdx.utils.Pool;
 /**
  * @author Joonas Vali January 2017
  */
-public class Enemy extends Rectangle implements Pool.Poolable {
+public class Enemy extends Rectangle {
 
   private int matrixPosX;
   private int matrixPosY;
+  private int bounty;
+
+  public Enemy(int bounty, int x, int y) {
+    this.bounty = bounty;
+    this.matrixPosX = x;
+    this.matrixPosY = y;
+  }
 
   public int getMatrixPosX() {
     return matrixPosX;
-  }
-
-  public void setMatrixPosX(int matrixPosX) {
-    this.matrixPosX = matrixPosX;
   }
 
   public int getMatrixPosY() {
     return matrixPosY;
   }
 
-  public void setMatrixPosY(int matrixPosY) {
-    this.matrixPosY = matrixPosY;
-  }
-
-  @Override
-  public void reset() {
-    this.x = 0;
-    this.y = 0;
-    this.width = 0;
-    this.height = 0;
-  }
-
   public int getBounty() {
-    return 100;
+    return bounty;
   }
 }
