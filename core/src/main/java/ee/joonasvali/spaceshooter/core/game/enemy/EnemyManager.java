@@ -79,13 +79,13 @@ public class EnemyManager implements Disposable, GameStepListener {
       Enemy enemy;
 
       if (y == 0) {
-        enemy = new Enemy(200, x, y);
+        enemy = new Enemy(3000, 200, x, y);
         spriteMap.put(enemy, sprite2);
       } else if (x == 0 || x == FORMATION_WIDTH_AMOUNT - 1) {
-        enemy = new Enemy(150, x, y);
+        enemy = new Enemy(2000, 150, x, y);
         spriteMap.put(enemy, sprite3);
       } else {
-        enemy = new Enemy(100, x, y);
+        enemy = new Enemy(1000, 100, x, y);
         spriteMap.put(enemy, sprite);
       }
       enemy.setSize(ENEMY_SIZE, ENEMY_SIZE);
@@ -155,9 +155,11 @@ public class EnemyManager implements Disposable, GameStepListener {
     for (Enemy e : formation.getEnemies()) {
       Optional<WeaponProjectile> m = weaponProjectileManager.projectileCollisionWith(e, e);
       if (m.isPresent()) {
-        createExplosion(e);
-        dead.add(e);
-        score.addAndGet(e.getBounty());
+        if (e.decreaseHealthBy(m.get().getDamage())) {
+          createExplosion(e);
+          dead.add(e);
+          score.addAndGet(e.getBounty());
+        }
         weaponProjectileManager.removeProjectile(m.get());
       }
     }

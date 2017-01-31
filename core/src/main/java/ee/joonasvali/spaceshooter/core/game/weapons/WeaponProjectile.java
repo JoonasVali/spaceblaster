@@ -11,6 +11,7 @@ public abstract class WeaponProjectile extends Rectangle implements Pool.Poolabl
   private float angle = 0;
   private float acceleration = 0;
   private Object author;
+  private int damage;
 
   @Override
   public void reset() {
@@ -21,6 +22,7 @@ public abstract class WeaponProjectile extends Rectangle implements Pool.Poolabl
     speed = 0;
     angle = 0;
     acceleration = 0;
+    damage = 0;
   }
 
   public Object getAuthor() {
@@ -62,4 +64,12 @@ public abstract class WeaponProjectile extends Rectangle implements Pool.Poolabl
   }
 
   abstract ProjectileProvider<? extends WeaponProjectile> getProjectileProvider();
+
+  public int getDamage() {
+    return damage;
+  }
+
+  public void setDamage(int damage) {
+    this.damage = damage;
+  }
 }
