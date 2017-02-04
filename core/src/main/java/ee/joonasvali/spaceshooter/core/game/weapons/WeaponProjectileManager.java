@@ -85,8 +85,12 @@ public class WeaponProjectileManager implements Disposable, GameStepListener {
   }
 
   @Override
-  public void onStep() {
+  public void onStepAction() {
     moveAndRemoveProjectiles();
   }
 
+  @Override
+  public void onStepEffect() {
+
+  }
 }

@@ -18,11 +18,6 @@ public class RebirthEffect implements Effect {
   }
 
   @Override
-  public void onStep() {
-    step++;
-  }
-
-  @Override
   public boolean isActive() {
     return totalSteps > step;
   }
@@ -33,5 +28,15 @@ public class RebirthEffect implements Effect {
     if ((step / blinkingFrequency) % 2 == 0) {
       sprite.draw(batch);
     }
+  }
+
+  @Override
+  public void onStepAction() {
+    step++;
+  }
+
+  @Override
+  public void onStepEffect() {
+
   }
 }
