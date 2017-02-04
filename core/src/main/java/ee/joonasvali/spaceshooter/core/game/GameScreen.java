@@ -66,7 +66,7 @@ public class GameScreen implements Screen, Disposable {
     explosionManager = new ExplosionManager();
     weaponProjectileManager = new WeaponProjectileManager(WORLD_WIDTH, WORLD_HEIGHT * (h / w));
 
-    rocket = new Rocket(weaponProjectileManager, lives);
+    rocket = new Rocket(weaponProjectileManager, explosionManager, lives);
     stage = new Stage();
 
     inputHandler = new InputHandler();

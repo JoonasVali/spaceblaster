@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.Pool;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -16,6 +17,14 @@ import java.util.List;
 public class ExplosionManager implements Disposable, GameStepListener {
 
   public static final int DEFAULT_EXPIRE_TIME = 10;
+
+  private final Pool<Explosion> explosionPool = new Pool<Explosion>() {
+    @Override
+    protected Explosion newObject() {
+      return new Explosion();
+    }
+  };
+
   private final Texture explosionTexture;
   private final Sprite explosionSprite;
 
@@ -38,7 +47,6 @@ public class ExplosionManager implements Disposable, GameStepListener {
     }
   }
 
-
   @Override
   public void dispose() {
     explosionTexture.dispose();
@@ -46,7 +54,7 @@ public class ExplosionManager implements Disposable, GameStepListener {
 
 
   public void createExplosion(float x, float y, float width, float height) {
-    Explosion exp = Explosion.obtain();
+    Explosion exp = obtain();
     exp.setExpireTime(DEFAULT_EXPIRE_TIME);
     exp.setX(x);
     exp.setY(y);
@@ -62,9 +70,18 @@ public class ExplosionManager implements Disposable, GameStepListener {
       Explosion e = it.next();
       e.setExpireTime(e.getExpireTime() - 1);
       if (e.getExpireTime() <= 0) {
-        Explosion.free(e);
+        free(e);
         it.remove();
       }
     }
+  }
+
+
+  public Explosion obtain() {
+    return explosionPool.obtain();
+  }
+
+  public void free(Explosion e) {
+    explosionPool.free(e);
   }
 }

@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Disposable;
 import ee.joonasvali.spaceshooter.core.game.Explosion;
+import ee.joonasvali.spaceshooter.core.game.ExplosionManager;
 import ee.joonasvali.spaceshooter.core.game.GameStepListener;
 import ee.joonasvali.spaceshooter.core.game.RebirthEffect;
 import ee.joonasvali.spaceshooter.core.game.weapons.Missile;
@@ -24,26 +25,24 @@ public class Rocket implements Disposable, GameStepListener {
   private static final float ROCKET_SPEED = 1;
   public static final int TIME_TO_REBIRTH = 150;
   private final Sprite sprite;
-  private final Sprite explosionSprite;
   private final Rectangle rectangle;
   private final Texture texture;
-  private final Texture explosionTexture;
   private final WeaponProjectileManager weaponProjectileManager;
+  private final ExplosionManager explosionManager;
   private final AtomicInteger lives;
 
   private Effect effect;
   private boolean alive;
-  private Explosion explosion;
   private int countDownToRebirth;
 
   private float xTarget;
 
-  public Rocket(WeaponProjectileManager weaponProjectileManager, AtomicInteger lives) {
+  public Rocket(WeaponProjectileManager weaponProjectileManager, ExplosionManager explosionManager, AtomicInteger lives) {
     this.weaponProjectileManager = weaponProjectileManager;
+    this.explosionManager = explosionManager;
     this.lives = lives;
     texture = new Texture(Gdx.files.internal("rocket.png"));
-    explosionTexture = new Texture(Gdx.files.internal("explosion1.png"));
-    this.explosionSprite = new Sprite(explosionTexture);
+
     rectangle = new Rectangle(0, 0, ROCKET_SIZE, ROCKET_SIZE);
     sprite = new Sprite(texture);
     sprite.setSize(ROCKET_SIZE, ROCKET_SIZE);
@@ -54,7 +53,6 @@ public class Rocket implements Disposable, GameStepListener {
   @Override
   public void dispose() {
     texture.dispose();
-    explosionTexture.dispose();
   }
 
   public void setPosition(float x, float y) {
@@ -70,15 +68,6 @@ public class Rocket implements Disposable, GameStepListener {
         sprite.draw(batch);
       } else {
         effect.draw(sprite, batch);
-      }
-    } else {
-      if (explosion != null && explosion.getExpireTime() > 0) {
-        explosionSprite.setX(explosion.getX());
-        explosionSprite.setY(explosion.getY());
-        explosionSprite.setSize(explosion.getWidth(), explosion.getHeight());
-        explosionSprite.setOrigin(explosion.getWidth() / 2, explosion.getHeight() / 2);
-        explosionSprite.setRotation((explosion.getExpireTime() * 5) % 360); // Make it rotate
-        explosionSprite.draw(batch);
       }
     }
   }
@@ -104,9 +93,6 @@ public class Rocket implements Disposable, GameStepListener {
       }
     }
     if (!alive) {
-      if (explosion != null) {
-        explosion.setExpireTime(explosion.getExpireTime() - 1);
-      }
       countDownToRebirth--;
       if (countDownToRebirth <= 0) {
         rebirth();
@@ -125,13 +111,7 @@ public class Rocket implements Disposable, GameStepListener {
       Optional<WeaponProjectile> missile = weaponProjectileManager.projectileCollisionWith(rectangle, this);
       missile.ifPresent((m) -> {
         weaponProjectileManager.removeProjectile(m);
-        Explosion exp = Explosion.obtain();
-        exp.setExpireTime(10);
-        exp.setX(getX());
-        exp.setY(getY());
-        exp.setWidth(getWidth());
-        exp.setHeight(getHeight());
-        this.explosion = exp;
+        explosionManager.createExplosion(getX(), getY(), getWidth(), getHeight());
         this.alive = false;
         countDownToRebirth = TIME_TO_REBIRTH;
         lives.decrementAndGet();
@@ -156,7 +136,6 @@ public class Rocket implements Disposable, GameStepListener {
   private void rebirth() {
     if (lives.get() > 0) {
       alive = true;
-      explosion = null;
       effect = new RebirthEffect(200, 5);
     }
   }

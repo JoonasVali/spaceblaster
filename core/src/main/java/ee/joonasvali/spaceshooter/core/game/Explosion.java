@@ -5,21 +5,6 @@ import com.badlogic.gdx.utils.Pool;
 
 public class Explosion extends Rectangle implements Pool.Poolable {
 
-  private static final Pool<Explosion> explosionPool = new Pool<Explosion>() {
-    @Override
-    protected Explosion newObject() {
-      return new Explosion();
-    }
-  };
-
-  public static Explosion obtain() {
-    return explosionPool.obtain();
-  }
-
-  public static void free(Explosion e) {
-    explosionPool.free(e);
-  }
-
   private int expireTime;
 
   @Override
