@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Disposable;
-import ee.joonasvali.spaceshooter.core.game.Explosion;
+import ee.joonasvali.spaceshooter.core.game.ExplosionManager;
 import ee.joonasvali.spaceshooter.core.game.GameStepListener;
 import ee.joonasvali.spaceshooter.core.game.TriggerCounter;
 import ee.joonasvali.spaceshooter.core.game.weapons.Missile;
@@ -14,9 +14,7 @@ import ee.joonasvali.spaceshooter.core.game.weapons.WeaponProjectile;
 import ee.joonasvali.spaceshooter.core.game.weapons.WeaponProjectileManager;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.IdentityHashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -37,11 +35,10 @@ public class EnemyManager implements Disposable, GameStepListener {
   private final TriggerCounter fireTrigger;
 
   private final WeaponProjectileManager weaponProjectileManager;
+  private final ExplosionManager explosionManager;
   private final float worldWidth;
   private final float worldHeight;
 
-  private final Texture explosionTexture;
-  private final Sprite explosionSprite;
   private final Texture texture;
 
   private final Sprite sprite;
@@ -52,20 +49,16 @@ public class EnemyManager implements Disposable, GameStepListener {
 
   private float formationSpeed = 0.1f;
   private EnemyFormation formation;
-
-  private final List<Explosion> explosions = new ArrayList<>();
   private final AtomicInteger score;
 
-  public EnemyManager(float screenWidth, float screenHeight, WeaponProjectileManager weaponProjectileManager, AtomicInteger score) {
+  public EnemyManager(float screenWidth, float screenHeight, WeaponProjectileManager weaponProjectileManager, ExplosionManager explosions, AtomicInteger score) {
     this.weaponProjectileManager = weaponProjectileManager;
+    this.explosionManager = explosions;
     this.score = score;
     this.worldWidth = screenWidth;
     this.worldHeight = screenHeight;
     this.texture = new Texture(Gdx.files.internal("Gunship_mf_Sprite.png"));
     this.fireTrigger = new TriggerCounter(this::doEnemyFire, FIRE_FREQUENCY, true);
-
-    this.explosionTexture = new Texture(Gdx.files.internal("explosion1.png"));
-    this.explosionSprite = new Sprite(explosionTexture);
 
     this.sprite = new Sprite(texture, 33, 77, 190, 100);
     this.sprite2 = new Sprite(texture, 33, 77, 190, 100);
@@ -102,14 +95,6 @@ public class EnemyManager implements Disposable, GameStepListener {
   }
 
   public void drawEnemies(SpriteBatch batch) {
-    for (Explosion exp : explosions) {
-      explosionSprite.setX(exp.getX());
-      explosionSprite.setY(exp.getY());
-      explosionSprite.setSize(exp.getWidth(), exp.getHeight());
-      explosionSprite.setOrigin(exp.getWidth() / 2, exp.getHeight() / 2);
-      explosionSprite.setRotation((exp.getExpireTime() * 5) % 360); // Make it rotate
-      explosionSprite.draw(batch);
-    }
     for (Enemy e : formation.getEnemies()) {
       Sprite sprite = getSprite(e);
       sprite.setX(e.getX());
@@ -137,24 +122,15 @@ public class EnemyManager implements Disposable, GameStepListener {
   @Override
   public void dispose() {
     texture.dispose();
-    explosionTexture.dispose();
   }
 
   private void act() {
-    Iterator<Explosion> it = explosions.iterator();
-    while (it.hasNext()) {
-      Explosion e = it.next();
-      e.setExpireTime(e.getExpireTime() - 1);
-      if (e.getExpireTime() <= 0) {
-        Explosion.free(e);
-        it.remove();
-      }
-    }
-
     List<Enemy> dead = new ArrayList<>();
     for (Enemy e : formation.getEnemies()) {
       Optional<WeaponProjectile> m = weaponProjectileManager.projectileCollisionWith(e, e);
       if (m.isPresent()) {
+        WeaponProjectile projectile = m.get();
+        explosionManager.createExplosion(projectile.getX() - projectile.getWidth() / 2, projectile.getY() - projectile.getHeight() / 2, 1, 1);
         if (e.decreaseHealthBy(m.get().getDamage())) {
           createExplosion(e);
           dead.add(e);
@@ -197,14 +173,9 @@ public class EnemyManager implements Disposable, GameStepListener {
   }
 
   private void createExplosion(Enemy e) {
-    Explosion exp = Explosion.obtain();
-    exp.setExpireTime(10);
-    exp.setX(e.getX());
-    exp.setY(e.getY());
-    exp.setWidth(e.getWidth());
-    exp.setHeight(e.getHeight());
-    explosions.add(exp);
+    explosionManager.createExplosion(e.getX(), e.getY(), e.getWidth(), e.getHeight());
   }
+
 
   @Override
   public void onStep() {

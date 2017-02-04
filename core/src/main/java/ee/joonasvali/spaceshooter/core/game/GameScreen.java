@@ -43,6 +43,7 @@ public class GameScreen implements Screen, Disposable {
 
   private Stage stage;
   private WeaponProjectileManager weaponProjectileManager;
+  private ExplosionManager explosionManager;
   private static final int WORLD_WIDTH = 100;
   private static final int WORLD_HEIGHT = 100;
 
@@ -62,6 +63,7 @@ public class GameScreen implements Screen, Disposable {
     float w = Gdx.graphics.getWidth();
     float h = Gdx.graphics.getHeight();
 
+    explosionManager = new ExplosionManager();
     weaponProjectileManager = new WeaponProjectileManager(WORLD_WIDTH, WORLD_HEIGHT * (h / w));
 
     rocket = new Rocket(weaponProjectileManager, lives);
@@ -71,13 +73,14 @@ public class GameScreen implements Screen, Disposable {
     inputMultiplexer.addProcessor(inputHandler);
     inputMultiplexer.addProcessor(stage);
 
-    enemies = new EnemyManager(WORLD_WIDTH, WORLD_HEIGHT * (h / w), weaponProjectileManager, score);
+    enemies = new EnemyManager(WORLD_WIDTH, WORLD_HEIGHT * (h / w), weaponProjectileManager, explosionManager, score);
     enemies.setFormation(); // TODO set something.
 
     speedController.registerGameStepListener(weaponProjectileManager);
     speedController.registerGameStepListener(enemies);
     speedController.registerGameStepListener(rocket);
     speedController.registerGameStepListener(background);
+    speedController.registerGameStepListener(explosionManager);
 
     Gdx.input.setInputProcessor(inputMultiplexer);
 
@@ -116,6 +119,7 @@ public class GameScreen implements Screen, Disposable {
     batch.begin();
     background.draw(batch);
 
+    explosionManager.draw(batch);
     weaponProjectileManager.drawMissiles(batch);
     enemies.drawEnemies(batch);
     rocket.draw(batch);
@@ -159,6 +163,7 @@ public class GameScreen implements Screen, Disposable {
   public void dispose() {
     rocket.dispose();
     weaponProjectileManager.dispose();
+    explosionManager.dispose();
     enemies.dispose();
     stage.dispose();
     background.dispose();
