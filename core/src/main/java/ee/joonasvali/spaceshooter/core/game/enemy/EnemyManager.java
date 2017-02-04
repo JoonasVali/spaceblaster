@@ -31,12 +31,12 @@ public class EnemyManager implements Disposable, GameStepListener {
   private static final float FORMATION_SPEED_INCREASE = 0.02f;
 
   private static final int FIRE_FREQUENCY = 50;
-  public static final int VERTICAL_DISTANCE_IN_MATRIX = 6;
-  public static final int HORIZONTAL_DISTANCE_IN_MATRIX = 6;
-  public static final int FORMATION_HEIGHT_AMOUNT = 5;
-  public static final int FORMATION_WIDTH_AMOUNT = 8;
-  public static final int FORMATION_DROP = 2;
-  public static final float MAX_SPEED = 0.5f;
+  private static final int VERTICAL_DISTANCE_IN_MATRIX = 6;
+  private static final int HORIZONTAL_DISTANCE_IN_MATRIX = 6;
+  private static final int FORMATION_HEIGHT_AMOUNT = 5;
+  private static final int FORMATION_WIDTH_AMOUNT = 8;
+  private static final int FORMATION_DROP = 2;
+  private static final float MAX_SPEED = 0.5f;
   private final TriggerCounter fireTrigger;
 
   private final WeaponProjectileManager weaponProjectileManager;
@@ -203,6 +203,11 @@ public class EnemyManager implements Disposable, GameStepListener {
       if (rocket.isCollision(e)) {
         rocket.kill();
       }
+    }
+
+    if (formation.getEnemies().isEmpty() && !(state.isVictory() || state.isDefeat())) {
+      state.setVictory(true);
+      state.getUi().displayVictory();
     }
   }
 

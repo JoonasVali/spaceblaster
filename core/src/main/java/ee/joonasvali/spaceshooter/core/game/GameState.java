@@ -18,6 +18,8 @@ public class GameState {
   private ExplosionManager explosionManager;
   private AtomicInteger score;
   private AtomicInteger lives;
+  private boolean victory;
+  private boolean defeat;
 
   public UIOverlay getUi() {
     return ui;
@@ -81,5 +83,21 @@ public class GameState {
 
   public void setLives(AtomicInteger lives) {
     this.lives = lives;
+  }
+
+  public boolean isVictory() {
+    return victory;
+  }
+
+  public void setVictory(boolean victory) {
+    this.victory = victory;
+  }
+
+  public boolean isDefeat() {
+    return defeat;
+  }
+
+  public void setDefeat(boolean defeat) {
+    this.defeat = defeat;
   }
 }

@@ -9,13 +9,14 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.utils.Disposable;
+import ee.joonasvali.spaceshooter.core.TimedText;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Joonas Vali January 2017
  */
-public class UIOverlay implements Disposable {
+public class UIOverlay implements Disposable, GameStepListener {
   private static final int UNITS = 1000;
   private static final int LIFE_WIDTH = 20;
   private static final int LIFE_HEIGHT = 20;
@@ -25,6 +26,8 @@ public class UIOverlay implements Disposable {
 
   private static final int SCORE_POS_X = 20;
   private static final int SCORE_POS_Y_FROM_TOP = 10;
+  public static final String VICTORY_TEXT = "VICTORY";
+  public static final String GAME_OVER_TEXT = "GAME OVER";
 
   private OrthographicCamera cam;
   private BitmapFont font;
@@ -38,6 +41,8 @@ public class UIOverlay implements Disposable {
   private final float width;
   private final float height;
 
+  private TimedText textToDisplay;
+
   public UIOverlay(AtomicInteger score, AtomicInteger lives) {
     this.lives = lives;
     this.score = score;
@@ -48,6 +53,7 @@ public class UIOverlay implements Disposable {
     // Height is multiplied by aspect ratio.
     width = UNITS;
     height = width * (h / w);
+
     cam = new OrthographicCamera(width, height);
 
     cam.position.set(cam.viewportWidth / 2f, cam.viewportHeight / 2f, 0);
@@ -72,6 +78,10 @@ public class UIOverlay implements Disposable {
       sprite.setY(height * LIVES_POSITION_Y);
       sprite.draw(batch);
     }
+
+    if (textToDisplay != null) {
+      textToDisplay.draw(batch);
+    }
   }
 
   @Override
@@ -81,6 +91,24 @@ public class UIOverlay implements Disposable {
   }
 
   public void displayVictory() {
+    textToDisplay = new TimedText(VICTORY_TEXT, font, width, height, 100);
+  }
 
+  public void displayGameOver() {
+    textToDisplay = new TimedText(GAME_OVER_TEXT, font, width, height, 100);
+  }
+
+  @Override
+  public void onStepAction() {
+    if (textToDisplay != null) {
+      textToDisplay.onStepAction();
+    }
+  }
+
+  @Override
+  public void onStepEffect() {
+    if (textToDisplay != null) {
+      textToDisplay.onStepEffect();
+    }
   }
 }
