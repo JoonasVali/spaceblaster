@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.Disposable;
 import ee.joonasvali.spaceshooter.core.game.ExplosionManager;
 import ee.joonasvali.spaceshooter.core.game.GameStepListener;
 import ee.joonasvali.spaceshooter.core.game.TriggerCounter;
+import ee.joonasvali.spaceshooter.core.game.player.Rocket;
 import ee.joonasvali.spaceshooter.core.game.weapons.Missile;
 import ee.joonasvali.spaceshooter.core.game.weapons.WeaponProjectile;
 import ee.joonasvali.spaceshooter.core.game.weapons.WeaponProjectileManager;
@@ -134,7 +135,10 @@ public class EnemyManager implements Disposable, GameStepListener {
         if (e.decreaseHealthBy(m.get().getDamage())) {
           createExplosion(e);
           dead.add(e);
-          score.addAndGet(e.getBounty());
+          // Add score only if player shot the projectile.
+          if (projectile.getAuthor() instanceof Rocket) {
+            score.addAndGet(e.getBounty());
+          }
         }
         weaponProjectileManager.removeProjectile(m.get());
       }

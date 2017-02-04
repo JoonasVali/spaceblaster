@@ -15,6 +15,7 @@ import java.util.List;
  */
 public class ExplosionManager implements Disposable, GameStepListener {
 
+  public static final int DEFAULT_EXPIRE_TIME = 10;
   private final Texture explosionTexture;
   private final Sprite explosionSprite;
 
@@ -29,7 +30,8 @@ public class ExplosionManager implements Disposable, GameStepListener {
     for (Explosion exp : explosions) {
       explosionSprite.setX(exp.getX());
       explosionSprite.setY(exp.getY());
-      explosionSprite.setSize(exp.getWidth(), exp.getHeight()); // TODO calc from expiretime aswell
+      float sizeModifier = Math.max(0, (float) Math.sin(exp.getExpireTime() / 4));
+      explosionSprite.setSize(exp.getWidth() - sizeModifier, exp.getHeight() - sizeModifier);
       explosionSprite.setOrigin(exp.getWidth() / 2, exp.getHeight() / 2);
       explosionSprite.setRotation((exp.getExpireTime() * 5) % 360); // Make it rotate
       explosionSprite.draw(batch);
@@ -45,7 +47,7 @@ public class ExplosionManager implements Disposable, GameStepListener {
 
   public void createExplosion(float x, float y, float width, float height) {
     Explosion exp = Explosion.obtain();
-    exp.setExpireTime(10);
+    exp.setExpireTime(DEFAULT_EXPIRE_TIME);
     exp.setX(x);
     exp.setY(y);
     exp.setWidth(width);
