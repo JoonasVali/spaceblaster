@@ -145,4 +145,15 @@ public class EnemyFormation {
     }
 
   }
+
+  public float getLowestYPositionOffset() {
+    for (int j = height - 1; j >= 0; j--) {
+      for (int i = 0; i < width; i++) {
+        if (formation[i][j] != null) {
+          return (height - j) * verticalDistance;
+        }
+      }
+    }
+    return 0;
+  }
 }

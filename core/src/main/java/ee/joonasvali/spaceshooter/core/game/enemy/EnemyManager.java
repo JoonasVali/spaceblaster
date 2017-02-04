@@ -26,13 +26,15 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class EnemyManager implements Disposable, GameStepListener {
   private static final int ENEMY_SIZE = 3;
-  private static final float FORMATION_DROP = 0.02f;
+  private static final float FORMATION_SPEED_INCREASE = 0.02f;
 
   private static final int FIRE_FREQUENCY = 50;
   public static final int VERTICAL_DISTANCE_IN_MATRIX = 6;
   public static final int HORIZONTAL_DISTANCE_IN_MATRIX = 6;
   public static final int FORMATION_HEIGHT_AMOUNT = 5;
   public static final int FORMATION_WIDTH_AMOUNT = 8;
+  public static final int FORMATION_DROP = 2;
+  public static final float MAX_SPEED = 0.5f;
   private final TriggerCounter fireTrigger;
 
   private final WeaponProjectileManager weaponProjectileManager;
@@ -157,19 +159,24 @@ public class EnemyManager implements Disposable, GameStepListener {
   }
 
   private void moveFormation() {
+    float bottomBorder = -formation.getLowestYPositionOffset() + 1;
     if (formation.isMovesLeft()) {
       if (formation.getMinX() <= 2) {
         formation.setMovesLeft(false);
-        formation.setY(formation.getY() - 2);
-        formationSpeed += FORMATION_DROP;
+        formation.setY(Math.max(bottomBorder, formation.getY() - FORMATION_DROP));
+        formationSpeed += FORMATION_SPEED_INCREASE;
+        formationSpeed = Math.min(MAX_SPEED, formationSpeed);
+
       } else {
         formation.setX(formation.getX() - formationSpeed);
       }
     } else {
       if (formation.getMaxX() >= (98 - ENEMY_SIZE)) {
         formation.setMovesLeft(true);
-        formation.setY(formation.getY() - 2);
-        formationSpeed += FORMATION_DROP;
+        formation.setY(Math.max(bottomBorder, formation.getY() - FORMATION_DROP));
+        formationSpeed += FORMATION_SPEED_INCREASE;
+        formationSpeed = Math.min(MAX_SPEED, formationSpeed);
+
       } else {
         formation.setX(formation.getX() + formationSpeed);
       }
