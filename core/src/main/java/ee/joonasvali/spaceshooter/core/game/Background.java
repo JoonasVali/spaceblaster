@@ -25,15 +25,20 @@ public class Background implements Disposable, GameStepListener {
     mapSprite.getTexture().dispose();
   }
 
-  @Override
-  public void onStep() {
-    gameStepsCounted++;
-  }
-
   public void draw(SpriteBatch batch) {
     mapSprite.setOrigin(mapSprite.getWidth() / 2, mapSprite.getHeight() / 2);
     mapSprite.setRotation((gameStepsCounted / BACKGROUND_ROTATION_SPEED_MODIFIER) % 360);
     mapSprite.setScale(1.5f);
     mapSprite.draw(batch);
+  }
+
+  @Override
+  public void onStepAction() {
+    gameStepsCounted++;
+  }
+
+  @Override
+  public void onStepEffect() {
+
   }
 }

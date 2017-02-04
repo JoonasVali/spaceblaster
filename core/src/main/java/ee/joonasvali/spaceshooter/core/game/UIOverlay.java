@@ -79,4 +79,8 @@ public class UIOverlay implements Disposable {
     texture.dispose();
     font.dispose();
   }
+
+  public void displayVictory() {
+
+  }
 }

@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Disposable;
 import ee.joonasvali.spaceshooter.core.game.ExplosionManager;
+import ee.joonasvali.spaceshooter.core.game.GameState;
 import ee.joonasvali.spaceshooter.core.game.GameStepListener;
 import ee.joonasvali.spaceshooter.core.game.TriggerCounter;
 import ee.joonasvali.spaceshooter.core.game.player.Rocket;
@@ -51,16 +52,18 @@ public class EnemyManager implements Disposable, GameStepListener {
 
   private final Map<Enemy, Sprite> spriteMap = new IdentityHashMap<>();
 
+  private final GameState state;
   private float formationSpeed = 0.1f;
   private EnemyFormation formation;
   private final AtomicInteger score;
 
-  public EnemyManager(float screenWidth, float screenHeight, WeaponProjectileManager weaponProjectileManager, ExplosionManager explosions, AtomicInteger score) {
-    this.weaponProjectileManager = weaponProjectileManager;
-    this.explosionManager = explosions;
-    this.score = score;
+  public EnemyManager(float screenWidth, float screenHeight, GameState state) {
+    this.weaponProjectileManager = state.getWeaponProjectileManager();
+    this.explosionManager = state.getExplosionManager();
+    this.score = state.getScore();
     this.worldWidth = screenWidth;
     this.worldHeight = screenHeight;
+    this.state = state;
     this.texture = new Texture(Gdx.files.internal("Gunship_mf_Sprite.png"));
     this.fireTrigger = new TriggerCounter(this::doEnemyFire, FIRE_FREQUENCY, true);
 
@@ -190,8 +193,17 @@ public class EnemyManager implements Disposable, GameStepListener {
 
 
   @Override
-  public void onStep() {
+  public void onStepAction() {
     act();
+  }
+
+  public void onStepEffect() {
+    for (Enemy e : formation.getEnemies()) {
+      Rocket rocket = state.getRocket();
+      if (rocket.isCollision(e)) {
+        rocket.kill();
+      }
+    }
   }
 
 }

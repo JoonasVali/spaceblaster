@@ -63,8 +63,18 @@ public class ExplosionManager implements Disposable, GameStepListener {
     explosions.add(exp);
   }
 
+
+
+  public Explosion obtain() {
+    return explosionPool.obtain();
+  }
+
+  public void free(Explosion e) {
+    explosionPool.free(e);
+  }
+
   @Override
-  public void onStep() {
+  public void onStepAction() {
     Iterator<Explosion> it = explosions.iterator();
     while (it.hasNext()) {
       Explosion e = it.next();
@@ -76,12 +86,8 @@ public class ExplosionManager implements Disposable, GameStepListener {
     }
   }
 
+  @Override
+  public void onStepEffect() {
 
-  public Explosion obtain() {
-    return explosionPool.obtain();
-  }
-
-  public void free(Explosion e) {
-    explosionPool.free(e);
   }
 }

@@ -32,61 +32,52 @@ public class GameScreen implements Screen, Disposable {
   private InputMultiplexer inputMultiplexer = new InputMultiplexer();
   private GameSpeedController speedController = new GameSpeedController(1000 / FPS);
 
-  private UIOverlay ui;
-  private Background background;
-
-  private Rocket rocket;
-  private EnemyManager enemies;
-
-
   private OrthographicCamera cam;
 
   private Stage stage;
-  private WeaponProjectileManager weaponProjectileManager;
-  private ExplosionManager explosionManager;
+
   private static final int WORLD_WIDTH = 100;
   private static final int WORLD_HEIGHT = 100;
 
-  private final AtomicInteger score;
-  private final AtomicInteger lives;
-
   private SpaceShooterGame game;
+  private final GameState state;
 
   public GameScreen(SpaceShooterGame game) {
     this.game = game;
+    this.state = new GameState();
     this.game.registerDisposable(this);
-    this.background = new Background(WORLD_WIDTH, WORLD_HEIGHT);
-    this.score = new AtomicInteger();
-    this.lives = new AtomicInteger(INITIAL_LIVES);
-    this.ui = new UIOverlay(score, lives);
+    state.setBackground(new Background(WORLD_WIDTH, WORLD_HEIGHT));
+    state.setScore(new AtomicInteger());
+    state.setLives(new AtomicInteger(INITIAL_LIVES));
+    state.setUi(new UIOverlay(state.getScore(), state.getLives()));
 
     float w = Gdx.graphics.getWidth();
     float h = Gdx.graphics.getHeight();
 
-    explosionManager = new ExplosionManager();
-    weaponProjectileManager = new WeaponProjectileManager(WORLD_WIDTH, WORLD_HEIGHT * (h / w));
+    state.setExplosionManager(new ExplosionManager());
+    state.setWeaponProjectileManager(new WeaponProjectileManager(WORLD_WIDTH, WORLD_HEIGHT * (h / w)));
 
-    rocket = new Rocket(weaponProjectileManager, explosionManager, lives);
+    state.setRocket(new Rocket(state));
     stage = new Stage();
 
     inputHandler = new InputHandler();
     inputMultiplexer.addProcessor(inputHandler);
     inputMultiplexer.addProcessor(stage);
 
-    enemies = new EnemyManager(WORLD_WIDTH, WORLD_HEIGHT * (h / w), weaponProjectileManager, explosionManager, score);
-    enemies.setFormation(); // TODO set something.
+    state.setEnemies(new EnemyManager(WORLD_WIDTH, WORLD_HEIGHT * (h / w), state));
+    state.getEnemies().setFormation(); // TODO set something.
 
-    speedController.registerGameStepListener(weaponProjectileManager);
-    speedController.registerGameStepListener(enemies);
-    speedController.registerGameStepListener(rocket);
-    speedController.registerGameStepListener(background);
-    speedController.registerGameStepListener(explosionManager);
+    speedController.registerGameStepListener(state.getWeaponProjectileManager());
+    speedController.registerGameStepListener(state.getEnemies());
+    speedController.registerGameStepListener(state.getRocket());
+    speedController.registerGameStepListener(state.getBackground());
+    speedController.registerGameStepListener(state.getExplosionManager());
 
     Gdx.input.setInputProcessor(inputMultiplexer);
 
     inputHandler.addKeyBinding(Input.Keys.ESCAPE, game::setExit);
     inputHandler.addKeyBinding(
-        Input.Keys.SPACE, () -> rocket.fireMissile()
+        Input.Keys.SPACE, () -> state.getRocket().fireMissile()
     );
 
     createCamera();
@@ -117,14 +108,14 @@ public class GameScreen implements Screen, Disposable {
     speedController.passTime(delta);
 
     batch.begin();
-    background.draw(batch);
+    state.getBackground().draw(batch);
 
-    explosionManager.draw(batch);
-    weaponProjectileManager.drawMissiles(batch);
-    enemies.drawEnemies(batch);
-    rocket.draw(batch);
+    state.getExplosionManager().draw(batch);
+    state.getWeaponProjectileManager().drawMissiles(batch);
+    state.getEnemies().drawEnemies(batch);
+    state.getRocket().draw(batch);
 
-    ui.draw(batch);
+    state.getUi().draw(batch);
 
 
     batch.end();
@@ -161,20 +152,20 @@ public class GameScreen implements Screen, Disposable {
 
   @Override
   public void dispose() {
-    rocket.dispose();
-    weaponProjectileManager.dispose();
-    explosionManager.dispose();
-    enemies.dispose();
+    state.getRocket().dispose();
+    state.getWeaponProjectileManager().dispose();
+    state.getExplosionManager().dispose();
+    state.getEnemies().dispose();
     stage.dispose();
-    background.dispose();
-    ui.dispose();
+    state.getBackground().dispose();
+    state.getUi().dispose();
   }
 
 
   private void handleInput() {
     int mouseX = Gdx.input.getX();
     int mouseY = Gdx.input.getY();
-    rocket.setPosition(Math.min(Util.unProjectX(cam, mouseX, mouseY), WORLD_WIDTH - Rocket.ROCKET_SIZE), ROCKET_DISTANCE_FROM_BOTTOM);
+    state.getRocket().setPosition(Math.min(Util.unProjectX(cam, mouseX, mouseY), WORLD_WIDTH - Rocket.ROCKET_SIZE), ROCKET_DISTANCE_FROM_BOTTOM);
 
   }
 }

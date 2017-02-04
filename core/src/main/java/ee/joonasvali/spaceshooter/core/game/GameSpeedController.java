@@ -26,7 +26,8 @@ public class GameSpeedController {
   public void passTime(float delta) {
     lastTime += delta;
     while (lastTime > msInStep) {
-      stepListeners.forEach(GameStepListener::onStep);
+      stepListeners.forEach(GameStepListener::onStepAction);
+      stepListeners.forEach(GameStepListener::onStepEffect);
       lastTime -= msInStep;
     }
   }

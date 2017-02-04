@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Disposable;
 import ee.joonasvali.spaceshooter.core.game.Explosion;
 import ee.joonasvali.spaceshooter.core.game.ExplosionManager;
+import ee.joonasvali.spaceshooter.core.game.GameState;
 import ee.joonasvali.spaceshooter.core.game.GameStepListener;
 import ee.joonasvali.spaceshooter.core.game.RebirthEffect;
 import ee.joonasvali.spaceshooter.core.game.weapons.Missile;
@@ -30,6 +31,7 @@ public class Rocket implements Disposable, GameStepListener {
   private final WeaponProjectileManager weaponProjectileManager;
   private final ExplosionManager explosionManager;
   private final AtomicInteger lives;
+  private final GameState state;
 
   private Effect effect;
   private boolean alive;
@@ -37,10 +39,11 @@ public class Rocket implements Disposable, GameStepListener {
 
   private float xTarget;
 
-  public Rocket(WeaponProjectileManager weaponProjectileManager, ExplosionManager explosionManager, AtomicInteger lives) {
-    this.weaponProjectileManager = weaponProjectileManager;
-    this.explosionManager = explosionManager;
-    this.lives = lives;
+  public Rocket(GameState state) {
+    this.weaponProjectileManager = state.getWeaponProjectileManager();
+    this.explosionManager = state.getExplosionManager();
+    this.lives = state.getLives();
+    this.state = state;
     texture = new Texture(Gdx.files.internal("rocket.png"));
 
     rectangle = new Rectangle(0, 0, ROCKET_SIZE, ROCKET_SIZE);
@@ -84,10 +87,11 @@ public class Rocket implements Disposable, GameStepListener {
     return this.rectangle.overlaps(rectangle);
   }
 
+
   @Override
-  public void onStep() {
+  public void onStepAction() {
     if (effect != null) {
-      effect.onStep();
+      effect.onStepAction();
       if (!effect.isActive()) {
         effect = null;
       }
@@ -111,10 +115,8 @@ public class Rocket implements Disposable, GameStepListener {
       Optional<WeaponProjectile> missile = weaponProjectileManager.projectileCollisionWith(rectangle, this);
       missile.ifPresent((m) -> {
         weaponProjectileManager.removeProjectile(m);
-        explosionManager.createExplosion(getX(), getY(), getWidth(), getHeight());
-        this.alive = false;
-        countDownToRebirth = TIME_TO_REBIRTH;
-        lives.decrementAndGet();
+        explosionManager.createExplosion(m.getX(), m.getY(), m.getWidth(), m.getHeight());
+        kill();
       });
     }
   }
@@ -146,5 +148,22 @@ public class Rocket implements Disposable, GameStepListener {
 
   public float getHeight() {
     return rectangle.getHeight();
+  }
+
+  public void kill() {
+    if (!alive || isInvincible()) {
+      return;
+    }
+    explosionManager.createExplosion(getX(), getY(), getWidth(), getHeight());
+    this.alive = false;
+    countDownToRebirth = TIME_TO_REBIRTH;
+    lives.decrementAndGet();
+  }
+
+  @Override
+  public void onStepEffect() {
+    if (effect != null) {
+      effect.onStepEffect();
+    }
   }
 }
