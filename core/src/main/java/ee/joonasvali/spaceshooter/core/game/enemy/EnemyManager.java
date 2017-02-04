@@ -10,6 +10,7 @@ import ee.joonasvali.spaceshooter.core.game.ExplosionManager;
 import ee.joonasvali.spaceshooter.core.game.GameStepListener;
 import ee.joonasvali.spaceshooter.core.game.TriggerCounter;
 import ee.joonasvali.spaceshooter.core.game.player.Rocket;
+import ee.joonasvali.spaceshooter.core.game.weapons.GaussGunBullet;
 import ee.joonasvali.spaceshooter.core.game.weapons.Missile;
 import ee.joonasvali.spaceshooter.core.game.weapons.WeaponProjectile;
 import ee.joonasvali.spaceshooter.core.game.weapons.WeaponProjectileManager;
@@ -75,13 +76,13 @@ public class EnemyManager implements Disposable, GameStepListener {
       Enemy enemy;
 
       if (y == 0) {
-        enemy = new Enemy(3000, 200, x, y);
+        enemy = new Enemy(GaussGunBullet.class, 3000, 200, x, y);
         spriteMap.put(enemy, sprite2);
       } else if (x == 0 || x == FORMATION_WIDTH_AMOUNT - 1) {
-        enemy = new Enemy(2000, 150, x, y);
+        enemy = new Enemy(Missile.class, 2000, 150, x, y);
         spriteMap.put(enemy, sprite3);
       } else {
-        enemy = new Enemy(1000, 100, x, y);
+        enemy = new Enemy(Missile.class, 1000, 100, x, y);
         spriteMap.put(enemy, sprite);
       }
       enemy.setSize(ENEMY_SIZE, ENEMY_SIZE);
@@ -114,7 +115,7 @@ public class EnemyManager implements Disposable, GameStepListener {
     }
 
     Optional<Enemy> chosen = formation.getRandomFromBottom();
-    chosen.ifPresent(enemy -> weaponProjectileManager.createProjectileAt(Missile.class, enemy,
+    chosen.ifPresent(enemy -> weaponProjectileManager.createProjectileAt(enemy.getProjectileType(), enemy,
         formation.getXof(enemy) + ENEMY_SIZE / 2,
         formation.getYof(enemy) + ENEMY_SIZE / 2,
         180
