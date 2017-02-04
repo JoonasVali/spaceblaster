@@ -2,6 +2,7 @@ package ee.joonasvali.spaceshooter.core.game.enemy;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Pool;
+import ee.joonasvali.spaceshooter.core.game.weapons.WeaponProjectile;
 
 /**
  * @author Joonas Vali January 2017
@@ -12,8 +13,10 @@ public class Enemy extends Rectangle {
   private int matrixPosY;
   private int bounty;
   private int health;
+  private Class<? extends WeaponProjectile> weapon;
 
-  public Enemy(int health, int bounty, int x, int y) {
+  public Enemy(Class<? extends WeaponProjectile> weapon, int health, int bounty, int x, int y) {
+    this.weapon = weapon;
     this.bounty = bounty;
     this.matrixPosX = x;
     this.matrixPosY = y;
@@ -34,6 +37,10 @@ public class Enemy extends Rectangle {
 
   public int getHealth() {
     return health;
+  }
+
+  public Class<? extends WeaponProjectile> getProjectileType() {
+    return weapon;
   }
 
   /**
