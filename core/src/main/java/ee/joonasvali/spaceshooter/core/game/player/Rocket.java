@@ -158,6 +158,9 @@ public class Rocket implements Disposable, GameStepListener {
     this.alive = false;
     countDownToRebirth = TIME_TO_REBIRTH;
     lives.decrementAndGet();
+    if (lives.get() <= 0) {
+      state.getUi().displayGameOver();
+    }
   }
 
   @Override

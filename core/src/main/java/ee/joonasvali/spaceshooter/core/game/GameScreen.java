@@ -72,6 +72,7 @@ public class GameScreen implements Screen, Disposable {
     speedController.registerGameStepListener(state.getRocket());
     speedController.registerGameStepListener(state.getBackground());
     speedController.registerGameStepListener(state.getExplosionManager());
+    speedController.registerGameStepListener(state.getUi());
 
     Gdx.input.setInputProcessor(inputMultiplexer);
 
