@@ -13,6 +13,8 @@ public class Enemy extends Rectangle {
   private int matrixPosY;
   private int bounty;
   private int health;
+  private float offsetX;
+  private float offsetY;
   private Class<? extends WeaponProjectile> weapon;
 
   public Enemy(Class<? extends WeaponProjectile> weapon, int health, int bounty, int x, int y) {
@@ -21,6 +23,22 @@ public class Enemy extends Rectangle {
     this.matrixPosX = x;
     this.matrixPosY = y;
     this.health = health;
+  }
+
+  public float getOffsetX() {
+    return offsetX;
+  }
+
+  public void setOffsetX(float offsetX) {
+    this.offsetX = offsetX;
+  }
+
+  public float getOffsetY() {
+    return offsetY;
+  }
+
+  public void setOffsetY(float offsetY) {
+    this.offsetY = offsetY;
   }
 
   public int getMatrixPosX() {
@@ -50,5 +68,9 @@ public class Enemy extends Rectangle {
   public boolean decreaseHealthBy(int damage) {
     health -= damage;
     return health <= 0;
+  }
+
+  public void onFire() {
+
   }
 }

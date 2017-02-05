@@ -79,7 +79,7 @@ public class EnemyManager implements Disposable, GameStepListener {
       Enemy enemy;
 
       if (y == 0) {
-        enemy = new Enemy(GaussGunBullet.class, 3000, 200, x, y);
+        enemy = new GaussEnemy(3000, 200, x, y);
         spriteMap.put(enemy, sprite2);
       } else if (x == 0 || x == FORMATION_WIDTH_AMOUNT - 1) {
         enemy = new Enemy(Missile.class, 2000, 150, x, y);
@@ -118,6 +118,7 @@ public class EnemyManager implements Disposable, GameStepListener {
     }
 
     Optional<Enemy> chosen = formation.getRandomFromBottom();
+    chosen.ifPresent(Enemy::onFire);
     chosen.ifPresent(enemy -> weaponProjectileManager.createProjectileAt(enemy.getProjectileType(), enemy,
         formation.getXof(enemy) + ENEMY_SIZE / 2,
         formation.getYof(enemy) + ENEMY_SIZE / 2,
@@ -151,6 +152,8 @@ public class EnemyManager implements Disposable, GameStepListener {
     }
 
     formation.removeAll(dead);
+
+    formation.getEnemies().stream().filter(e -> e instanceof GameStepListener).forEach(e -> ((GameStepListener)e).onStepAction());
 
     for (Enemy e : formation.getEnemies()) {
       e.setX(formation.getXof(e));
@@ -198,6 +201,9 @@ public class EnemyManager implements Disposable, GameStepListener {
   }
 
   public void onStepEffect() {
+
+    formation.getEnemies().stream().filter(e -> e instanceof GameStepListener).forEach(e -> ((GameStepListener)e).onStepEffect());
+
     for (Enemy e : formation.getEnemies()) {
       Rocket rocket = state.getRocket();
       if (rocket.isCollision(e)) {
