@@ -33,6 +33,7 @@ public class GameScreen implements Screen, Disposable {
   private GameSpeedController speedController = new GameSpeedController(1000 / FPS);
 
   private OrthographicCamera cam;
+  private LevelProvider levelProvider;
 
   private Stage stage;
 
@@ -65,7 +66,8 @@ public class GameScreen implements Screen, Disposable {
     inputMultiplexer.addProcessor(stage);
 
     state.setEnemies(new EnemyManager(WORLD_WIDTH, WORLD_HEIGHT * (h / w), state));
-    state.getEnemies().setFormation(); // TODO set something.
+    this.levelProvider = new LevelProvider(WORLD_WIDTH, WORLD_HEIGHT * (h / w));
+    state.getEnemies().setLevelProvider(levelProvider);
 
     speedController.registerGameStepListener(state.getWeaponProjectileManager());
     speedController.registerGameStepListener(state.getEnemies());
@@ -160,6 +162,7 @@ public class GameScreen implements Screen, Disposable {
     stage.dispose();
     state.getBackground().dispose();
     state.getUi().dispose();
+    levelProvider.dispose();
   }
 
 
