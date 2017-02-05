@@ -90,14 +90,14 @@ public class EnemyFormation {
   }
 
   public float getXof(Enemy enemy) {
-    return getX() + (enemy.getMatrixPosX() * horizontalDistance);
+    return getX() + (enemy.getMatrixPosX() * horizontalDistance) + enemy.getOffsetX();
   }
 
   /* Inverse the matrix because Y points up in the game engine, but for human readability it's better if array
   * matches what's on screen. Otherwise the lowest row in array would be highest in screen...
   * */
   public float getYof(Enemy enemy) {
-    return getY() + (height - enemy.getMatrixPosY()) * verticalDistance;
+    return getY() + (height - enemy.getMatrixPosY()) * verticalDistance  + enemy.getOffsetY();
   }
 
 
