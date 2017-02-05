@@ -17,9 +17,9 @@ public class MissileProvider implements ProjectileProvider<Missile>, Disposable 
   private static final float MISSILE_ACCELERATION = 0.01f;
 
   private static final int MISSILE_TEXTURE_X = 12;
-  private static final int MISSILE_TEXTURE_Y = 2;
+  private static final int MISSILE_TEXTURE_Y = 1;
   private static final int MISSILE_TEXTURE_WIDTH = 8;
-  private static final int MISSILE_TEXTURE_HEIGHT = 26;
+  private static final int MISSILE_TEXTURE_HEIGHT = 30;
 
   private final Texture missileTexture;
   private final Sprite missileSprite;

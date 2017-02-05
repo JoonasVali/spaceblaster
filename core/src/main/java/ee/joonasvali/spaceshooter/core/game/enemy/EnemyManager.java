@@ -1,25 +1,19 @@
 package ee.joonasvali.spaceshooter.core.game.enemy;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Disposable;
 import ee.joonasvali.spaceshooter.core.game.ExplosionManager;
 import ee.joonasvali.spaceshooter.core.game.GameState;
 import ee.joonasvali.spaceshooter.core.game.GameStepListener;
+import ee.joonasvali.spaceshooter.core.game.LevelProvider;
 import ee.joonasvali.spaceshooter.core.game.TriggerCounter;
 import ee.joonasvali.spaceshooter.core.game.player.Rocket;
-import ee.joonasvali.spaceshooter.core.game.weapons.GaussGunBullet;
-import ee.joonasvali.spaceshooter.core.game.weapons.Missile;
 import ee.joonasvali.spaceshooter.core.game.weapons.WeaponProjectile;
 import ee.joonasvali.spaceshooter.core.game.weapons.WeaponProjectileManager;
 
 import java.util.ArrayList;
-import java.util.IdentityHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -30,11 +24,8 @@ public class EnemyManager implements Disposable, GameStepListener {
   private static final int ENEMY_SIZE = 3;
   private static final float FORMATION_SPEED_INCREASE = 0.02f;
 
-  private static final int FIRE_FREQUENCY = 50;
-  private static final int VERTICAL_DISTANCE_IN_MATRIX = 6;
-  private static final int HORIZONTAL_DISTANCE_IN_MATRIX = 6;
-  private static final int FORMATION_HEIGHT_AMOUNT = 5;
-  private static final int FORMATION_WIDTH_AMOUNT = 8;
+  private static final int FIRE_FREQUENCY = 25;
+
   private static final int FORMATION_DROP = 2;
   private static final float MAX_SPEED = 0.5f;
   private final TriggerCounter fireTrigger;
@@ -44,18 +35,15 @@ public class EnemyManager implements Disposable, GameStepListener {
   private final float worldWidth;
   private final float worldHeight;
 
-  private final Texture texture;
-
-  private final Sprite sprite;
-  private final Sprite sprite2;
-  private final Sprite sprite3;
-
-  private final Map<Enemy, Sprite> spriteMap = new IdentityHashMap<>();
+  private static final int LEVEL_LOADED = -1;
+  private int timeToLoadNextLevel = LEVEL_LOADED;
 
   private final GameState state;
-  private float formationSpeed = 0.1f;
+  private float formationSpeed;
   private EnemyFormation formation;
   private final AtomicInteger score;
+
+  private LevelProvider levels;
 
   public EnemyManager(float screenWidth, float screenHeight, GameState state) {
     this.weaponProjectileManager = state.getWeaponProjectileManager();
@@ -64,41 +52,23 @@ public class EnemyManager implements Disposable, GameStepListener {
     this.worldWidth = screenWidth;
     this.worldHeight = screenHeight;
     this.state = state;
-    this.texture = new Texture(Gdx.files.internal("Gunship_mf_Sprite.png"));
+
     this.fireTrigger = new TriggerCounter(this::doEnemyFire, FIRE_FREQUENCY, true);
 
-    this.sprite = new Sprite(texture, 33, 77, 190, 100);
-    this.sprite2 = new Sprite(texture, 33, 77, 190, 100);
-    sprite2.setColor(Color.YELLOW);
-    this.sprite3 = new Sprite(texture, 33, 77, 190, 100);
-    sprite3.setColor(Color.BLUE);
   }
 
-  public void setFormation() {
-    this.formation = new EnemyFormation(FORMATION_WIDTH_AMOUNT, FORMATION_HEIGHT_AMOUNT, (x, y) -> {
-      Enemy enemy;
-
-      if (y == 0) {
-        enemy = new GaussEnemy(3000, 200, x, y);
-        spriteMap.put(enemy, sprite2);
-      } else if (x == 0 || x == FORMATION_WIDTH_AMOUNT - 1) {
-        enemy = new Enemy(Missile.class, 2000, 150, x, y);
-        spriteMap.put(enemy, sprite3);
-      } else {
-        enemy = new Enemy(Missile.class, 1000, 100, x, y);
-        spriteMap.put(enemy, sprite);
-      }
-      enemy.setSize(ENEMY_SIZE, ENEMY_SIZE);
-      return enemy;
-    }, HORIZONTAL_DISTANCE_IN_MATRIX, VERTICAL_DISTANCE_IN_MATRIX);
-
-    this.formation.setX(5);
-    this.formation.setY(worldHeight - Math.min(50, (FORMATION_HEIGHT_AMOUNT + 2) * (VERTICAL_DISTANCE_IN_MATRIX)));
-
+  public void setLevelProvider(LevelProvider levelProvider) {
+    this.levels = levelProvider;
+    loadNextLevel();
   }
 
-  public Sprite getSprite(Enemy enemy) {
-    return spriteMap.getOrDefault(enemy, sprite);
+  private void loadNextLevel() {
+    formationSpeed = 0.1f;
+    this.formation = levels.nextLevel(ENEMY_SIZE);
+  }
+
+  private Sprite getSprite(Enemy enemy) {
+    return levels.getSprite(enemy);
   }
 
   public void drawEnemies(SpriteBatch batch) {
@@ -129,10 +99,11 @@ public class EnemyManager implements Disposable, GameStepListener {
 
   @Override
   public void dispose() {
-    texture.dispose();
+
   }
 
   private void act() {
+    checkIfNeedToLoadLevel();
     List<Enemy> dead = new ArrayList<>();
     for (Enemy e : formation.getEnemies()) {
       Optional<WeaponProjectile> m = weaponProjectileManager.projectileCollisionWith(e, e);
@@ -163,6 +134,19 @@ public class EnemyManager implements Disposable, GameStepListener {
     moveFormation();
 
     fireTrigger.countDown();
+  }
+
+  private void checkIfNeedToLoadLevel() {
+
+    if (timeToLoadNextLevel == 0) {
+      System.out.println(timeToLoadNextLevel);
+      timeToLoadNextLevel = LEVEL_LOADED;
+      loadNextLevel();
+    }
+    if (timeToLoadNextLevel > 0) {
+      System.out.println(timeToLoadNextLevel);
+      timeToLoadNextLevel--;
+    }
   }
 
   private void moveFormation() {
@@ -211,10 +195,19 @@ public class EnemyManager implements Disposable, GameStepListener {
       }
     }
 
-    if (formation.getEnemies().isEmpty() && !(state.isVictory() || state.isDefeat())) {
-      state.setVictory(true);
-      state.getUi().displayVictory();
+    if (timeToLoadNextLevel == LEVEL_LOADED && formation.getEnemies().isEmpty() && !(state.isVictory() || state.isDefeat())) {
+      if (levels.hasNextLevel()) {
+        setLoadNextLevel();
+      } else {
+        state.setVictory(true);
+        state.getUi().displayVictory();
+      }
     }
+  }
+
+  private void setLoadNextLevel() {
+    state.getUi().displayText("LEVEL " + levels.getNextLevel(), 100, 100);
+    timeToLoadNextLevel = 200;
   }
 
 }

@@ -111,4 +111,8 @@ public class UIOverlay implements Disposable, GameStepListener {
       textToDisplay.onStepEffect();
     }
   }
+
+  public void displayText(String text, int timeToDisplay, int timeToFade) {
+    textToDisplay = new TimedText(text, font, width, height, timeToDisplay, timeToFade);
+  }
 }
