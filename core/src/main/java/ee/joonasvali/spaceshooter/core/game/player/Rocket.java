@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Disposable;
-import ee.joonasvali.spaceshooter.core.game.Explosion;
 import ee.joonasvali.spaceshooter.core.game.ExplosionManager;
 import ee.joonasvali.spaceshooter.core.game.GameState;
 import ee.joonasvali.spaceshooter.core.game.GameStepListener;

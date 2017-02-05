@@ -47,7 +47,7 @@ public class WeaponProjectileManager implements Disposable, GameStepListener {
   }
 
 
-  public WeaponProjectile createProjectileAt(Class type, Object author, float x, float y, float angle) {
+  public WeaponProjectile createProjectileAt(Class<? extends WeaponProjectile> type, Object author, float x, float y, float angle) {
     ProjectileProvider provider = providers.get(type);
     if (provider == null) {
       throw new IllegalArgumentException("Projectile provider missing for: " + type);

@@ -15,17 +15,12 @@ public class GaussGunBulletProvider implements ProjectileProvider<GaussGunBullet
   private static final float SIZE = 0.3f;
   private static final float ACCELERATION = 0f;
 
-  private static final int TEXTURE_X = 12;
-  private static final int TEXTURE_Y = 2;
-  private static final int TEXTURE_WIDTH = 8;
-  private static final int TEXTURE_HEIGHT = 26;
-
   private final Texture texture;
   private final Sprite sprite;
 
   public GaussGunBulletProvider() {
-    this.texture = new Texture(Gdx.files.internal("missile.png"));
-    this.sprite = new Sprite(texture, TEXTURE_X, TEXTURE_Y, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+    this.texture = new Texture(Gdx.files.internal("gauss.png"));
+    this.sprite = new Sprite(texture);
   }
 
 
