@@ -1,6 +1,7 @@
 package ee.joonasvali.spaceshooter.core.game.weapons;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -39,6 +40,11 @@ public class GaussGunBulletProvider implements ProjectileProvider<GaussGunBullet
     sprite.setX(m.getX());
     sprite.setY(m.getY());
     sprite.draw(batch);
+  }
+
+  @Override
+  public Sound getSound() {
+    return null;
   }
 
   @Override
