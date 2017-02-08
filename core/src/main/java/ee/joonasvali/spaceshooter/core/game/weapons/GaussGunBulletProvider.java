@@ -18,10 +18,12 @@ public class GaussGunBulletProvider implements ProjectileProvider<GaussGunBullet
 
   private final Texture texture;
   private final Sprite sprite;
+  private final Sound sound;
 
   public GaussGunBulletProvider() {
     this.texture = new Texture(Gdx.files.internal("gauss.png"));
     this.sprite = new Sprite(texture);
+    this.sound = Gdx.audio.newSound(Gdx.files.internal("sound/gauss.mp3"));
   }
 
 
@@ -44,7 +46,7 @@ public class GaussGunBulletProvider implements ProjectileProvider<GaussGunBullet
 
   @Override
   public Sound getSound() {
-    return null;
+    return sound;
   }
 
   @Override
@@ -66,6 +68,7 @@ public class GaussGunBulletProvider implements ProjectileProvider<GaussGunBullet
 
   @Override
   public void dispose() {
+    sound.dispose();
     texture.dispose();
   }
 }
