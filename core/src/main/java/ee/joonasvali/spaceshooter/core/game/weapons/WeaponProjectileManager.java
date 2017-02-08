@@ -1,5 +1,6 @@
 package ee.joonasvali.spaceshooter.core.game.weapons;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Disposable;
@@ -56,6 +57,10 @@ public class WeaponProjectileManager implements Disposable, GameStepListener {
     projectile.setPosition(x, y);
     projectile.setAngle(angle);
     projectile.setAuthor(author);
+    Sound sound = provider.getSound();
+    if (sound != null) {
+      sound.play(0.5f);
+    }
 
     activeProjectiles.add(projectile);
     return projectile;

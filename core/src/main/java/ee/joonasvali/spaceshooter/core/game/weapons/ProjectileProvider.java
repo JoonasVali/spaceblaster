@@ -1,5 +1,6 @@
 package ee.joonasvali.spaceshooter.core.game.weapons;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 /**
@@ -9,4 +10,5 @@ public interface ProjectileProvider<T extends WeaponProjectile> {
   T obtain();
   void free(WeaponProjectile projectile);
   void draw(SpriteBatch batch, WeaponProjectile projectile);
+  Sound getSound();
 }
