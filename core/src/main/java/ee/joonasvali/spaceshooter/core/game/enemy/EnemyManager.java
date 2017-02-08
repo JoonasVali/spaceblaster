@@ -24,7 +24,7 @@ public class EnemyManager implements Disposable, GameStepListener {
   private static final int ENEMY_SIZE = 3;
   private static final float FORMATION_SPEED_INCREASE = 0.02f;
 
-  private static final int FIRE_FREQUENCY = 25;
+  private static final int FIRE_FREQUENCY = 35;
 
   private static final int FORMATION_DROP = 2;
   private static final float MAX_SPEED = 0.5f;
@@ -139,12 +139,10 @@ public class EnemyManager implements Disposable, GameStepListener {
   private void checkIfNeedToLoadLevel() {
 
     if (timeToLoadNextLevel == 0) {
-      System.out.println(timeToLoadNextLevel);
       timeToLoadNextLevel = LEVEL_LOADED;
       loadNextLevel();
     }
     if (timeToLoadNextLevel > 0) {
-      System.out.println(timeToLoadNextLevel);
       timeToLoadNextLevel--;
     }
   }
