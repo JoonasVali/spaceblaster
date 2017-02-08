@@ -1,5 +1,7 @@
 package ee.joonasvali.spaceshooter.core.game.enemy;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Disposable;
@@ -44,6 +46,9 @@ public class EnemyManager implements Disposable, GameStepListener {
   private final AtomicInteger score;
 
   private LevelProvider levels;
+  private Sound[] hitSounds;
+  private Sound damageSound;
+
 
   public EnemyManager(float screenWidth, float screenHeight, GameState state) {
     this.weaponProjectileManager = state.getWeaponProjectileManager();
@@ -54,7 +59,12 @@ public class EnemyManager implements Disposable, GameStepListener {
     this.state = state;
 
     this.fireTrigger = new TriggerCounter(this::doEnemyFire, FIRE_FREQUENCY, true);
+    this.hitSounds = new Sound[] {
+        Gdx.audio.newSound(Gdx.files.internal("sound/hit.mp3")),
+        Gdx.audio.newSound(Gdx.files.internal("sound/hit2.mp3"))
+    };
 
+    this.damageSound =  Gdx.audio.newSound(Gdx.files.internal("sound/damage.mp3"));
   }
 
   public void setLevelProvider(LevelProvider levelProvider) {
@@ -99,7 +109,10 @@ public class EnemyManager implements Disposable, GameStepListener {
 
   @Override
   public void dispose() {
-
+    for (Sound hitSound : hitSounds) {
+      hitSound.dispose();
+    }
+    damageSound.dispose();
   }
 
   private void act() {
@@ -110,6 +123,7 @@ public class EnemyManager implements Disposable, GameStepListener {
       if (m.isPresent()) {
         WeaponProjectile projectile = m.get();
         explosionManager.createExplosion(projectile.getX() - projectile.getWidth() / 2, projectile.getY() - projectile.getHeight() / 2, 1, 1);
+        damageSound.play(0.2f, 1f - (float) Math.random() / 5f, 0f);
         if (e.decreaseHealthBy(m.get().getDamage())) {
           createExplosion(e);
           dead.add(e);
@@ -117,6 +131,8 @@ public class EnemyManager implements Disposable, GameStepListener {
           if (projectile.getAuthor() instanceof Rocket) {
             score.addAndGet(e.getBounty());
           }
+          Sound sound = hitSounds[(int) (Math.random() * hitSounds.length)];
+          sound.play(0.5f);
         }
         weaponProjectileManager.removeProjectile(m.get());
       }
