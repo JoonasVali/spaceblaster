@@ -46,7 +46,7 @@ public class Rocket implements Disposable, GameStepListener {
     texture = new Texture(Gdx.files.internal("rocket.png"));
 
     rectangle = new Rectangle(0, 0, ROCKET_SIZE, ROCKET_SIZE);
-    sprite = new Sprite(texture);
+    sprite = new Sprite(texture, 1, 1, 31, 31);
     sprite.setSize(ROCKET_SIZE, ROCKET_SIZE);
 
     alive = true;
