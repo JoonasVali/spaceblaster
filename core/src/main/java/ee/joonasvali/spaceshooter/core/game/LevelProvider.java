@@ -35,7 +35,7 @@ public class LevelProvider implements Disposable {
   private final Map<Enemy, Sprite> spriteMap = new IdentityHashMap<>();
 
   private int activeLevel = 0;
-  private final int maxLevel = 2;
+  private final int maxLevel = 3;
 
   private final float worldWidth;
   private final float worldHeight;
@@ -60,12 +60,37 @@ public class LevelProvider implements Disposable {
         System.out.println("loading level 1"); break;
       case 1: formation = createLevel2(enemySize);
         System.out.println("loading level 2"); break;
+      case 2: formation = createLevel3(enemySize);
+        System.out.println("loading level 3"); break;
     }
     activeLevel++;
     return formation;
   }
 
   private EnemyFormation createLevel1(float enemySize) {
+    EnemyFormation formation = new EnemyFormation(LEVEL1_FORMATION_WIDTH_AMOUNT, LEVEL1_FORMATION_HEIGHT_AMOUNT, (x, y) -> {
+      Enemy enemy;
+      if (y == 0) {
+        enemy = new Enemy(Missile.class, 2000, 150, x, y);
+        spriteMap.put(enemy, sprite3);
+      } else if (y == 1) {
+        enemy = null;
+      } else {
+        enemy = new Enemy(Missile.class, 1000, 100, x, y);
+        spriteMap.put(enemy, sprite);
+      }
+      if (enemy != null) {
+        enemy.setSize(enemySize, enemySize);
+      }
+      return enemy;
+    }, LEVEL1_HORIZONTAL_DISTANCE_IN_MATRIX, LEVEL1_VERTICAL_DISTANCE_IN_MATRIX);
+
+    formation.setX(5);
+    formation.setY(worldHeight - Math.min(50, (LEVEL1_FORMATION_HEIGHT_AMOUNT + 2) * (LEVEL1_VERTICAL_DISTANCE_IN_MATRIX)));
+    return formation;
+  }
+
+  private EnemyFormation createLevel2(float enemySize) {
     EnemyFormation formation = new EnemyFormation(LEVEL1_FORMATION_WIDTH_AMOUNT, LEVEL1_FORMATION_HEIGHT_AMOUNT, (x, y) -> {
       Enemy enemy;
       if (y == 0) {
@@ -87,7 +112,7 @@ public class LevelProvider implements Disposable {
     return formation;
   }
 
-  private EnemyFormation createLevel2(float enemySize) {
+  private EnemyFormation createLevel3(float enemySize) {
     EnemyFormation formation = new EnemyFormation(LEVEL2_FORMATION_WIDTH_AMOUNT, LEVEL2_FORMATION_HEIGHT_AMOUNT, (x, y) -> {
       Enemy enemy;
 
