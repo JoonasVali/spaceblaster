@@ -10,7 +10,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Disposable;
 import ee.joonasvali.spaceshooter.core.SpaceShooterGame;
 import ee.joonasvali.spaceshooter.core.Util;
-import ee.joonasvali.spaceshooter.core.game.enemy.EnemyManager;
 import ee.joonasvali.spaceshooter.core.game.player.Rocket;
 import ee.joonasvali.spaceshooter.core.game.weapons.WeaponProjectileManager;
 import org.slf4j.Logger;
@@ -65,7 +64,7 @@ public class GameScreen implements Screen, Disposable {
     inputMultiplexer.addProcessor(inputHandler);
     inputMultiplexer.addProcessor(stage);
 
-    state.setEnemies(new EnemyManager(WORLD_WIDTH, WORLD_HEIGHT * (h / w), state));
+    state.setEnemies(new GameStateManager(WORLD_WIDTH, WORLD_HEIGHT * (h / w), state));
     this.levelProvider = new LevelProvider(WORLD_WIDTH, WORLD_HEIGHT * (h / w));
     state.getEnemies().setLevelProvider(levelProvider);
 

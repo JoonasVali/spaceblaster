@@ -1,6 +1,5 @@
 package ee.joonasvali.spaceshooter.core.game;
 
-import ee.joonasvali.spaceshooter.core.game.enemy.EnemyManager;
 import ee.joonasvali.spaceshooter.core.game.player.Rocket;
 import ee.joonasvali.spaceshooter.core.game.weapons.WeaponProjectileManager;
 
@@ -13,7 +12,7 @@ public class GameState {
   private UIOverlay ui;
   private Background background;
   private Rocket rocket;
-  private EnemyManager enemies;
+  private GameStateManager enemies;
   private WeaponProjectileManager weaponProjectileManager;
   private ExplosionManager explosionManager;
   private AtomicInteger score;
@@ -45,11 +44,11 @@ public class GameState {
     this.rocket = rocket;
   }
 
-  public EnemyManager getEnemies() {
+  public GameStateManager getEnemies() {
     return enemies;
   }
 
-  public void setEnemies(EnemyManager enemies) {
+  public void setEnemies(GameStateManager enemies) {
     this.enemies = enemies;
   }
 

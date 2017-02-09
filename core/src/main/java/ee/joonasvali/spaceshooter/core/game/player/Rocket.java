@@ -1,6 +1,7 @@
 package ee.joonasvali.spaceshooter.core.game.player;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -36,6 +37,7 @@ public class Rocket implements Disposable, GameStepListener {
   private boolean alive;
   private int countDownToRebirth;
 
+  private final Sound[] hitSounds;
   private float xTarget;
 
   public Rocket(GameState state) {
@@ -44,6 +46,11 @@ public class Rocket implements Disposable, GameStepListener {
     this.lives = state.getLives();
     this.state = state;
     texture = new Texture(Gdx.files.internal("rocket.png"));
+
+    this.hitSounds = new Sound[] {
+        Gdx.audio.newSound(Gdx.files.internal("sound/hit.mp3")),
+        Gdx.audio.newSound(Gdx.files.internal("sound/hit2.mp3"))
+    };
 
     rectangle = new Rectangle(0, 0, ROCKET_SIZE, ROCKET_SIZE);
     sprite = new Sprite(texture, 1, 1, 31, 31);
@@ -54,6 +61,9 @@ public class Rocket implements Disposable, GameStepListener {
 
   @Override
   public void dispose() {
+    for (Sound hitSound : hitSounds) {
+      hitSound.dispose();
+    }
     texture.dispose();
   }
 
@@ -154,6 +164,7 @@ public class Rocket implements Disposable, GameStepListener {
       return;
     }
     explosionManager.createExplosion(getX(), getY(), getWidth(), getHeight());
+    hitSounds[(int) (Math.random() * hitSounds.length)].play(0.5f);
     this.alive = false;
     countDownToRebirth = TIME_TO_REBIRTH;
     lives.decrementAndGet();
