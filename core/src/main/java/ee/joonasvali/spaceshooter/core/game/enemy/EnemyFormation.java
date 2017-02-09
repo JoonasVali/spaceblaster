@@ -24,10 +24,12 @@ public class EnemyFormation {
   private float y;
 
   private boolean movesLeft;
+  private final float enemySize;
 
-  public EnemyFormation(int width, int height, EnemyProvider generator, float horizontalDistance, float verticalDistance) {
+  public EnemyFormation(int width, int height, float enemySize, EnemyProvider generator, float horizontalDistance, float verticalDistance) {
     this.horizontalDistance = horizontalDistance;
     this.verticalDistance = verticalDistance;
+    this.enemySize = enemySize;
 
     this.width = width;
     this.height = height;
@@ -155,5 +157,9 @@ public class EnemyFormation {
       }
     }
     return 0;
+  }
+
+  public float getEnemySize() {
+    return enemySize;
   }
 }

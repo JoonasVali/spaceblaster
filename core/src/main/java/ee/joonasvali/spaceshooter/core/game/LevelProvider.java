@@ -27,6 +27,8 @@ public class LevelProvider implements Disposable {
   private static final int LEVEL2_FORMATION_HEIGHT_AMOUNT = 3;
   private static final int LEVEL2_FORMATION_WIDTH_AMOUNT = 9;
 
+  private static final int ENEMY_SIZE = 3;
+
   private final Texture texture;
   private final Sprite sprite;
   private final Sprite sprite2;
@@ -52,23 +54,23 @@ public class LevelProvider implements Disposable {
     sprite3.setColor(Color.BLUE);
   }
 
-  public EnemyFormation nextLevel(float enemySize) {
+  public EnemyFormation nextLevel() {
     spriteMap.clear();
     EnemyFormation formation = null;
     switch (activeLevel) {
-      case 0: formation = createLevel1(enemySize);
+      case 0: formation = createLevel1();
         System.out.println("loading level 1"); break;
-      case 1: formation = createLevel2(enemySize);
+      case 1: formation = createLevel2();
         System.out.println("loading level 2"); break;
-      case 2: formation = createLevel3(enemySize);
+      case 2: formation = createLevel3();
         System.out.println("loading level 3"); break;
     }
     activeLevel++;
     return formation;
   }
 
-  private EnemyFormation createLevel1(float enemySize) {
-    EnemyFormation formation = new EnemyFormation(LEVEL1_FORMATION_WIDTH_AMOUNT, LEVEL1_FORMATION_HEIGHT_AMOUNT, (x, y) -> {
+  private EnemyFormation createLevel1() {
+    EnemyFormation formation = new EnemyFormation(LEVEL1_FORMATION_WIDTH_AMOUNT, LEVEL1_FORMATION_HEIGHT_AMOUNT, ENEMY_SIZE, (x, y) -> {
       Enemy enemy;
       if (y == 0) {
         enemy = new Enemy(Missile.class, 2000, 150, x, y);
@@ -80,7 +82,7 @@ public class LevelProvider implements Disposable {
         spriteMap.put(enemy, sprite);
       }
       if (enemy != null) {
-        enemy.setSize(enemySize, enemySize);
+        enemy.setSize(ENEMY_SIZE, ENEMY_SIZE);
       }
       return enemy;
     }, LEVEL1_HORIZONTAL_DISTANCE_IN_MATRIX, LEVEL1_VERTICAL_DISTANCE_IN_MATRIX);
@@ -90,8 +92,8 @@ public class LevelProvider implements Disposable {
     return formation;
   }
 
-  private EnemyFormation createLevel2(float enemySize) {
-    EnemyFormation formation = new EnemyFormation(LEVEL1_FORMATION_WIDTH_AMOUNT, LEVEL1_FORMATION_HEIGHT_AMOUNT, (x, y) -> {
+  private EnemyFormation createLevel2() {
+    EnemyFormation formation = new EnemyFormation(LEVEL1_FORMATION_WIDTH_AMOUNT, LEVEL1_FORMATION_HEIGHT_AMOUNT, ENEMY_SIZE, (x, y) -> {
       Enemy enemy;
       if (y == 0) {
         enemy = new GaussEnemy(3000, 200, x, y);
@@ -103,7 +105,7 @@ public class LevelProvider implements Disposable {
         enemy = new Enemy(Missile.class, 1000, 100, x, y);
         spriteMap.put(enemy, sprite);
       }
-      enemy.setSize(enemySize, enemySize);
+      enemy.setSize(ENEMY_SIZE, ENEMY_SIZE);
       return enemy;
     }, LEVEL1_HORIZONTAL_DISTANCE_IN_MATRIX, LEVEL1_VERTICAL_DISTANCE_IN_MATRIX);
 
@@ -112,14 +114,15 @@ public class LevelProvider implements Disposable {
     return formation;
   }
 
-  private EnemyFormation createLevel3(float enemySize) {
-    EnemyFormation formation = new EnemyFormation(LEVEL2_FORMATION_WIDTH_AMOUNT, LEVEL2_FORMATION_HEIGHT_AMOUNT, (x, y) -> {
+  private EnemyFormation createLevel3() {
+    EnemyFormation formation = new EnemyFormation(LEVEL2_FORMATION_WIDTH_AMOUNT, LEVEL2_FORMATION_HEIGHT_AMOUNT, ENEMY_SIZE,
+        (x, y) -> {
       Enemy enemy;
 
       enemy = new GaussEnemy(3000, 200, x, y);
       spriteMap.put(enemy, sprite2);
 
-      enemy.setSize(enemySize, enemySize);
+      enemy.setSize(ENEMY_SIZE, ENEMY_SIZE);
       return enemy;
     }, LEVEL2_HORIZONTAL_DISTANCE_IN_MATRIX, LEVEL2_VERTICAL_DISTANCE_IN_MATRIX);
 
