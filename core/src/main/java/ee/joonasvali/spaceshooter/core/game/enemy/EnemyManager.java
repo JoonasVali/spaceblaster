@@ -23,7 +23,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Joonas Vali January 2017
  */
 public class EnemyManager implements Disposable, GameStepListener {
-  private static final int ENEMY_SIZE = 3;
   private static final float FORMATION_SPEED_INCREASE = 0.02f;
 
   private static final int FIRE_FREQUENCY = 35;
@@ -74,7 +73,7 @@ public class EnemyManager implements Disposable, GameStepListener {
 
   private void loadNextLevel() {
     formationSpeed = 0.1f;
-    this.formation = levels.nextLevel(ENEMY_SIZE);
+    this.formation = levels.nextLevel();
   }
 
   private Sprite getSprite(Enemy enemy) {
@@ -100,8 +99,8 @@ public class EnemyManager implements Disposable, GameStepListener {
     Optional<Enemy> chosen = formation.getRandomFromBottom();
     chosen.ifPresent(Enemy::onFire);
     chosen.ifPresent(enemy -> weaponProjectileManager.createProjectileAt(enemy.getProjectileType(), enemy,
-        formation.getXof(enemy) + ENEMY_SIZE / 2,
-        formation.getYof(enemy) + ENEMY_SIZE / 2,
+        formation.getXof(enemy) + formation.getEnemySize() / 2,
+        formation.getYof(enemy) + formation.getEnemySize() / 2,
         180
     ));
   }
@@ -176,7 +175,7 @@ public class EnemyManager implements Disposable, GameStepListener {
         formation.setX(formation.getX() - formationSpeed);
       }
     } else {
-      if (formation.getMaxX() >= (98 - ENEMY_SIZE)) {
+      if (formation.getMaxX() >= (98 - formation.getEnemySize())) {
         formation.setMovesLeft(true);
         formation.setY(Math.max(bottomBorder, formation.getY() - FORMATION_DROP));
         formationSpeed += FORMATION_SPEED_INCREASE;
