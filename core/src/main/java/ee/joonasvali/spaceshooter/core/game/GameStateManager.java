@@ -1,4 +1,4 @@
-package ee.joonasvali.spaceshooter.core.game.enemy;
+package ee.joonasvali.spaceshooter.core.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
@@ -10,6 +10,8 @@ import ee.joonasvali.spaceshooter.core.game.GameState;
 import ee.joonasvali.spaceshooter.core.game.GameStepListener;
 import ee.joonasvali.spaceshooter.core.game.LevelProvider;
 import ee.joonasvali.spaceshooter.core.game.TriggerCounter;
+import ee.joonasvali.spaceshooter.core.game.enemy.Enemy;
+import ee.joonasvali.spaceshooter.core.game.enemy.EnemyFormation;
 import ee.joonasvali.spaceshooter.core.game.player.Rocket;
 import ee.joonasvali.spaceshooter.core.game.weapons.WeaponProjectile;
 import ee.joonasvali.spaceshooter.core.game.weapons.WeaponProjectileManager;
@@ -22,7 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * @author Joonas Vali January 2017
  */
-public class EnemyManager implements Disposable, GameStepListener {
+public class GameStateManager implements Disposable, GameStepListener {
   private static final float FORMATION_SPEED_INCREASE = 0.02f;
 
   private static final int FIRE_FREQUENCY = 35;
@@ -49,7 +51,7 @@ public class EnemyManager implements Disposable, GameStepListener {
   private Sound damageSound;
 
 
-  public EnemyManager(float screenWidth, float screenHeight, GameState state) {
+  public GameStateManager(float screenWidth, float screenHeight, GameState state) {
     this.weaponProjectileManager = state.getWeaponProjectileManager();
     this.explosionManager = state.getExplosionManager();
     this.score = state.getScore();
@@ -68,7 +70,7 @@ public class EnemyManager implements Disposable, GameStepListener {
 
   public void setLevelProvider(LevelProvider levelProvider) {
     this.levels = levelProvider;
-    loadNextLevel();
+    setLoadNextLevel();
   }
 
   private void loadNextLevel() {
@@ -81,6 +83,9 @@ public class EnemyManager implements Disposable, GameStepListener {
   }
 
   public void drawEnemies(SpriteBatch batch) {
+    if (formation == null) {
+      return;
+    }
     for (Enemy e : formation.getEnemies()) {
       Sprite sprite = getSprite(e);
       sprite.setX(e.getX());
@@ -90,7 +95,7 @@ public class EnemyManager implements Disposable, GameStepListener {
     }
   }
 
-  public void doEnemyFire() {
+  private void doEnemyFire() {
     List<Enemy> enemies = formation.getEnemies();
     if (enemies.isEmpty()) {
       return;
@@ -116,7 +121,13 @@ public class EnemyManager implements Disposable, GameStepListener {
 
   private void act() {
     checkIfNeedToLoadLevel();
+
+    if (formation == null) {
+      return;
+    }
+
     List<Enemy> dead = new ArrayList<>();
+
     for (Enemy e : formation.getEnemies()) {
       Optional<WeaponProjectile> m = weaponProjectileManager.projectileCollisionWith(e, e);
       if (m.isPresent()) {
@@ -198,6 +209,9 @@ public class EnemyManager implements Disposable, GameStepListener {
   }
 
   public void onStepEffect() {
+    if (formation == null) {
+      return;
+    }
 
     formation.getEnemies().stream().filter(e -> e instanceof GameStepListener).forEach(e -> ((GameStepListener)e).onStepEffect());
 
