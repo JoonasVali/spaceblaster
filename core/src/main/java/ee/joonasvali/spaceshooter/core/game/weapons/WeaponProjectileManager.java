@@ -30,6 +30,7 @@ public class WeaponProjectileManager implements Disposable, GameStepListener {
     this.worldHeight = worldHeight;
     this.providers.put(Missile.class, new MissileProvider());
     this.providers.put(GaussGunBullet.class, new GaussGunBulletProvider());
+    this.providers.put(CannonBullet.class, new CannonBulletProvider());
   }
 
   private void moveAndRemoveProjectiles() {
