@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.Disposable;
 import ee.joonasvali.spaceshooter.core.game.enemy.Enemy;
 import ee.joonasvali.spaceshooter.core.game.enemy.EnemyFormation;
 import ee.joonasvali.spaceshooter.core.game.enemy.GaussEnemy;
+import ee.joonasvali.spaceshooter.core.game.weapons.CannonBullet;
 import ee.joonasvali.spaceshooter.core.game.weapons.Missile;
 
 import java.util.IdentityHashMap;
@@ -78,7 +79,7 @@ public class LevelProvider implements Disposable {
       } else if (y == 1) {
         enemy = null;
       } else {
-        enemy = new Enemy(Missile.class, 1000, 100, x, y);
+        enemy = new Enemy(CannonBullet.class, 1000, 100, x, y);
         spriteMap.put(enemy, sprite);
       }
       if (enemy != null) {
@@ -102,7 +103,7 @@ public class LevelProvider implements Disposable {
         enemy = new Enemy(Missile.class, 2000, 150, x, y);
         spriteMap.put(enemy, sprite3);
       } else {
-        enemy = new Enemy(Missile.class, 1000, 100, x, y);
+        enemy = new Enemy(CannonBullet.class, 1000, 100, x, y);
         spriteMap.put(enemy, sprite);
       }
       enemy.setSize(ENEMY_SIZE, ENEMY_SIZE);

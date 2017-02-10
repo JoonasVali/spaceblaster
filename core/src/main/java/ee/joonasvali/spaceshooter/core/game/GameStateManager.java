@@ -26,6 +26,7 @@ public class GameStateManager implements Disposable, GameStepListener {
 
   private static final int FORMATION_DROP = 2;
   private static final float MAX_SPEED = 0.5f;
+  public static final int STEPS_TO_SKIP_BEFORE_NEXT_LEVEL = 200;
   private final TriggerCounter fireTrigger;
 
   private final WeaponProjectileManager weaponProjectileManager;
@@ -42,7 +43,7 @@ public class GameStateManager implements Disposable, GameStepListener {
   private Sound[] hitSounds;
   private Sound damageSound;
 
-  private boolean loadNextLevel;
+  private boolean loadNextLevelInProgress;
 
 
   public GameStateManager(float screenWidth, float screenHeight, GameState state) {
@@ -66,7 +67,7 @@ public class GameStateManager implements Disposable, GameStepListener {
     this.levels = levelProvider;
   }
 
-  private void loadNextLevel() {
+  private void doLoadNextLevel() {
     formationSpeed = 0.1f;
     this.formation = levels.nextLevel();
   }
@@ -116,7 +117,7 @@ public class GameStateManager implements Disposable, GameStepListener {
     checkIfNeedToLoadLevel();
 
     if (formation == null) {
-      if (!loadNextLevel) {
+      if (!loadNextLevelInProgress) {
         setLoadNextLevelAfterDelay(control);
       }
       return;
@@ -155,7 +156,7 @@ public class GameStateManager implements Disposable, GameStepListener {
 
     moveFormation();
 
-    if (!loadNextLevel && formation.getEnemies().isEmpty() && !(state.isVictory() || state.isDefeat())) {
+    if (!loadNextLevelInProgress && formation.getEnemies().isEmpty() && !(state.isVictory() || state.isDefeat())) {
       if (levels.hasNextLevel()) {
         setLoadNextLevelAfterDelay(control);
       } else {
@@ -168,9 +169,9 @@ public class GameStateManager implements Disposable, GameStepListener {
   }
 
   private void checkIfNeedToLoadLevel() {
-    if (loadNextLevel) {
-      loadNextLevel();
-      loadNextLevel = false;
+    if (loadNextLevelInProgress) {
+      doLoadNextLevel();
+      loadNextLevelInProgress = false;
     }
   }
 
@@ -226,8 +227,8 @@ public class GameStateManager implements Disposable, GameStepListener {
 
   private void setLoadNextLevelAfterDelay(GameSpeedController.Control control) {
     state.getUi().displayText("LEVEL " + levels.getNextLevel(), 100, 100);
-    control.skipNextSteps(200);
-    loadNextLevel = true;
+    control.skipNextSteps(STEPS_TO_SKIP_BEFORE_NEXT_LEVEL);
+    loadNextLevelInProgress = true;
   }
 
 }

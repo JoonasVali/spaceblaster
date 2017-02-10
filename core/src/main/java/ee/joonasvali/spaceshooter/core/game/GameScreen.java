@@ -79,7 +79,7 @@ public class GameScreen implements Screen, Disposable {
 
     inputHandler.addKeyBinding(Input.Keys.ESCAPE, game::setExit);
     inputHandler.addKeyBinding(
-        Input.Keys.SPACE, () -> state.getRocket().fireMissile()
+        Input.Keys.SPACE, () -> state.getRocket().doFire()
     );
 
     createCamera();

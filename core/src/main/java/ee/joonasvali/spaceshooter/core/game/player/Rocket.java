@@ -12,6 +12,7 @@ import ee.joonasvali.spaceshooter.core.game.GameSpeedController;
 import ee.joonasvali.spaceshooter.core.game.GameState;
 import ee.joonasvali.spaceshooter.core.game.GameStepListener;
 import ee.joonasvali.spaceshooter.core.game.RebirthEffect;
+import ee.joonasvali.spaceshooter.core.game.weapons.CannonBullet;
 import ee.joonasvali.spaceshooter.core.game.weapons.Missile;
 import ee.joonasvali.spaceshooter.core.game.weapons.WeaponProjectile;
 import ee.joonasvali.spaceshooter.core.game.weapons.WeaponProjectileManager;
@@ -135,11 +136,11 @@ public class Rocket implements Disposable, GameStepListener {
     return effect instanceof RebirthEffect;
   }
 
-  public void fireMissile() {
+  public void doFire() {
     if (!alive) {
       return;
     }
-    this.weaponProjectileManager.createProjectileAt(Missile.class,
+    this.weaponProjectileManager.createProjectileAt(CannonBullet.class,
         this,this.getX() + Rocket.ROCKET_SIZE / 2, this.getY() + Rocket.ROCKET_SIZE / 2,
         (float) Math.random() * 10 - 5
     );
