@@ -2,6 +2,7 @@ package ee.joonasvali.spaceshooter.core;
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import ee.joonasvali.spaceshooter.core.game.GameSpeedController;
 import ee.joonasvali.spaceshooter.core.game.GameStepListener;
 
 /**
@@ -37,7 +38,7 @@ public class TimedText implements GameStepListener {
   }
 
   @Override
-  public void onStepAction() {
+  public void onStepAction(GameSpeedController.Control control) {
     if (timeToDisplay > 0) {
       timeToDisplay--;
     } else {

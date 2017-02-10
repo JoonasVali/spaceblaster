@@ -74,7 +74,7 @@ public class ExplosionManager implements Disposable, GameStepListener {
   }
 
   @Override
-  public void onStepAction() {
+  public void onStepAction(GameSpeedController.Control control) {
     Iterator<Explosion> it = explosions.iterator();
     while (it.hasNext()) {
       Explosion e = it.next();

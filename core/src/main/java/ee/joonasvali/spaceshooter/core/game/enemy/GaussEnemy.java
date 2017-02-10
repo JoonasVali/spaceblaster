@@ -1,5 +1,6 @@
 package ee.joonasvali.spaceshooter.core.game.enemy;
 
+import ee.joonasvali.spaceshooter.core.game.GameSpeedController;
 import ee.joonasvali.spaceshooter.core.game.GameStepListener;
 import ee.joonasvali.spaceshooter.core.game.weapons.GaussGunBullet;
 
@@ -12,7 +13,7 @@ public class GaussEnemy extends Enemy implements GameStepListener {
   }
 
   @Override
-  public void onStepAction() {
+  public void onStepAction(GameSpeedController.Control control) {
     float offsetX = getOffsetX();
     float offsetY = getOffsetY();
     if (offsetX < 0) {
