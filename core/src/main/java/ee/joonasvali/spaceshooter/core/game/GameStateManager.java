@@ -5,11 +5,6 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Disposable;
-import ee.joonasvali.spaceshooter.core.game.ExplosionManager;
-import ee.joonasvali.spaceshooter.core.game.GameState;
-import ee.joonasvali.spaceshooter.core.game.GameStepListener;
-import ee.joonasvali.spaceshooter.core.game.LevelProvider;
-import ee.joonasvali.spaceshooter.core.game.TriggerCounter;
 import ee.joonasvali.spaceshooter.core.game.enemy.Enemy;
 import ee.joonasvali.spaceshooter.core.game.enemy.EnemyFormation;
 import ee.joonasvali.spaceshooter.core.game.player.Rocket;
@@ -38,9 +33,6 @@ public class GameStateManager implements Disposable, GameStepListener {
   private final float worldWidth;
   private final float worldHeight;
 
-  private static final int LEVEL_LOADED = -1;
-  private int timeToLoadNextLevel = LEVEL_LOADED;
-
   private final GameState state;
   private float formationSpeed;
   private EnemyFormation formation;
@@ -49,6 +41,8 @@ public class GameStateManager implements Disposable, GameStepListener {
   private LevelProvider levels;
   private Sound[] hitSounds;
   private Sound damageSound;
+
+  private boolean loadNextLevel;
 
 
   public GameStateManager(float screenWidth, float screenHeight, GameState state) {
@@ -70,7 +64,6 @@ public class GameStateManager implements Disposable, GameStepListener {
 
   public void setLevelProvider(LevelProvider levelProvider) {
     this.levels = levelProvider;
-    setLoadNextLevel();
   }
 
   private void loadNextLevel() {
@@ -119,10 +112,13 @@ public class GameStateManager implements Disposable, GameStepListener {
     damageSound.dispose();
   }
 
-  private void act() {
+  private void act(GameSpeedController.Control control) {
     checkIfNeedToLoadLevel();
 
     if (formation == null) {
+      if (!loadNextLevel) {
+        setLoadNextLevelAfterDelay(control);
+      }
       return;
     }
 
@@ -150,7 +146,7 @@ public class GameStateManager implements Disposable, GameStepListener {
 
     formation.removeAll(dead);
 
-    formation.getEnemies().stream().filter(e -> e instanceof GameStepListener).forEach(e -> ((GameStepListener)e).onStepAction());
+    formation.getEnemies().stream().filter(e -> e instanceof GameStepListener).forEach(e -> ((GameStepListener)e).onStepAction(control));
 
     for (Enemy e : formation.getEnemies()) {
       e.setX(formation.getXof(e));
@@ -159,17 +155,22 @@ public class GameStateManager implements Disposable, GameStepListener {
 
     moveFormation();
 
+    if (!loadNextLevel && formation.getEnemies().isEmpty() && !(state.isVictory() || state.isDefeat())) {
+      if (levels.hasNextLevel()) {
+        setLoadNextLevelAfterDelay(control);
+      } else {
+        state.setVictory(true);
+        state.getUi().displayVictory();
+      }
+    }
+
     fireTrigger.countDown();
   }
 
   private void checkIfNeedToLoadLevel() {
-
-    if (timeToLoadNextLevel == 0) {
-      timeToLoadNextLevel = LEVEL_LOADED;
+    if (loadNextLevel) {
       loadNextLevel();
-    }
-    if (timeToLoadNextLevel > 0) {
-      timeToLoadNextLevel--;
+      loadNextLevel = false;
     }
   }
 
@@ -204,8 +205,8 @@ public class GameStateManager implements Disposable, GameStepListener {
 
 
   @Override
-  public void onStepAction() {
-    act();
+  public void onStepAction(GameSpeedController.Control control) {
+    act(control);
   }
 
   public void onStepEffect() {
@@ -221,20 +222,12 @@ public class GameStateManager implements Disposable, GameStepListener {
         rocket.kill();
       }
     }
-
-    if (timeToLoadNextLevel == LEVEL_LOADED && formation.getEnemies().isEmpty() && !(state.isVictory() || state.isDefeat())) {
-      if (levels.hasNextLevel()) {
-        setLoadNextLevel();
-      } else {
-        state.setVictory(true);
-        state.getUi().displayVictory();
-      }
-    }
   }
 
-  private void setLoadNextLevel() {
+  private void setLoadNextLevelAfterDelay(GameSpeedController.Control control) {
     state.getUi().displayText("LEVEL " + levels.getNextLevel(), 100, 100);
-    timeToLoadNextLevel = 200;
+    control.skipNextSteps(200);
+    loadNextLevel = true;
   }
 
 }

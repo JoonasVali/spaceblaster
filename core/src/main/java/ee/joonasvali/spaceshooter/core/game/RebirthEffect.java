@@ -31,7 +31,7 @@ public class RebirthEffect implements Effect {
   }
 
   @Override
-  public void onStepAction() {
+  public void onStepAction(GameSpeedController.Control control) {
     step++;
   }
 

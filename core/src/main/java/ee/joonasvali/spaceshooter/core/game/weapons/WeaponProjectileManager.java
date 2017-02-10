@@ -4,6 +4,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Disposable;
+import ee.joonasvali.spaceshooter.core.game.GameSpeedController;
 import ee.joonasvali.spaceshooter.core.game.GameStepListener;
 
 import java.util.ArrayList;
@@ -90,7 +91,7 @@ public class WeaponProjectileManager implements Disposable, GameStepListener {
   }
 
   @Override
-  public void onStepAction() {
+  public void onStepAction(GameSpeedController.Control control) {
     moveAndRemoveProjectiles();
   }
 

@@ -33,7 +33,7 @@ public class Background implements Disposable, GameStepListener {
   }
 
   @Override
-  public void onStepAction() {
+  public void onStepAction(GameSpeedController.Control control) {
     gameStepsCounted++;
   }
 

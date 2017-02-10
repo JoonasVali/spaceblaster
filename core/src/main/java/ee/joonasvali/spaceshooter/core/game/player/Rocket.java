@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Disposable;
 import ee.joonasvali.spaceshooter.core.game.ExplosionManager;
+import ee.joonasvali.spaceshooter.core.game.GameSpeedController;
 import ee.joonasvali.spaceshooter.core.game.GameState;
 import ee.joonasvali.spaceshooter.core.game.GameStepListener;
 import ee.joonasvali.spaceshooter.core.game.RebirthEffect;
@@ -98,9 +99,9 @@ public class Rocket implements Disposable, GameStepListener {
 
 
   @Override
-  public void onStepAction() {
+  public void onStepAction(GameSpeedController.Control control) {
     if (effect != null) {
-      effect.onStepAction();
+      effect.onStepAction(control);
       if (!effect.isActive()) {
         effect = null;
       }

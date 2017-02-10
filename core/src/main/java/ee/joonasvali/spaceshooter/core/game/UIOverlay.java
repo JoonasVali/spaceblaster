@@ -99,9 +99,9 @@ public class UIOverlay implements Disposable, GameStepListener {
   }
 
   @Override
-  public void onStepAction() {
+  public void onStepAction(GameSpeedController.Control control) {
     if (textToDisplay != null) {
-      textToDisplay.onStepAction();
+      textToDisplay.onStepAction(control);
     }
   }
 
