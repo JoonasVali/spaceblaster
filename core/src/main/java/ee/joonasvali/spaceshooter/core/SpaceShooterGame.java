@@ -2,6 +2,7 @@ package ee.joonasvali.spaceshooter.core;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -20,9 +21,11 @@ public class SpaceShooterGame extends Game {
   private BitmapFont font16;
   private SpriteBatch batch;
   private float elapsed;
-  private Set<Disposable> disposables = new HashSet<>();
 
   private boolean exit;
+
+  private float viewportWidth;
+  private float viewportHeight;
 
   @Override
   public void create() {
@@ -43,13 +46,19 @@ public class SpaceShooterGame extends Game {
 
     float w = Gdx.graphics.getWidth();
     float h = Gdx.graphics.getHeight();
-    this.setScreen(new MainMenuScreen(this, 100, 100 * (h / w)));
+    this.viewportWidth = 100;
+    this.viewportHeight = 100 * (h / w);
+    gotoMainMenu();
+  }
 
+  public void gotoMainMenu() {
+    setScreen(new MainMenuScreen(this, viewportWidth, viewportHeight));
   }
 
   @Override
   public void render() {
     if (exit) {
+      disposeActiveScreen();
       Gdx.app.exit();
     }
     elapsed += Gdx.graphics.getDeltaTime();
@@ -58,6 +67,13 @@ public class SpaceShooterGame extends Game {
 
     super.render();
 
+  }
+
+  private void disposeActiveScreen() {
+    Screen old = getScreen();
+    if (old != null) {
+      old.dispose();
+    }
   }
 
   public float getElapsed() {
@@ -74,11 +90,10 @@ public class SpaceShooterGame extends Game {
 
   @Override
   public void dispose() {
+    System.out.println("SpaceShooterGame disposed.");
     batch.dispose();
     font16.dispose();
 
-    disposables.forEach(Disposable::dispose);
-    disposables.clear();
   }
 
   public SpriteBatch getBatch() {
@@ -93,7 +108,9 @@ public class SpaceShooterGame extends Game {
     exit = true;
   }
 
-  public void registerDisposable(Disposable disposable) {
-    this.disposables.add(disposable);
+  @Override
+  public void setScreen(Screen screen) {
+    disposeActiveScreen();
+    super.setScreen(screen);
   }
 }

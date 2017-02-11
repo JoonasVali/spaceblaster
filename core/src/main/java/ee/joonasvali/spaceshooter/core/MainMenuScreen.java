@@ -1,6 +1,9 @@
 package ee.joonasvali.spaceshooter.core;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
@@ -10,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import ee.joonasvali.spaceshooter.core.game.GameScreen;
+import ee.joonasvali.spaceshooter.core.game.InputHandler;
 
 /**
  * @author Joonas Vali January 2017
@@ -24,7 +28,9 @@ public class MainMenuScreen implements Screen {
   private OrthographicCamera textCamera;
   private float textCameraWidth;
   private float textCameraHeight;
-  GlyphLayout glyphLayout = new GlyphLayout();
+  private InputMultiplexer inputMultiplexer = new InputMultiplexer();
+  private InputHandler inputHandler = new InputHandler();
+  private GlyphLayout glyphLayout = new GlyphLayout();
 
   public MainMenuScreen(SpaceShooterGame spaceShooterGame, float viewportWidth, float viewportHeight) {
     this.game = spaceShooterGame;
@@ -45,6 +51,11 @@ public class MainMenuScreen implements Screen {
     parameter.color = Color.YELLOW;
     titlefont = generator.generateFont(parameter);
     generator.dispose();
+
+    inputMultiplexer.addProcessor(inputHandler);
+    Gdx.input.setInputProcessor(inputMultiplexer);
+
+    inputHandler.addKeyBinding(Input.Keys.ESCAPE, game::setExit);
   }
 
   @Override
@@ -68,10 +79,15 @@ public class MainMenuScreen implements Screen {
     game.getFont16().draw(game.getBatch(), "Tap anywhere to begin!", 5, 35);
     game.getBatch().end();
 
-    if (Gdx.input.isTouched()) {
+    if (shouldGoToGameScreen()) {
       game.setScreen(new GameScreen(game));
-      dispose();
     }
+  }
+
+  private boolean shouldGoToGameScreen() {
+    return
+        Gdx.input.isKeyPressed(Input.Keys.ENTER) ||
+        Gdx.input.isKeyPressed(Input.Keys.SPACE);
   }
 
   @Override
@@ -101,6 +117,9 @@ public class MainMenuScreen implements Screen {
 
   @Override
   public void dispose() {
+    System.out.println("MainMenuScreen disposed.");
     titlefont.dispose();
+
+
   }
 }

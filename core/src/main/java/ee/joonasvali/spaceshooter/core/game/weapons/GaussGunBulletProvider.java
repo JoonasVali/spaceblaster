@@ -57,7 +57,7 @@ public class GaussGunBulletProvider implements ProjectileProvider<GaussGunBullet
     float height = SIZE * sprite.getHeight() / sprite.getWidth();
     projectile.setWidth(SIZE);
     projectile.setHeight(height);
-    projectile.setDamage(1000);
+    projectile.setDamage(3000);
     return projectile;
   }
 
