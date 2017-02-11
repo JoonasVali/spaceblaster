@@ -14,12 +14,15 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import ee.joonasvali.spaceshooter.core.game.GameScreen;
 import ee.joonasvali.spaceshooter.core.game.InputHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Joonas Vali January 2017
  */
 public class MainMenuScreen implements Screen {
 
+  private final Logger log = LoggerFactory.getLogger(MainMenuScreen.class);
   public final FileHandle CAMBRIA_FONT = Gdx.files.internal("fonts/cambria.ttc");
   private final SpaceShooterGame game;
   private final BitmapFont titlefont;
@@ -117,9 +120,7 @@ public class MainMenuScreen implements Screen {
 
   @Override
   public void dispose() {
-    System.out.println("MainMenuScreen disposed.");
+    log.info("MainMenuScreen disposed.");
     titlefont.dispose();
-
-
   }
 }
