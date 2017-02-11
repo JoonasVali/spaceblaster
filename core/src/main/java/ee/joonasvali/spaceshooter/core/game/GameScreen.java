@@ -154,7 +154,7 @@ public class GameScreen implements Screen, Disposable {
 
   @Override
   public void dispose() {
-    System.out.println("GameScreen disposed.");
+    log.info("GameScreen disposed.");
     state.getRocket().dispose();
     state.getWeaponProjectileManager().dispose();
     state.getExplosionManager().dispose();

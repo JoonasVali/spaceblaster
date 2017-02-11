@@ -90,7 +90,7 @@ public class SpaceShooterGame extends Game {
 
   @Override
   public void dispose() {
-    System.out.println("SpaceShooterGame disposed.");
+    log.info("SpaceShooterGame disposed.");
     batch.dispose();
     font16.dispose();
 

@@ -10,6 +10,8 @@ import ee.joonasvali.spaceshooter.core.game.enemy.EnemyFormation;
 import ee.joonasvali.spaceshooter.core.game.enemy.GaussEnemy;
 import ee.joonasvali.spaceshooter.core.game.weapons.CannonBullet;
 import ee.joonasvali.spaceshooter.core.game.weapons.Missile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
@@ -18,6 +20,7 @@ import java.util.Map;
  * @author Joonas Vali February 2017
  */
 public class LevelProvider implements Disposable {
+  private static final Logger log = LoggerFactory.getLogger(LevelProvider.class);
   private static final int LEVEL1_VERTICAL_DISTANCE_IN_MATRIX = 6;
   private static final int LEVEL1_HORIZONTAL_DISTANCE_IN_MATRIX = 6;
   private static final int LEVEL1_FORMATION_HEIGHT_AMOUNT = 5;
@@ -60,11 +63,11 @@ public class LevelProvider implements Disposable {
     EnemyFormation formation = null;
     switch (activeLevel) {
       case 0: formation = createLevel1();
-        System.out.println("loading level 1"); break;
+        log.info("loading level 1"); break;
       case 1: formation = createLevel2();
-        System.out.println("loading level 2"); break;
+        log.info("loading level 2"); break;
       case 2: formation = createLevel3();
-        System.out.println("loading level 3"); break;
+        log.info("loading level 3"); break;
     }
     activeLevel++;
     return formation;
