@@ -26,7 +26,7 @@ public class GameStateManager implements Disposable, GameStepListener {
 
   private static final int FORMATION_DROP = 2;
   private static final float MAX_SPEED = 0.5f;
-  public static final int STEPS_TO_SKIP_BEFORE_NEXT_LEVEL = 200;
+  public static final int STEPS_TO_SKIP_BEFORE_NEXT_LEVEL = 250;
   private final TriggerCounter fireTrigger;
 
   private final WeaponProjectileManager weaponProjectileManager;

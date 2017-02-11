@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Disposable;
+import ee.joonasvali.spaceshooter.core.MainMenuScreen;
 import ee.joonasvali.spaceshooter.core.SpaceShooterGame;
 import ee.joonasvali.spaceshooter.core.Util;
 import ee.joonasvali.spaceshooter.core.game.player.Rocket;
@@ -45,7 +46,6 @@ public class GameScreen implements Screen, Disposable {
   public GameScreen(SpaceShooterGame game) {
     this.game = game;
     this.state = new GameState();
-    this.game.registerDisposable(this);
     state.setBackground(new Background(WORLD_WIDTH, WORLD_HEIGHT));
     state.setScore(new AtomicInteger());
     state.setLives(new AtomicInteger(INITIAL_LIVES));
@@ -77,7 +77,7 @@ public class GameScreen implements Screen, Disposable {
 
     Gdx.input.setInputProcessor(inputMultiplexer);
 
-    inputHandler.addKeyBinding(Input.Keys.ESCAPE, game::setExit);
+    inputHandler.addKeyBinding(Input.Keys.ESCAPE, game::gotoMainMenu);
     inputHandler.addKeyBinding(
         Input.Keys.SPACE, () -> state.getRocket().doFire()
     );
@@ -154,6 +154,7 @@ public class GameScreen implements Screen, Disposable {
 
   @Override
   public void dispose() {
+    System.out.println("GameScreen disposed.");
     state.getRocket().dispose();
     state.getWeaponProjectileManager().dispose();
     state.getExplosionManager().dispose();
@@ -171,4 +172,7 @@ public class GameScreen implements Screen, Disposable {
     state.getRocket().setPosition(Math.min(Util.unProjectX(cam, mouseX, mouseY), WORLD_WIDTH - Rocket.ROCKET_SIZE), ROCKET_DISTANCE_FROM_BOTTOM);
 
   }
+
+
+
 }

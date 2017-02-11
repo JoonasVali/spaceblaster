@@ -13,7 +13,7 @@ import com.badlogic.gdx.utils.Pool;
  */
 public class CannonBulletProvider implements ProjectileProvider<CannonBullet>, Disposable {
   private static final float START_SPEED = 0.7f;
-  private static final float SIZE = 0.3f;
+  private static final float SIZE = 0.25f;
   private static final float ACCELERATION = 0f;
 
   private final Texture texture;
@@ -57,7 +57,7 @@ public class CannonBulletProvider implements ProjectileProvider<CannonBullet>, D
     float height = SIZE * sprite.getHeight() / sprite.getWidth();
     projectile.setWidth(SIZE);
     projectile.setHeight(height);
-    projectile.setDamage(1000);
+    projectile.setDamage(500);
     return projectile;
   }
 
