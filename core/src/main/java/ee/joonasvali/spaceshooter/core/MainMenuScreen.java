@@ -3,14 +3,15 @@ package ee.joonasvali.spaceshooter.core;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import ee.joonasvali.spaceshooter.core.game.GameScreen;
 import ee.joonasvali.spaceshooter.core.game.InputHandler;
@@ -29,8 +30,9 @@ public class MainMenuScreen implements Screen {
 
   private final OrthographicCamera camera;
   private OrthographicCamera textCamera;
-  private float textCameraWidth;
-  private float textCameraHeight;
+  private Sprite background;
+  private float width;
+  private float height;
   private InputMultiplexer inputMultiplexer = new InputMultiplexer();
   private InputHandler inputHandler = new InputHandler();
   private GlyphLayout glyphLayout = new GlyphLayout();
@@ -41,9 +43,12 @@ public class MainMenuScreen implements Screen {
     camera = new OrthographicCamera();
     textCamera = new OrthographicCamera();
     camera.setToOrtho(false, viewportWidth, viewportHeight);
-    textCameraWidth = 1000;
-    textCameraHeight = 1000 * (viewportHeight / viewportWidth);
-    textCamera.setToOrtho(false, textCameraWidth, textCameraHeight);
+    width = 1000;
+    height = 1000 * (viewportHeight / viewportWidth);
+    textCamera.setToOrtho(false, width, height);
+    background = new Sprite(new Texture(Gdx.files.internal("mainmenuback.png")),0,131,1024,740);
+    background.setOrigin(0,0);
+    background.setScale(width / background.getWidth());
 
     FreeTypeFontGenerator generator = new FreeTypeFontGenerator(CAMBRIA_FONT);
     FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -59,6 +64,8 @@ public class MainMenuScreen implements Screen {
     Gdx.input.setInputProcessor(inputMultiplexer);
 
     inputHandler.addKeyBinding(Input.Keys.ESCAPE, game::setExit);
+    inputHandler.addKeyBinding(Input.Keys.SPACE, this::goToGameScreen);
+    inputHandler.addKeyBinding(Input.Keys.ENTER, this::goToGameScreen);
   }
 
   @Override
@@ -74,23 +81,20 @@ public class MainMenuScreen implements Screen {
     game.getBatch().setProjectionMatrix(textCamera.combined);
 
     game.getBatch().begin();
+
+    background.draw(game.getBatch());
     game.getFont16().setColor(Color.WHITE);
 
     glyphLayout.setText(titlefont, "Space Shooter");
     float fwidth = glyphLayout.width;
-    titlefont.draw(game.getBatch(), "Space Shooter", textCameraWidth / 2  - fwidth / 2, textCameraHeight / 1.4f);
-    game.getFont16().draw(game.getBatch(), "Tap anywhere to begin!", 5, 35);
+    titlefont.draw(game.getBatch(), "Space Shooter", width / 2  - fwidth / 2, height / 1.4f);
+//    game.getFont16().draw(game.getBatch(), "Tap anywhere to begin!", 5, 35);
     game.getBatch().end();
 
-    if (shouldGoToGameScreen()) {
-      game.setScreen(new GameScreen(game));
-    }
   }
 
-  private boolean shouldGoToGameScreen() {
-    return
-        Gdx.input.isKeyPressed(Input.Keys.ENTER) ||
-        Gdx.input.isKeyPressed(Input.Keys.SPACE);
+  private void goToGameScreen() {
+    game.setScreen(new GameScreen(game));
   }
 
   @Override
@@ -121,6 +125,7 @@ public class MainMenuScreen implements Screen {
   @Override
   public void dispose() {
     log.info("MainMenuScreen disposed.");
+    background.getTexture().dispose();
     titlefont.dispose();
   }
 }
