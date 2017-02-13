@@ -114,7 +114,7 @@ public class GameScreen implements Screen, Disposable {
 
     state.getExplosionManager().draw(batch);
     state.getWeaponProjectileManager().drawMissiles(batch);
-    state.getEnemies().drawEnemies(batch);
+    state.getEnemies().drawEnemies(batch, delta);
     state.getRocket().draw(batch);
 
     state.getUi().draw(batch);
