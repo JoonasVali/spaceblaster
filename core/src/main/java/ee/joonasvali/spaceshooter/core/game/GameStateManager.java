@@ -2,21 +2,18 @@ package ee.joonasvali.spaceshooter.core.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.ParticleEffect;
-import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Disposable;
 import ee.joonasvali.spaceshooter.core.game.enemy.Enemy;
 import ee.joonasvali.spaceshooter.core.game.enemy.EnemyFormation;
 import ee.joonasvali.spaceshooter.core.game.player.Rocket;
 import ee.joonasvali.spaceshooter.core.game.weapons.WeaponProjectile;
 import ee.joonasvali.spaceshooter.core.game.weapons.WeaponProjectileManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -25,6 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Joonas Vali January 2017
  */
 public class GameStateManager implements Disposable, GameStepListener {
+  private static final Logger log = LoggerFactory.getLogger(GameStateManager.class);
   private static final float FORMATION_SPEED_INCREASE = 0.02f;
 
   private static final int FIRE_FREQUENCY = 35;
@@ -32,7 +30,6 @@ public class GameStateManager implements Disposable, GameStepListener {
   private static final int FORMATION_DROP = 2;
   private static final float MAX_SPEED = 0.5f;
   public static final int STEPS_TO_SKIP_BEFORE_NEXT_LEVEL = 250;
-  public static final float PARTICLE_HIT_SCALE_FACTOR = 0.03f;
   private final TriggerCounter fireTrigger;
 
   private final WeaponProjectileManager weaponProjectileManager;
@@ -50,10 +47,7 @@ public class GameStateManager implements Disposable, GameStepListener {
   private Sound damageSound;
 
   private boolean loadNextLevelInProgress;
-  private final ParticleEffect hitEffect;
-  private final TextureAtlas particleAtlas;
-  private final ParticleEffectPool particlePool;
-  private final List<ParticleEffectPool.PooledEffect> activeEffects = new ArrayList<>();
+
 
   public GameStateManager(float screenWidth, float screenHeight, GameState state) {
     this.weaponProjectileManager = state.getWeaponProjectileManager();
@@ -71,14 +65,6 @@ public class GameStateManager implements Disposable, GameStepListener {
 
     this.damageSound =  Gdx.audio.newSound(Gdx.files.internal("sound/damage.mp3"));
 
-    /* Load particles */
-    particleAtlas = new TextureAtlas();
-    Texture particleTexture = new Texture(Gdx.files.internal("particles/particle.png"));
-    particleAtlas.addRegion("particle", particleTexture, 0, 0, 32, 32);
-    hitEffect = new ParticleEffect();
-    hitEffect.load(Gdx.files.internal("particles/hit.p"), particleAtlas);
-    hitEffect.scaleEffect(PARTICLE_HIT_SCALE_FACTOR);
-    particlePool = new ParticleEffectPool(hitEffect, 1, 5);
   }
 
   public void setLevelProvider(LevelProvider levelProvider) {
@@ -105,19 +91,8 @@ public class GameStateManager implements Disposable, GameStepListener {
       sprite.setSize(e.getWidth(), e.getHeight());
       sprite.draw(batch);
     }
-
-
-    Iterator<ParticleEffectPool.PooledEffect> it = activeEffects.iterator();
-    while (it.hasNext()) {
-      ParticleEffectPool.PooledEffect e = it.next();
-      e.draw(batch, delta); // Is delta really ok to use? GameStepListener maybe?
-      if (e.isComplete()) {
-        e.free();
-        it.remove();
-      }
-    }
-
   }
+
 
   private void doEnemyFire() {
     List<Enemy> enemies = formation.getEnemies();
@@ -141,8 +116,6 @@ public class GameStateManager implements Disposable, GameStepListener {
       hitSound.dispose();
     }
     damageSound.dispose();
-    particleAtlas.dispose();
-    hitEffect.dispose();
   }
 
   private void act(GameSpeedController.Control control) {
@@ -163,19 +136,21 @@ public class GameStateManager implements Disposable, GameStepListener {
         WeaponProjectile projectile = m.get();
         explosionManager.createExplosion(projectile.getX() - projectile.getWidth() / 2, projectile.getY() - projectile.getHeight() / 2, 1, 1);
         damageSound.play(0.2f, 1f - (float) Math.random() / 5f, 0f);
-        ParticleEffect effect = particlePool.obtain();
-        effect.setPosition(projectile.getX(), projectile.getY());
-        activeEffects.add((ParticleEffectPool.PooledEffect) effect);
-        hitEffect.setPosition(projectile.getX(), projectile.getY());
+        state.getParticleManager().createParticleEmitter("hit", projectile.getX(), projectile.getY(), projectile.getAngle());
+
         if (e.decreaseHealthBy(m.get().getDamage())) {
           createExplosion(e);
+          state.getParticleManager().createParticleEmitter("explosion", e.getX() + e.getWidth() / 2, e.getY() + e.getHeight() / 2, 0);
           dead.add(e);
+
           // Add score only if player shot the projectile.
           if (projectile.getAuthor() instanceof Rocket) {
             score.addAndGet(e.getBounty());
           }
+
           Sound sound = hitSounds[(int) (Math.random() * hitSounds.length)];
           sound.play(0.5f);
+
         }
         weaponProjectileManager.removeProjectile(m.get());
       }

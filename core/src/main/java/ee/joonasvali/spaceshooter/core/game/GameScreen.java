@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Disposable;
 import ee.joonasvali.spaceshooter.core.MainMenuScreen;
+import ee.joonasvali.spaceshooter.core.ParticleEffectManager;
 import ee.joonasvali.spaceshooter.core.SpaceShooterGame;
 import ee.joonasvali.spaceshooter.core.Util;
 import ee.joonasvali.spaceshooter.core.game.player.Rocket;
@@ -49,7 +50,9 @@ public class GameScreen implements Screen, Disposable {
     state.setBackground(new Background(WORLD_WIDTH, WORLD_HEIGHT));
     state.setScore(new AtomicInteger());
     state.setLives(new AtomicInteger(INITIAL_LIVES));
+    state.setParticleManager(new ParticleEffectManager());
     state.setUi(new UIOverlay(state.getScore(), state.getLives()));
+
 
     float w = Gdx.graphics.getWidth();
     float h = Gdx.graphics.getHeight();
@@ -116,6 +119,7 @@ public class GameScreen implements Screen, Disposable {
     state.getWeaponProjectileManager().drawMissiles(batch);
     state.getEnemies().drawEnemies(batch, delta);
     state.getRocket().draw(batch);
+    state.getParticleManager().draw(batch, delta);
 
     state.getUi().draw(batch);
 
@@ -159,9 +163,10 @@ public class GameScreen implements Screen, Disposable {
     state.getWeaponProjectileManager().dispose();
     state.getExplosionManager().dispose();
     state.getEnemies().dispose();
-    stage.dispose();
     state.getBackground().dispose();
     state.getUi().dispose();
+    state.getParticleManager().dispose();
+    stage.dispose();
     levelProvider.dispose();
   }
 
