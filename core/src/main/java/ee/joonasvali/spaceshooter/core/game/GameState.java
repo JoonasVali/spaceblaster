@@ -1,5 +1,6 @@
 package ee.joonasvali.spaceshooter.core.game;
 
+import ee.joonasvali.spaceshooter.core.ParticleEffectManager;
 import ee.joonasvali.spaceshooter.core.game.player.Rocket;
 import ee.joonasvali.spaceshooter.core.game.weapons.WeaponProjectileManager;
 
@@ -15,6 +16,7 @@ public class GameState {
   private GameStateManager enemies;
   private WeaponProjectileManager weaponProjectileManager;
   private ExplosionManager explosionManager;
+  private ParticleEffectManager particleManager;
   private AtomicInteger score;
   private AtomicInteger lives;
   private boolean victory;
@@ -98,5 +100,13 @@ public class GameState {
 
   public void setDefeat(boolean defeat) {
     this.defeat = defeat;
+  }
+
+  public ParticleEffectManager getParticleManager() {
+    return particleManager;
+  }
+
+  public void setParticleManager(ParticleEffectManager particleManager) {
+    this.particleManager = particleManager;
   }
 }
