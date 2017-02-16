@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.utils.Disposable;
@@ -19,6 +20,8 @@ public class SpaceShooterGame extends Game {
   private static final Logger log = LoggerFactory.getLogger(SpaceShooterGame.class);
 
   private BitmapFont font16;
+  private BitmapFont font12;
+
   private SpriteBatch batch;
   private float elapsed;
 
@@ -27,13 +30,14 @@ public class SpaceShooterGame extends Game {
   private float viewportWidth;
   private float viewportHeight;
 
+
   @Override
   public void create() {
-    log.info("Starting game!!!");
+    log.info("Starting game");
 
     batch = new SpriteBatch();
 
-    FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/cambria.ttc"));
+    FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/BebasNeue.otf"));
     FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
 
     parameter.size = 16;
@@ -41,6 +45,8 @@ public class SpaceShooterGame extends Game {
     parameter.spaceX = 1;
 
     font16 = generator.generateFont(parameter);
+    parameter.size = 12;
+    font12 = generator.generateFont(parameter);
 
     generator.dispose();
 
@@ -93,7 +99,7 @@ public class SpaceShooterGame extends Game {
     log.info("SpaceShooterGame disposed.");
     batch.dispose();
     font16.dispose();
-
+    font12.dispose();
   }
 
   public SpriteBatch getBatch() {
@@ -112,5 +118,9 @@ public class SpaceShooterGame extends Game {
   public void setScreen(Screen screen) {
     disposeActiveScreen();
     super.setScreen(screen);
+  }
+
+  public BitmapFont getFont12() {
+    return font12;
   }
 }
