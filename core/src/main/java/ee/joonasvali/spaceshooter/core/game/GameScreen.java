@@ -85,6 +85,10 @@ public class GameScreen implements Screen, Disposable {
         Input.Keys.SPACE, () -> state.getRocket().doFire()
     );
 
+    inputHandler.addMouseBinding(
+        Input.Buttons.LEFT, () -> state.getRocket().doFire()
+    );
+
     createCamera();
 
   }
@@ -96,7 +100,7 @@ public class GameScreen implements Screen, Disposable {
 
     // Constructs a new OrthographicCamera, using the given viewport width and height
     // Height is multiplied by aspect ratio.
-    cam = new OrthographicCamera(100, 100 * (h / w));
+    cam = new OrthographicCamera(WORLD_WIDTH, WORLD_HEIGHT * (h / w));
 
     cam.position.set(cam.viewportWidth / 2f, cam.viewportHeight / 2f, 0);
     cam.update();
@@ -175,7 +179,6 @@ public class GameScreen implements Screen, Disposable {
     int mouseX = Gdx.input.getX();
     int mouseY = Gdx.input.getY();
     state.getRocket().setPosition(Math.min(Util.unProjectX(cam, mouseX, mouseY), WORLD_WIDTH - Rocket.ROCKET_SIZE), ROCKET_DISTANCE_FROM_BOTTOM);
-
   }
 
 

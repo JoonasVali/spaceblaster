@@ -49,13 +49,15 @@ public class LevelProvider implements Disposable {
   public LevelProvider(float worldWidth, float worldHeight) {
     this.worldWidth = worldWidth;
     this.worldHeight = worldHeight;
-    this.texture = new Texture(Gdx.files.internal("Gunship_mf_Sprite.png"));
-
-    this.sprite = new Sprite(texture, 33, 77, 190, 100);
-    this.sprite2 = new Sprite(texture, 33, 77, 190, 100);
-    sprite2.setColor(Color.YELLOW);
-    this.sprite3 = new Sprite(texture, 33, 77, 190, 100);
-    sprite3.setColor(Color.BLUE);
+    this.texture = new Texture(Gdx.files.internal("enemy1.png"));
+    this.sprite = new Sprite(texture);
+    this.sprite2 = new Sprite(texture);
+    sprite2.setColor(new Color(255 / 255f, 162 / 255f, 29 / 255f, 1f));
+    this.sprite3 = new Sprite(texture);
+    sprite3.setColor(new Color(173 / 255f, 207 / 255f, 255 / 255f, 1f));
+    this.sprite.flip(false, true);
+    this.sprite2.flip(false, true);
+    this.sprite3.flip(false, true);
   }
 
   public EnemyFormation nextLevel() {
