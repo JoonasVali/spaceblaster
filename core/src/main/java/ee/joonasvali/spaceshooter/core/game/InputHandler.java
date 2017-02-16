@@ -12,10 +12,21 @@ import java.util.Map;
  */
 public class InputHandler extends InputAdapter {
   private Map<Integer, List<Runnable>> keyMap = new HashMap<>();
+  private Map<Integer, List<Runnable>> mouseMap = new HashMap<>();
 
   @Override
   public boolean keyDown(int keycode) {
     List<Runnable> list = keyMap.get(keycode);
+    if (list == null) {
+      return false;
+    }
+    list.forEach(Runnable::run);
+    return true;
+  }
+
+  @Override
+  public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+    List<Runnable> list = mouseMap.get(button);
     if (list == null) {
       return false;
     }
@@ -28,4 +39,9 @@ public class InputHandler extends InputAdapter {
     list.add(runnable);
   }
 
+
+  public void addMouseBinding(int mouseButton, Runnable runnable) {
+    List<Runnable> list = mouseMap.computeIfAbsent(mouseButton, k -> new ArrayList<>());
+    list.add(runnable);
+  }
 }
