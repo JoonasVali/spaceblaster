@@ -23,10 +23,13 @@ import org.slf4j.LoggerFactory;
  */
 public class MainMenuScreen implements Screen {
 
+  private static final String START_MESSAGE = "Press space to start";
+  private static final String GAME_TITLE = "Space Blaster";
   private final Logger log = LoggerFactory.getLogger(MainMenuScreen.class);
   public final FileHandle CAMBRIA_FONT = Gdx.files.internal("fonts/cambria.ttc");
   private final SpaceShooterGame game;
   private final BitmapFont titlefont;
+  private final BitmapFont normalfont;
 
   private final OrthographicCamera camera;
   private OrthographicCamera textCamera;
@@ -35,7 +38,7 @@ public class MainMenuScreen implements Screen {
   private float height;
   private InputMultiplexer inputMultiplexer = new InputMultiplexer();
   private InputHandler inputHandler = new InputHandler();
-  private GlyphLayout glyphLayout = new GlyphLayout();
+  private float deltaCount = 0;
 
   public MainMenuScreen(SpaceShooterGame spaceShooterGame, float viewportWidth, float viewportHeight) {
     this.game = spaceShooterGame;
@@ -58,6 +61,10 @@ public class MainMenuScreen implements Screen {
     parameter.shadowColor = Color.BLACK;
     parameter.color = Color.YELLOW;
     titlefont = generator.generateFont(parameter);
+    parameter.shadowOffsetX = 1;
+    parameter.shadowOffsetY = 1;
+    parameter.size = 18;
+    normalfont = generator.generateFont(parameter);
     generator.dispose();
 
     inputMultiplexer.addProcessor(inputHandler);
@@ -70,6 +77,7 @@ public class MainMenuScreen implements Screen {
 
   @Override
   public void render(float delta) {
+    deltaCount += delta;
     Gdx.gl.glClearColor(0.1f, 0.1f, 0.2f, 1);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -85,9 +93,14 @@ public class MainMenuScreen implements Screen {
     background.draw(game.getBatch());
     game.getFont16().setColor(Color.WHITE);
 
-    glyphLayout.setText(titlefont, "Space Shooter");
-    float fwidth = glyphLayout.width;
-    titlefont.draw(game.getBatch(), "Space Shooter", width / 2  - fwidth / 2, height / 1.4f);
+    float fwidth = Util.getTextWidth(GAME_TITLE, titlefont);
+    titlefont.draw(game.getBatch(), GAME_TITLE, width / 2  - fwidth / 2, height / 1.4f);
+
+    if (((int)deltaCount) % 2 == 0) {
+      fwidth = Util.getTextWidth(START_MESSAGE, normalfont);
+      normalfont.draw(game.getBatch(), START_MESSAGE, width / 2 - fwidth / 2, 40);
+    }
+
 //    game.getFont16().draw(game.getBatch(), "Tap anywhere to begin!", 5, 35);
     game.getBatch().end();
 
@@ -127,5 +140,6 @@ public class MainMenuScreen implements Screen {
     log.info("MainMenuScreen disposed.");
     background.getTexture().dispose();
     titlefont.dispose();
+    normalfont.dispose();
   }
 }

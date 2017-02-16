@@ -166,6 +166,7 @@ public class Rocket implements Disposable, GameStepListener {
       return;
     }
     explosionManager.createExplosion(getX(), getY(), getWidth(), getHeight());
+    state.getParticleManager().createParticleEmitter("explosion", getX() + getWidth() / 2, getY() + getHeight() / 2, 0);
     hitSounds[(int) (Math.random() * hitSounds.length)].play(0.5f);
     this.alive = false;
     countDownToRebirth = TIME_TO_REBIRTH;
