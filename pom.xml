@@ -25,22 +25,6 @@
         <version>${gdx.version}</version>
       </dependency>
 
-      <!-- android-specific dependencies -->
-      <dependency>
-        <groupId>com.badlogicgames.gdx</groupId>
-        <artifactId>gdx-backend-android</artifactId>
-        <version>${gdx.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>com.badlogicgames.gdx</groupId>
-        <artifactId>gdx-platform</artifactId>
-        <version>${gdx.version}</version>
-        <classifier>natives-armeabi</classifier>
-        <scope>provided</scope>
-      </dependency>
-
-
       <!-- desktop-specific dependencies -->
       <dependency>
         <groupId>com.badlogicgames.gdx</groupId>
@@ -63,7 +47,6 @@
         <scope>provided</scope>
       </dependency>
 
-      <!-- gwt-specific dependencies -->
       <dependency>
         <groupId>com.badlogicgames.gdx</groupId>
         <artifactId>gdx</artifactId>
@@ -72,27 +55,6 @@
         <scope>provided</scope>
       </dependency>
 
-      <dependency>
-        <groupId>com.badlogicgames.gdx</groupId>
-        <artifactId>gdx-backend-gwt</artifactId>
-        <version>${gdx.version}</version>
-        <classifier>sources</classifier>
-        <scope>provided</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>com.badlogicgames.gdx</groupId>
-        <artifactId>gdx-backend-gwt</artifactId>
-        <version>${gdx.version}</version>
-      </dependency>
-
-      <!-- ios-specific dependencies -->
-      <!-- requires robovm upgrades -->
-      <dependency>
-        <groupId>com.badlogic.gdx</groupId>
-        <artifactId>gdx-backend-ios</artifactId>
-        <version>${gdx.version}</version>
-      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -128,24 +90,6 @@
       <id>desktop</id>
       <modules>
         <module>desktop</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>android</id>
-      <modules>
-        <module>android</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>html</id>
-      <modules>
-        <module>html</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>ios</id>
-      <modules>
-        <module>ios</module>
       </modules>
     </profile>
   </profiles>
