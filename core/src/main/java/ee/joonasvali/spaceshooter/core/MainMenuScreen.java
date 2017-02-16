@@ -10,7 +10,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import ee.joonasvali.spaceshooter.core.game.GameScreen;
@@ -25,8 +24,9 @@ public class MainMenuScreen implements Screen {
 
   private static final String START_MESSAGE = "Press space to start";
   private static final String GAME_TITLE = "Space Blaster";
+  public static final String DISCLAIMER = GAME_TITLE + " is freeware and created for educational purposes. Joonas Vali 2017";
   private final Logger log = LoggerFactory.getLogger(MainMenuScreen.class);
-  public final FileHandle CAMBRIA_FONT = Gdx.files.internal("fonts/cambria.ttc");
+  public final FileHandle MAIN_FONT = Gdx.files.internal("fonts/coolvetica.ttf");
   private final SpaceShooterGame game;
   private final BitmapFont titlefont;
   private final BitmapFont normalfont;
@@ -53,7 +53,7 @@ public class MainMenuScreen implements Screen {
     background.setOrigin(0,0);
     background.setScale(width / background.getWidth());
 
-    FreeTypeFontGenerator generator = new FreeTypeFontGenerator(CAMBRIA_FONT);
+    FreeTypeFontGenerator generator = new FreeTypeFontGenerator(MAIN_FONT);
     FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
     parameter.size = 30;
     parameter.shadowOffsetX = 3;
@@ -98,10 +98,11 @@ public class MainMenuScreen implements Screen {
 
     if (((int)deltaCount) % 2 == 0) {
       fwidth = Util.getTextWidth(START_MESSAGE, normalfont);
-      normalfont.draw(game.getBatch(), START_MESSAGE, width / 2 - fwidth / 2, 40);
+      normalfont.draw(game.getBatch(), START_MESSAGE, width / 2 - fwidth / 2, 60);
     }
 
-//    game.getFont16().draw(game.getBatch(), "Tap anywhere to begin!", 5, 35);
+    fwidth = Util.getTextWidth(DISCLAIMER, game.getFont12());
+    game.getFont12().draw(game.getBatch(), DISCLAIMER, width / 2 - fwidth / 2, 20);
     game.getBatch().end();
 
   }
