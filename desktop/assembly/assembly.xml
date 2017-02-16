@@ -15,7 +15,7 @@
   <fileSets>
 
     <fileSet>
-      <directory>${binfolder}</directory>
+      <directory>${binfolder}/win</directory>
       <outputDirectory>bin</outputDirectory>
       <!-- Causes maven placeholders to be replaced in the files -->
       <filtered>true</filtered>
@@ -23,6 +23,17 @@
         <include>**/*</include>
       </includes>
       <lineEnding>windows</lineEnding>
+    </fileSet>
+
+    <fileSet>
+      <directory>${binfolder}/unix</directory>
+      <outputDirectory>bin</outputDirectory>
+      <filtered>true</filtered> <!-- Causes maven placeholders to be replaced in the files -->
+      <includes>
+        <include>**/*</include>
+      </includes>
+      <lineEnding>unix</lineEnding>
+      <fileMode>0755</fileMode>
     </fileSet>
 
     <fileSet>
