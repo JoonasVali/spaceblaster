@@ -32,10 +32,11 @@ public class CreditsScreen implements Screen {
   private final Logger log = LoggerFactory.getLogger(CreditsScreen.class);
   private final SpaceShooterGame game;
 
-  private final BitmapFont normalfont;
+  private final BitmapFont smallfont;
   private final BitmapFont titleFont;
 
   private Skin skin;
+  private Skin tableSkin;
   private Stage stage;
   private final OrthographicCamera camera;
   private OrthographicCamera textCamera;
@@ -48,7 +49,7 @@ public class CreditsScreen implements Screen {
 
   public CreditsScreen(SpaceShooterGame spaceShooterGame, float viewportWidth, float viewportHeight) {
     this.game = spaceShooterGame;
-    this.normalfont = spaceShooterGame.getFontFactory().createNormalfont();
+    this.smallfont = spaceShooterGame.getFontFactory().createCreditsFontSmall();
     this.titleFont = spaceShooterGame.getFontFactory().createTitlefont();
 
     camera = new OrthographicCamera();
@@ -83,8 +84,14 @@ public class CreditsScreen implements Screen {
       }
     });
 
+    tableSkin = new Skin();
+    // Skin font disposed together with skin.
+    tableSkin.add("default", spaceShooterGame.getFontFactory().createCreditsFont(), BitmapFont.class);
+    tableSkin.addRegions(new TextureAtlas("skin/skin.atlas"));
+    tableSkin.load(Gdx.files.internal("skin/skin.json"));
+
     table.setColor(Color.BLACK);
-    table.setSkin(skin);
+    table.setSkin(tableSkin);
     table.add("Joonas Vali - Programming, Graphics, Sounds").pad(20);
     table.row();
     table.add("LibGDX skin by Czyzby").pad(20);
@@ -98,7 +105,7 @@ public class CreditsScreen implements Screen {
     table.row();
     table.row();
 
-    table.add(backButton).width(200).height(50).pad(10);
+    table.add(backButton).width(200).height(50).pad(50);
 
     stage.addActor(table);
 
@@ -130,8 +137,8 @@ public class CreditsScreen implements Screen {
     float fwidth = Util.getTextWidth(GAME_TITLE, titleFont);
     titleFont.draw(game.getBatch(), GAME_TITLE, width / 2  - fwidth / 2, height / 1.4f);
 
-    fwidth = Util.getTextWidth(DISCLAIMER, normalfont);
-    normalfont.draw(game.getBatch(), DISCLAIMER, width / 2 - fwidth / 2, 20);
+    fwidth = Util.getTextWidth(DISCLAIMER, smallfont);
+    smallfont.draw(game.getBatch(), DISCLAIMER, width / 2 - fwidth / 2, 20);
     game.getBatch().end();
 
     stage.act(Gdx.graphics.getDeltaTime());
@@ -172,7 +179,8 @@ public class CreditsScreen implements Screen {
     log.info("CreditScreen disposed.");
     background.getTexture().dispose();
     skin.dispose();
-    normalfont.dispose();
+    tableSkin.dispose();
+    smallfont.dispose();
     titleFont.dispose();
     stage.dispose();
   }

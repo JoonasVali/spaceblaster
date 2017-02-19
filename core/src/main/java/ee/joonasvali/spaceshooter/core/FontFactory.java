@@ -59,4 +59,10 @@ public class FontFactory {
     return font;
   }
 
+  public BitmapFont createCreditsFont() {
+    return createCoolvetica(Color.WHITE, 16, 1, 1, 1);
+  }
+  public BitmapFont createCreditsFontSmall() {
+    return createCoolvetica(Color.WHITE, 12, 1, 1, 1);
+  }
 }
