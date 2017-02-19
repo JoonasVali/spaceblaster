@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -26,6 +28,7 @@ public class GameScreen implements Screen, Disposable {
   private static final int ROCKET_DISTANCE_FROM_BOTTOM = 1;
   private static final int FPS = 60;
   private static final int INITIAL_LIVES = 3;
+  public static final float MUSIC_VOLUME = 0.3f;
 
   private Logger log = LoggerFactory.getLogger(GameScreen.class);
 
@@ -43,9 +46,15 @@ public class GameScreen implements Screen, Disposable {
 
   private SpaceShooterGame game;
   private final GameState state;
+  private final Music music;
 
   public GameScreen(SpaceShooterGame game) {
     this.game = game;
+
+    this.music = Gdx.audio.newMusic(Gdx.files.internal("sound/LB13_Nasdaq_byBobbyYarsulik.mp3"));
+    this.music.setVolume(MUSIC_VOLUME);
+    this.music.setLooping(true);
+
     this.state = new GameState();
     state.setBackground(new Background(WORLD_WIDTH, WORLD_HEIGHT));
     state.setScore(new AtomicInteger());
@@ -142,27 +151,29 @@ public class GameScreen implements Screen, Disposable {
 
   @Override
   public void show() {
-
+    this.music.play();
   }
 
   @Override
   public void hide() {
-
+    this.music.pause();
   }
 
   @Override
   public void pause() {
-
+    this.music.pause();
   }
 
   @Override
   public void resume() {
-
+    this.music.play();
   }
 
   @Override
   public void dispose() {
     log.info("GameScreen disposed.");
+    music.stop();
+    music.dispose();
     state.getRocket().dispose();
     state.getWeaponProjectileManager().dispose();
     state.getExplosionManager().dispose();

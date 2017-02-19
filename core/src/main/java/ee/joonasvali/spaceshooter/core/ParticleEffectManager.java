@@ -21,7 +21,7 @@ import java.util.Map;
  * @author Joonas Vali February 2017
  */
 public class ParticleEffectManager implements Disposable {
-  public static final float PARTICLE_HIT_SCALE_FACTOR = 0.03f;
+  public static final float PARTICLE_SCALE_FACTOR = 0.03f;
 
   private final Map<String, ParticleEffectData> effects = new HashMap<>();
   private final List<ParticleEffectPool.PooledEffect> activeEffects = new ArrayList<>();
@@ -94,7 +94,7 @@ public class ParticleEffectManager implements Disposable {
       particleAtlas.addRegion("pre_particle", particleTexture, 0, 0, 32, 32);
       effect = new ParticleEffect();
       effect.load(Gdx.files.internal(particlePath), particleAtlas);
-      effect.scaleEffect(PARTICLE_HIT_SCALE_FACTOR);
+      effect.scaleEffect(PARTICLE_SCALE_FACTOR);
       particlePool = new ParticleEffectPool(effect, 1, 10);
     }
 
