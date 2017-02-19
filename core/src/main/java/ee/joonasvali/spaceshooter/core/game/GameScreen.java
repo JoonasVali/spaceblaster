@@ -5,12 +5,9 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Disposable;
-import ee.joonasvali.spaceshooter.core.MainMenuScreen;
 import ee.joonasvali.spaceshooter.core.ParticleEffectManager;
 import ee.joonasvali.spaceshooter.core.SpaceShooterGame;
 import ee.joonasvali.spaceshooter.core.Util;
@@ -38,8 +35,6 @@ public class GameScreen implements Screen, Disposable {
 
   private OrthographicCamera cam;
   private LevelProvider levelProvider;
-
-  private Stage stage;
 
   private static final int WORLD_WIDTH = 100;
   private static final int WORLD_HEIGHT = 100;
@@ -70,11 +65,9 @@ public class GameScreen implements Screen, Disposable {
     state.setWeaponProjectileManager(new WeaponProjectileManager(WORLD_WIDTH, WORLD_HEIGHT * (h / w)));
 
     state.setRocket(new Rocket(state));
-    stage = new Stage();
 
     inputHandler = new InputHandler();
     inputMultiplexer.addProcessor(inputHandler);
-    inputMultiplexer.addProcessor(stage);
 
     state.setEnemies(new GameStateManager(WORLD_WIDTH, WORLD_HEIGHT * (h / w), state));
     this.levelProvider = new LevelProvider(WORLD_WIDTH, WORLD_HEIGHT * (h / w));
@@ -138,12 +131,11 @@ public class GameScreen implements Screen, Disposable {
 
 
     batch.end();
-    stage.draw();
+
   }
 
   @Override
   public void resize(int width, int height) {
-    stage.getViewport().update(width, height, true);
     cam.viewportWidth = 100f;
     cam.viewportHeight = 100f * height / width;
     cam.update();
@@ -181,7 +173,6 @@ public class GameScreen implements Screen, Disposable {
     state.getBackground().dispose();
     state.getUi().dispose();
     state.getParticleManager().dispose();
-    stage.dispose();
     levelProvider.dispose();
   }
 
