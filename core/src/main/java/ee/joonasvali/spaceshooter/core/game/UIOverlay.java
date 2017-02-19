@@ -7,8 +7,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.utils.Disposable;
+import ee.joonasvali.spaceshooter.core.FontFactory;
 import ee.joonasvali.spaceshooter.core.TimedText;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -43,9 +43,10 @@ public class UIOverlay implements Disposable, GameStepListener {
 
   private TimedText textToDisplay;
 
-  public UIOverlay(AtomicInteger score, AtomicInteger lives) {
+  public UIOverlay(FontFactory fontFactory, AtomicInteger score, AtomicInteger lives) {
     this.lives = lives;
     this.score = score;
+    this.font = fontFactory.createFont20(Color.YELLOW);
     float w = Gdx.graphics.getWidth();
     float h = Gdx.graphics.getHeight();
 
@@ -58,12 +59,6 @@ public class UIOverlay implements Disposable, GameStepListener {
 
     cam.position.set(cam.viewportWidth / 2f, cam.viewportHeight / 2f, 0);
     cam.update();
-
-    FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/BebasNeue.otf"));
-    FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-    parameter.size = 20;
-    parameter.color = Color.YELLOW;
-    font = generator.generateFont(parameter);
 
     texture = new Texture(Gdx.files.internal("rocket.png"));
     sprite = new Sprite(texture);
