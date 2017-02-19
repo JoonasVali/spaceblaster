@@ -55,7 +55,7 @@ public class GameScreen implements Screen, Disposable {
     state.setScore(new AtomicInteger());
     state.setLives(new AtomicInteger(INITIAL_LIVES));
     state.setParticleManager(new ParticleEffectManager());
-    state.setUi(new UIOverlay(state.getScore(), state.getLives()));
+    state.setUi(new UIOverlay(game.getFontFactory(), state.getScore(), state.getLives()));
 
 
     float w = Gdx.graphics.getWidth();

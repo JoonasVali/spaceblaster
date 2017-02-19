@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -12,7 +11,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -29,11 +27,13 @@ import org.slf4j.LoggerFactory;
 public class CreditsScreen implements Screen {
 
   private static final String GAME_TITLE = "Space Blaster";
+  private static final String DISCLAIMER = GAME_TITLE + " is freeware and created for educational purposes. Joonas Vali 2017";
+
   private final Logger log = LoggerFactory.getLogger(CreditsScreen.class);
-  public final FileHandle MAIN_FONT = Gdx.files.internal("fonts/coolvetica.ttf");
   private final SpaceShooterGame game;
-  private final BitmapFont titlefont;
+
   private final BitmapFont normalfont;
+  private final BitmapFont titleFont;
 
   private Skin skin;
   private Stage stage;
@@ -45,10 +45,11 @@ public class CreditsScreen implements Screen {
   private TextButton backButton;
   private InputMultiplexer inputMultiplexer = new InputMultiplexer();
   private InputHandler inputHandler = new InputHandler();
-  private float deltaCount = 0;
 
   public CreditsScreen(SpaceShooterGame spaceShooterGame, float viewportWidth, float viewportHeight) {
     this.game = spaceShooterGame;
+    this.normalfont = spaceShooterGame.getFontFactory().createNormalfont();
+    this.titleFont = spaceShooterGame.getFontFactory().createTitlefont();
 
     camera = new OrthographicCamera();
     textCamera = new OrthographicCamera();
@@ -62,33 +63,13 @@ public class CreditsScreen implements Screen {
     background.setOrigin(0,0);
     background.setScale(width / background.getWidth());
 
-    FreeTypeFontGenerator generator = new FreeTypeFontGenerator(MAIN_FONT);
-    FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-    parameter.size = 30;
-    parameter.shadowOffsetX = 3;
-    parameter.shadowOffsetY = 3;
-    parameter.shadowColor = Color.BLACK;
-    parameter.color = Color.YELLOW;
-    titlefont = generator.generateFont(parameter);
-    parameter.shadowOffsetX = 1;
-    parameter.shadowOffsetY = 1;
-    parameter.size = 18;
-    normalfont = generator.generateFont(parameter);
-
-    parameter.shadowOffsetX = 0;
-    parameter.shadowOffsetY = 0;
-    parameter.size = 25;
-    parameter.color = Color.WHITE;
-    // Disposed with skin
-    BitmapFont menufont = generator.generateFont(parameter);
-    generator.dispose();
 
 
     skin = new Skin();
-    skin.add("default", menufont, BitmapFont.class);
+    // Skin font disposed together with skin.
+    skin.add("default", spaceShooterGame.getFontFactory().createMenufont(), BitmapFont.class);
     skin.addRegions(new TextureAtlas("skin/skin.atlas"));
     skin.load(Gdx.files.internal("skin/skin.json"));
-
 
 
     Table table = new Table();
@@ -101,6 +82,22 @@ public class CreditsScreen implements Screen {
         goToMainMenuScreen();
       }
     });
+
+    table.setColor(Color.BLACK);
+    table.setSkin(skin);
+    table.add("Joonas Vali - Programming, Graphics, Sounds").pad(20);
+    table.row();
+    table.add("LibGDX skin by Czyzby").pad(20);
+    table.row();
+    table.add("Fonts 'BebasNeue' and 'Coolvetica' - Ryoichi Tsunekawa & Ray Larabie").pad(20);
+    table.row();
+    table.row();
+    table.add("Music \"Nasdaq\" by Bobby Yarsulik");
+    table.row();
+    table.add("https://www.youtube.com/c/BobbyYarsulik");
+    table.row();
+    table.row();
+
     table.add(backButton).width(200).height(50).pad(10);
 
     stage.addActor(table);
@@ -116,7 +113,6 @@ public class CreditsScreen implements Screen {
 
   @Override
   public void render(float delta) {
-    deltaCount += delta;
     Gdx.gl.glClearColor(0.1f, 0.1f, 0.2f, 1);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -130,10 +126,12 @@ public class CreditsScreen implements Screen {
     game.getBatch().begin();
 
     background.draw(game.getBatch());
-    game.getFont16().setColor(Color.WHITE);
 
-    float fwidth = Util.getTextWidth(GAME_TITLE, titlefont);
-    titlefont.draw(game.getBatch(), GAME_TITLE, width / 2  - fwidth / 2, height / 1.4f);
+    float fwidth = Util.getTextWidth(GAME_TITLE, titleFont);
+    titleFont.draw(game.getBatch(), GAME_TITLE, width / 2  - fwidth / 2, height / 1.4f);
+
+    fwidth = Util.getTextWidth(DISCLAIMER, normalfont);
+    normalfont.draw(game.getBatch(), DISCLAIMER, width / 2 - fwidth / 2, 20);
     game.getBatch().end();
 
     stage.act(Gdx.graphics.getDeltaTime());
@@ -173,9 +171,9 @@ public class CreditsScreen implements Screen {
   public void dispose() {
     log.info("CreditScreen disposed.");
     background.getTexture().dispose();
-    titlefont.dispose();
-    normalfont.dispose();
     skin.dispose();
+    normalfont.dispose();
+    titleFont.dispose();
     stage.dispose();
   }
 }
