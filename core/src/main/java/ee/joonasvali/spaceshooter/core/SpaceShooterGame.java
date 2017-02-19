@@ -123,4 +123,8 @@ public class SpaceShooterGame extends Game {
   public BitmapFont getFont12() {
     return font12;
   }
+
+  public void gotoCredits() {
+    setScreen(new CreditsScreen(this, viewportWidth, viewportHeight));
+  }
 }
