@@ -5,6 +5,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Disposable;
+import ee.joonasvali.spaceshooter.core.ParticleEffectManager;
 import ee.joonasvali.spaceshooter.core.game.enemy.Enemy;
 import ee.joonasvali.spaceshooter.core.game.enemy.EnemyFormation;
 import ee.joonasvali.spaceshooter.core.game.player.Rocket;
@@ -136,11 +137,11 @@ public class GameStateManager implements Disposable, GameStepListener {
         WeaponProjectile projectile = m.get();
         explosionManager.createExplosion(projectile.getX() - projectile.getWidth() / 2, projectile.getY() - projectile.getHeight() / 2, 1, 1);
         damageSound.play(0.2f, 1f - (float) Math.random() / 5f, 0f);
-        state.getParticleManager().createParticleEmitter("hit", projectile.getX(), projectile.getY(), projectile.getAngle());
+        state.getParticleManager().createParticleEmitter(ParticleEffectManager.HIT, projectile.getX(), projectile.getY(), projectile.getAngle());
 
         if (e.decreaseHealthBy(m.get().getDamage())) {
           createExplosion(e);
-          state.getParticleManager().createParticleEmitter("explosion", e.getX() + e.getWidth() / 2, e.getY() + e.getHeight() / 2, 0);
+          state.getParticleManager().createParticleEmitter(ParticleEffectManager.EXPLOSION, e.getX() + e.getWidth() / 2, e.getY() + e.getHeight() / 2, 0);
           dead.add(e);
 
           // Add score only if player shot the projectile.
