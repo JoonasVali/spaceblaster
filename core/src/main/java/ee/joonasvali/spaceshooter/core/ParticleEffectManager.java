@@ -21,40 +21,52 @@ import java.util.Map;
  * @author Joonas Vali February 2017
  */
 public class ParticleEffectManager implements Disposable {
-  public static final float PARTICLE_SCALE_FACTOR = 0.03f;
+  private static final float PARTICLE_SCALE_FACTOR = 0.03f;
+  public static final String HIT = "hit";
+  public static final String EXPLOSION = "explosion";
+  public static final String BIRTH = "birth";
 
-  private final Map<String, ParticleEffectData> effects = new HashMap<>();
-  private final List<ParticleEffectPool.PooledEffect> activeEffects = new ArrayList<>();
-  private final Map<ParticleEffectPool.PooledEffect, Float> activeEffectsRotation = new IdentityHashMap<>();
+  private final Map<String, ParticleEffectType> effects = new HashMap<>();
+  private final List<ParticleEffectData> activeEffects = new ArrayList<>();
 
   public ParticleEffectManager() {
-    effects.put("hit", new ParticleEffectData("particles/hit.p"));
-    effects.put("explosion", new ParticleEffectData("particles/explosion.p"));
+    effects.put(HIT, new ParticleEffectType("particles/hit.p", PARTICLE_SCALE_FACTOR));
+    effects.put(EXPLOSION, new ParticleEffectType("particles/explosion.p", PARTICLE_SCALE_FACTOR));
+    effects.put(BIRTH, new ParticleEffectType("particles/birth.p", PARTICLE_SCALE_FACTOR));
   }
 
   public void createParticleEmitter(String particleId, float x, float y, float rotation) {
-    ParticleEffectData data = effects.get(particleId);
+    ParticleEffectType data = effects.get(particleId);
     if (data != null) {
       ParticleEffectPool.PooledEffect effect = data.particlePool.obtain();
-      effect.setPosition(x, y);
-      activeEffects.add(effect);
-      activeEffectsRotation.put(effect, rotation);
+      activeEffects.add(new StableEmitter(effect, rotation, x, y));
+    }
+  }
+
+  public void createParticleEmitter(String particleId, PositionProvider provider, float rotation) {
+    ParticleEffectType data = effects.get(particleId);
+    if (data != null) {
+      ParticleEffectPool.PooledEffect effect = data.particlePool.obtain();
+      activeEffects.add(new MovingEmitter(effect, rotation, provider));
     }
   }
 
   @Override
   public void dispose() {
-    effects.values().forEach(ParticleEffectData::dispose);
+    effects.values().forEach(ParticleEffectType::dispose);
   }
 
   public void draw(SpriteBatch batch, float delta) {
-    Iterator<ParticleEffectPool.PooledEffect> it = activeEffects.iterator();
+    Iterator<ParticleEffectData> it = activeEffects.iterator();
     while (it.hasNext()) {
-      ParticleEffectPool.PooledEffect e = it.next();
-      rotateParticleEmitter(e, activeEffectsRotation.get(e));
+      ParticleEffectData data = it.next();
+      ParticleEffectPool.PooledEffect e = data.getEffect();
+
+      rotateParticleEmitter(e, data.getRotation());
+      e.setPosition(data.getX(), data.getY());
+
       e.draw(batch, delta); // Is delta really ok to use? GameStepListener maybe?
       if (e.isComplete()) {
-        activeEffectsRotation.remove(e);
         it.remove();
         e.free();
       }
@@ -82,19 +94,19 @@ public class ParticleEffectManager implements Disposable {
     }
   }
 
-  private class ParticleEffectData implements Disposable {
+  private class ParticleEffectType implements Disposable {
     private final ParticleEffect effect;
     private final TextureAtlas particleAtlas;
     private final ParticleEffectPool particlePool;
 
-    public ParticleEffectData(String particlePath) {
+    public ParticleEffectType(String particlePath, float scaleFactor) {
       particleAtlas = new TextureAtlas();
       Texture particleTexture = new Texture(Gdx.files.internal("particles/particle.png"));
       particleAtlas.addRegion("particle", particleTexture, 0, 0, 32, 32);
       particleAtlas.addRegion("pre_particle", particleTexture, 0, 0, 32, 32);
       effect = new ParticleEffect();
       effect.load(Gdx.files.internal(particlePath), particleAtlas);
-      effect.scaleEffect(PARTICLE_SCALE_FACTOR);
+      effect.scaleEffect(scaleFactor);
       particlePool = new ParticleEffectPool(effect, 1, 10);
     }
 
@@ -103,5 +115,83 @@ public class ParticleEffectManager implements Disposable {
       particleAtlas.dispose();
       effect.dispose();
     }
+  }
+
+  private interface ParticleEffectData {
+    float getRotation();
+    ParticleEffectPool.PooledEffect getEffect();
+    float getX();
+    float getY();
+  }
+
+  private class StableEmitter implements ParticleEffectData {
+    private final ParticleEffectPool.PooledEffect emitter;
+    private final float rotation;
+    private final float x;
+    private final float y;
+
+    public StableEmitter(ParticleEffect emitter, float rotation, float x, float y) {
+      this.emitter = (ParticleEffectPool.PooledEffect) emitter;
+      this.rotation = rotation;
+      this.x = x;
+      this.y = y;
+    }
+
+    @Override
+    public float getRotation() {
+      return rotation;
+    }
+
+    @Override
+    public ParticleEffectPool.PooledEffect getEffect() {
+      return emitter;
+    }
+
+    @Override
+    public float getX() {
+      return x;
+    }
+
+    @Override
+    public float getY() {
+      return y;
+    }
+  }
+
+  private class MovingEmitter implements ParticleEffectData {
+    private final ParticleEffectPool.PooledEffect emitter;
+    private final float rotation;
+    private final PositionProvider positionProvider;
+
+    public MovingEmitter(ParticleEffect emitter, float rotation, PositionProvider positionProvider) {
+      this.emitter = (ParticleEffectPool.PooledEffect) emitter;
+      this.rotation = rotation;
+      this.positionProvider = positionProvider;
+    }
+
+    @Override
+    public float getRotation() {
+      return rotation;
+    }
+
+    @Override
+    public ParticleEffectPool.PooledEffect getEffect() {
+      return emitter;
+    }
+
+    @Override
+    public float getX() {
+      return positionProvider.getX();
+    }
+
+    @Override
+    public float getY() {
+      return positionProvider.getY();
+    }
+  }
+
+  public interface PositionProvider {
+    float getX();
+    float getY();
   }
 }

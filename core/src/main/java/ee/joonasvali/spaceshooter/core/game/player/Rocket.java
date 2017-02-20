@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Disposable;
+import ee.joonasvali.spaceshooter.core.ParticleEffectManager;
 import ee.joonasvali.spaceshooter.core.game.ExplosionManager;
 import ee.joonasvali.spaceshooter.core.game.GameSpeedController;
 import ee.joonasvali.spaceshooter.core.game.GameState;
@@ -166,7 +167,7 @@ public class Rocket implements Disposable, GameStepListener {
       return;
     }
     explosionManager.createExplosion(getX(), getY(), getWidth(), getHeight());
-    state.getParticleManager().createParticleEmitter("explosion", getX() + getWidth() / 2, getY() + getHeight() / 2, 0);
+    state.getParticleManager().createParticleEmitter(ParticleEffectManager.EXPLOSION, getX() + getWidth() / 2, getY() + getHeight() / 2, 0);
     hitSounds[(int) (Math.random() * hitSounds.length)].play(0.5f);
     this.alive = false;
     countDownToRebirth = TIME_TO_REBIRTH;
