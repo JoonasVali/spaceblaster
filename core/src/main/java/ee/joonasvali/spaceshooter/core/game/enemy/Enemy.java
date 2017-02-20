@@ -16,6 +16,7 @@ public class Enemy extends Rectangle {
   private float offsetX;
   private float offsetY;
   private Class<? extends WeaponProjectile> weapon;
+  private boolean born;
 
   public Enemy(Class<? extends WeaponProjectile> weapon, int health, int bounty, int x, int y) {
     this.weapon = weapon;
@@ -59,6 +60,14 @@ public class Enemy extends Rectangle {
 
   public Class<? extends WeaponProjectile> getProjectileType() {
     return weapon;
+  }
+
+  public boolean isBorn() {
+    return born;
+  }
+
+  public void setBorn(boolean born) {
+    this.born = born;
   }
 
   /**

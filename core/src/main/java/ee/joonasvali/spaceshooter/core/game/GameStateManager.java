@@ -31,6 +31,7 @@ public class GameStateManager implements Disposable, GameStepListener {
   private static final int FORMATION_DROP = 2;
   private static final float MAX_SPEED = 0.5f;
   public static final int STEPS_TO_SKIP_BEFORE_NEXT_LEVEL = 250;
+  public static final int BIRTH_RATE = 5;
   private final TriggerCounter fireTrigger;
 
   private final WeaponProjectileManager weaponProjectileManager;
@@ -43,6 +44,7 @@ public class GameStateManager implements Disposable, GameStepListener {
   private EnemyFormation formation;
   private final AtomicInteger score;
 
+  private int birthCountdown;
   private LevelProvider levels;
   private Sound[] hitSounds;
   private Sound damageSound;
@@ -86,6 +88,9 @@ public class GameStateManager implements Disposable, GameStepListener {
       return;
     }
     for (Enemy e : formation.getEnemies()) {
+      if (!e.isBorn()) {
+        continue;
+      }
       Sprite sprite = getSprite(e);
       sprite.setX(e.getX());
       sprite.setY(e.getY());
@@ -101,7 +106,7 @@ public class GameStateManager implements Disposable, GameStepListener {
       return;
     }
 
-    Optional<Enemy> chosen = formation.getRandomFromBottom();
+    Optional<Enemy> chosen = formation.getRandomBornFromBottom();
     chosen.ifPresent(Enemy::onFire);
     chosen.ifPresent(enemy -> weaponProjectileManager.createProjectileAt(enemy.getProjectileType(), enemy,
         formation.getXof(enemy) + formation.getEnemySize() / 2,
@@ -119,6 +124,20 @@ public class GameStateManager implements Disposable, GameStepListener {
     damageSound.dispose();
   }
 
+  private ParticleEffectManager.PositionProvider getPositionProviderOf(Enemy e) {
+    return new ParticleEffectManager.PositionProvider() {
+      @Override
+      public float getX() {
+        return e.getX() + e.getWidth() / 2;
+      }
+
+      @Override
+      public float getY() {
+        return e.getY() + e.getHeight() / 2;
+      }
+    };
+  }
+
   private void act(GameSpeedController.Control control) {
     checkIfNeedToLoadLevel();
 
@@ -129,31 +148,45 @@ public class GameStateManager implements Disposable, GameStepListener {
       return;
     }
 
+    if (formation.hasUnbornLeft()) {
+      if (birthCountdown++ >= BIRTH_RATE) {
+        birthCountdown -= BIRTH_RATE;
+        formation.getRandomUnBorn().ifPresent(
+            e -> {
+              e.setBorn(true);
+              state.getParticleManager().createParticleEmitter(ParticleEffectManager.BIRTH, getPositionProviderOf(e), 0);
+            }
+        );
+      }
+    }
+
     List<Enemy> dead = new ArrayList<>();
 
-    for (Enemy e : formation.getEnemies()) {
-      Optional<WeaponProjectile> m = weaponProjectileManager.projectileCollisionWith(e, e);
-      if (m.isPresent()) {
-        WeaponProjectile projectile = m.get();
-        explosionManager.createExplosion(projectile.getX() - projectile.getWidth() / 2, projectile.getY() - projectile.getHeight() / 2, 1, 1);
-        damageSound.play(0.2f, 1f - (float) Math.random() / 5f, 0f);
-        state.getParticleManager().createParticleEmitter(ParticleEffectManager.HIT, projectile.getX(), projectile.getY(), projectile.getAngle());
+    if (!formation.hasUnbornLeft()) {
+      for (Enemy e : formation.getEnemies()) {
+        Optional<WeaponProjectile> m = weaponProjectileManager.projectileCollisionWith(e, e);
+        if (m.isPresent()) {
+          WeaponProjectile projectile = m.get();
+          explosionManager.createExplosion(projectile.getX() - projectile.getWidth() / 2, projectile.getY() - projectile.getHeight() / 2, 1, 1);
+          damageSound.play(0.2f, 1f - (float) Math.random() / 5f, 0f);
+          state.getParticleManager().createParticleEmitter(ParticleEffectManager.HIT, projectile.getX(), projectile.getY(), projectile.getAngle());
 
-        if (e.decreaseHealthBy(m.get().getDamage())) {
-          createExplosion(e);
-          state.getParticleManager().createParticleEmitter(ParticleEffectManager.EXPLOSION, e.getX() + e.getWidth() / 2, e.getY() + e.getHeight() / 2, 0);
-          dead.add(e);
+          if (e.decreaseHealthBy(m.get().getDamage())) {
+            createExplosion(e);
+            state.getParticleManager().createParticleEmitter(ParticleEffectManager.EXPLOSION, e.getX() + e.getWidth() / 2, e.getY() + e.getHeight() / 2, 0);
+            dead.add(e);
 
-          // Add score only if player shot the projectile.
-          if (projectile.getAuthor() instanceof Rocket) {
-            score.addAndGet(e.getBounty());
+            // Add score only if player shot the projectile.
+            if (projectile.getAuthor() instanceof Rocket) {
+              score.addAndGet(e.getBounty());
+            }
+
+            Sound sound = hitSounds[(int) (Math.random() * hitSounds.length)];
+            sound.play(0.5f);
+
           }
-
-          Sound sound = hitSounds[(int) (Math.random() * hitSounds.length)];
-          sound.play(0.5f);
-
+          weaponProjectileManager.removeProjectile(m.get());
         }
-        weaponProjectileManager.removeProjectile(m.get());
       }
     }
 

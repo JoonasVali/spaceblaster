@@ -25,6 +25,7 @@ public class EnemyFormation {
 
   private boolean movesLeft;
   private final float enemySize;
+  private boolean noUnbornLeft;
 
   public EnemyFormation(int width, int height, float enemySize, EnemyProvider generator, float horizontalDistance, float verticalDistance) {
     this.horizontalDistance = horizontalDistance;
@@ -127,12 +128,12 @@ public class EnemyFormation {
     this.movesLeft = movesLeft;
   }
 
-  public Optional<Enemy> getRandomFromBottom() {
+  public Optional<Enemy> getRandomBornFromBottom() {
     List<Enemy> candidates = new ArrayList<>();
     for (int i = 0; i < width; i++) {
       Enemy e = null;
       for (int j = 0; j < height; j++) {
-        if (formation[i][j] != null) {
+        if (formation[i][j] != null && formation[i][j].isBorn()) {
           e = formation[i][j];
         }
       }
@@ -145,7 +146,26 @@ public class EnemyFormation {
     } else {
       return Optional.empty();
     }
+  }
 
+  public Optional<Enemy> getRandomUnBorn() {
+    if (noUnbornLeft) {
+      return Optional.empty();
+    }
+    List<Enemy> candidates = new ArrayList<>();
+    for (int i = 0; i < width; i++) {
+      for (int j = 0; j < height; j++) {
+        if (formation[i][j] != null && !formation[i][j].isBorn()) {
+          candidates.add(formation[i][j]);
+        }
+      }
+    }
+    if (!candidates.isEmpty()) {
+      return Optional.of(candidates.get((int) (Math.random() * candidates.size())));
+    } else {
+      noUnbornLeft = true;
+      return Optional.empty();
+    }
   }
 
   public float getLowestYPositionOffset() {
@@ -161,5 +181,9 @@ public class EnemyFormation {
 
   public float getEnemySize() {
     return enemySize;
+  }
+
+  public boolean hasUnbornLeft() {
+    return !noUnbornLeft;
   }
 }
