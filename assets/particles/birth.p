@@ -20,8 +20,8 @@ timeline0: 0.0
 - Life - 
 lowMin: 0.0
 lowMax: 0.0
-highMin: 500.0
-highMax: 1000.0
+highMin: 50.0
+highMax: 50.0
 relative: false
 scalingCount: 3
 scaling0: 1.0
@@ -64,8 +64,8 @@ timeline0: 0.0
 - Scale - 
 lowMin: 0.0
 lowMax: 0.0
-highMin: 17.0
-highMax: 17.0
+highMin: 50.0
+highMax: 50.0
 relative: false
 scalingCount: 3
 scaling0: 1.0
@@ -79,7 +79,7 @@ timeline2: 0.8767123
 active: true
 lowMin: 0.0
 lowMax: 0.0
-highMin: 30.0
+highMin: 500.0
 highMax: 300.0
 relative: false
 scalingCount: 3
@@ -142,4 +142,4 @@ additive: true
 behind: false
 premultipliedAlpha: false
 - Image Path -
-particle.png
+/K:/Progemine/Java/spaceshooter/particle.png

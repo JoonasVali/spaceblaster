@@ -32,7 +32,7 @@ public class ParticleEffectManager implements Disposable {
   public ParticleEffectManager() {
     effects.put(HIT, new ParticleEffectType("particles/hit.p", PARTICLE_SCALE_FACTOR));
     effects.put(EXPLOSION, new ParticleEffectType("particles/explosion.p", PARTICLE_SCALE_FACTOR));
-    effects.put(BIRTH, new ParticleEffectType("particles/birth.p", PARTICLE_SCALE_FACTOR));
+    effects.put(BIRTH, new ParticleEffectType("particles/birth.p", 0.2f));
   }
 
   public void createParticleEmitter(String particleId, float x, float y, float rotation) {
