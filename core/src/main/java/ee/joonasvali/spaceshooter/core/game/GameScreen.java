@@ -11,6 +11,8 @@ import com.badlogic.gdx.utils.Disposable;
 import ee.joonasvali.spaceshooter.core.ParticleEffectManager;
 import ee.joonasvali.spaceshooter.core.SpaceShooterGame;
 import ee.joonasvali.spaceshooter.core.Util;
+import ee.joonasvali.spaceshooter.core.game.level.LevelProvider;
+import ee.joonasvali.spaceshooter.core.game.level.LevelReader;
 import ee.joonasvali.spaceshooter.core.game.player.Rocket;
 import ee.joonasvali.spaceshooter.core.game.weapons.WeaponProjectileManager;
 import org.slf4j.Logger;
@@ -26,6 +28,7 @@ public class GameScreen implements Screen, Disposable {
   private static final int FPS = 60;
   private static final int INITIAL_LIVES = 3;
   public static final float MUSIC_VOLUME = 0.3f;
+  public static final String LEVELS_TXT = "levels.txt";
 
   private Logger log = LoggerFactory.getLogger(GameScreen.class);
 
@@ -70,7 +73,8 @@ public class GameScreen implements Screen, Disposable {
     inputMultiplexer.addProcessor(inputHandler);
 
     state.setEnemies(new GameStateManager(WORLD_WIDTH, WORLD_HEIGHT * (h / w), state));
-    this.levelProvider = new LevelProvider(WORLD_WIDTH, WORLD_HEIGHT * (h / w));
+    LevelReader reader = new LevelReader(Gdx.files.internal(LEVELS_TXT));
+    this.levelProvider = new LevelProvider(reader, WORLD_WIDTH, WORLD_HEIGHT * (h / w));
     state.getEnemies().setLevelProvider(levelProvider);
 
     speedController.registerGameStepListener(state.getWeaponProjectileManager());

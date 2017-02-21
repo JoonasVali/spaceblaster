@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.Disposable;
 import ee.joonasvali.spaceshooter.core.ParticleEffectManager;
 import ee.joonasvali.spaceshooter.core.game.enemy.Enemy;
 import ee.joonasvali.spaceshooter.core.game.enemy.EnemyFormation;
+import ee.joonasvali.spaceshooter.core.game.level.LevelProvider;
 import ee.joonasvali.spaceshooter.core.game.player.Rocket;
 import ee.joonasvali.spaceshooter.core.game.weapons.WeaponProjectile;
 import ee.joonasvali.spaceshooter.core.game.weapons.WeaponProjectileManager;
@@ -101,6 +102,9 @@ public class GameStateManager implements Disposable, GameStepListener {
 
 
   private void doEnemyFire() {
+    if (formation.hasUnbornLeft()) {
+      return;
+    }
     List<Enemy> enemies = formation.getEnemies();
     if (enemies.isEmpty()) {
       return;
@@ -162,33 +166,32 @@ public class GameStateManager implements Disposable, GameStepListener {
 
     List<Enemy> dead = new ArrayList<>();
 
-    if (!formation.hasUnbornLeft()) {
-      for (Enemy e : formation.getEnemies()) {
-        Optional<WeaponProjectile> m = weaponProjectileManager.projectileCollisionWith(e, e);
-        if (m.isPresent()) {
-          WeaponProjectile projectile = m.get();
-          explosionManager.createExplosion(projectile.getX() - projectile.getWidth() / 2, projectile.getY() - projectile.getHeight() / 2, 1, 1);
-          damageSound.play(0.2f, 1f - (float) Math.random() / 5f, 0f);
-          state.getParticleManager().createParticleEmitter(ParticleEffectManager.HIT, projectile.getX(), projectile.getY(), projectile.getAngle());
+    for (Enemy e : formation.getEnemies()) {
+      Optional<WeaponProjectile> m = weaponProjectileManager.projectileCollisionWith(e, e);
+      if (m.isPresent()) {
+        WeaponProjectile projectile = m.get();
+        explosionManager.createExplosion(projectile.getX() - projectile.getWidth() / 2, projectile.getY() - projectile.getHeight() / 2, 1, 1);
+        damageSound.play(0.2f, 1f - (float) Math.random() / 5f, 0f);
+        state.getParticleManager().createParticleEmitter(ParticleEffectManager.HIT, projectile.getX(), projectile.getY(), projectile.getAngle());
 
-          if (e.decreaseHealthBy(m.get().getDamage())) {
-            createExplosion(e);
-            state.getParticleManager().createParticleEmitter(ParticleEffectManager.EXPLOSION, e.getX() + e.getWidth() / 2, e.getY() + e.getHeight() / 2, 0);
-            dead.add(e);
+        if (e.decreaseHealthBy(m.get().getDamage())) {
+          createExplosion(e);
+          state.getParticleManager().createParticleEmitter(ParticleEffectManager.EXPLOSION, e.getX() + e.getWidth() / 2, e.getY() + e.getHeight() / 2, 0);
+          dead.add(e);
 
-            // Add score only if player shot the projectile.
-            if (projectile.getAuthor() instanceof Rocket) {
-              score.addAndGet(e.getBounty());
-            }
-
-            Sound sound = hitSounds[(int) (Math.random() * hitSounds.length)];
-            sound.play(0.5f);
-
+          // Add score only if player shot the projectile.
+          if (projectile.getAuthor() instanceof Rocket) {
+            score.addAndGet(e.getBounty());
           }
-          weaponProjectileManager.removeProjectile(m.get());
+
+          Sound sound = hitSounds[(int) (Math.random() * hitSounds.length)];
+          sound.play(0.5f);
+
         }
+        weaponProjectileManager.removeProjectile(m.get());
       }
     }
+
 
     formation.removeAll(dead);
 
@@ -271,7 +274,7 @@ public class GameStateManager implements Disposable, GameStepListener {
   }
 
   private void setLoadNextLevelAfterDelay(GameSpeedController.Control control) {
-    state.getUi().displayText("LEVEL " + levels.getNextLevel(), 100, 100);
+    state.getUi().displayText(levels.getLevelName(), 100, 100);
     control.skipNextSteps(STEPS_TO_SKIP_BEFORE_NEXT_LEVEL);
     loadNextLevelInProgress = true;
   }

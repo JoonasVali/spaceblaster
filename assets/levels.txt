@@ -1,0 +1,24 @@
+#This is where the game reads the levels. It's a simple level editor.
+#Use values 'a' 'b' 'c' to mark enemies, or '0' for empty space
+#You can add levels. 
+#The label before the formation marks what is displayed in game for a level.
+
+LEVEL 1
+bbbbbbbb
+00000000
+aaaaaaaa
+aaaaaaaa
+aaaaaaaa
+
+LEVEL 2
+ccccccccc
+baaaaaaab
+baaaaaaab
+baaaaaaab
+baaaaaaab
+
+LEVEL 3
+ccccccccc
+ccccccccc
+ccccccccc
+
