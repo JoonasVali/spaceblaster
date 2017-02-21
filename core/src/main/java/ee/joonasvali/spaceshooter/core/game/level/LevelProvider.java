@@ -33,7 +33,7 @@ public class LevelProvider implements Disposable {
 
   private final Map<Enemy, Sprite> spriteMap = new IdentityHashMap<>();
 
-  private int activeLevel = 0;
+  private int nextLevel = 0;
   private final int maxLevel;
 
   private final float worldWidth;
@@ -59,10 +59,10 @@ public class LevelProvider implements Disposable {
   public EnemyFormation nextLevel() {
     spriteMap.clear();
     EnemyFormation formation;
-    LevelDescriptor levelDesc = reader.getLevel(activeLevel);
+    LevelDescriptor levelDesc = reader.getLevel(nextLevel);
     log.info("loading level " + levelDesc.getName());
     formation = createLevel(levelDesc);
-    activeLevel++;
+    nextLevel++;
     return formation;
   }
 
@@ -124,12 +124,12 @@ public class LevelProvider implements Disposable {
   }
 
   public boolean hasNextLevel() {
-    return activeLevel < maxLevel;
+    return nextLevel < maxLevel;
   }
 
-  public String getLevelName() {
+  public String getNextLevelName() {
     if (hasNextLevel()) {
-      return reader.getLevel(activeLevel).getName();
+      return reader.getLevel(nextLevel).getName();
     }
     return null;
   }
