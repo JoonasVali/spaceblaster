@@ -31,7 +31,7 @@ public class TimedText implements GameStepListener {
     this.timeToDisplay = timeToDisplay;
     this.timeToFade = timeToFade;
     this.font = font;
-    this.text = text;
+    this.text = String.valueOf(text);
     this.fades = fades;
     this.screenHeight = screenHeight;
     this.screenWidth = screenWidth;

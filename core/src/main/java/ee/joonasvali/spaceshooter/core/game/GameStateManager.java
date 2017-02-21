@@ -274,7 +274,7 @@ public class GameStateManager implements Disposable, GameStepListener {
   }
 
   private void setLoadNextLevelAfterDelay(GameSpeedController.Control control) {
-    state.getUi().displayText(levels.getLevelName(), 100, 100);
+    state.getUi().displayText(levels.getNextLevelName(), 100, 100);
     control.skipNextSteps(STEPS_TO_SKIP_BEFORE_NEXT_LEVEL);
     loadNextLevelInProgress = true;
   }
