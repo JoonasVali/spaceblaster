@@ -12,6 +12,7 @@ syntax: regexp
 ^etc/priv.der$
 ^.settings/org.eclipse.jdt.core.prefs$
 ^.*iml$
+^personal$
 ^.*psd$
 syntax: regexp
 ^\.settings/org\.maven\.ide\.eclipse\.prefs$

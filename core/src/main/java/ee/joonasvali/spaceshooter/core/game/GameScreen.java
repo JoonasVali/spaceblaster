@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Disposable;
@@ -28,7 +29,6 @@ public class GameScreen implements Screen, Disposable {
   private static final int FPS = 60;
   private static final int INITIAL_LIVES = 3;
   public static final float MUSIC_VOLUME = 0.3f;
-  public static final String LEVELS_TXT = "levels.txt";
 
   private Logger log = LoggerFactory.getLogger(GameScreen.class);
 
@@ -46,7 +46,7 @@ public class GameScreen implements Screen, Disposable {
   private final GameState state;
   private final Music music;
 
-  public GameScreen(SpaceShooterGame game) {
+  public GameScreen(SpaceShooterGame game, FileHandle level) {
     this.game = game;
 
     this.music = Gdx.audio.newMusic(Gdx.files.internal("sound/LB13_Nasdaq_byBobbyYarsulik.mp3"));
@@ -73,7 +73,7 @@ public class GameScreen implements Screen, Disposable {
     inputMultiplexer.addProcessor(inputHandler);
 
     state.setEnemies(new GameStateManager(WORLD_WIDTH, WORLD_HEIGHT * (h / w), state));
-    LevelReader reader = new LevelReader(Gdx.files.internal(LEVELS_TXT));
+    LevelReader reader = new LevelReader(level);
     this.levelProvider = new LevelProvider(reader, WORLD_WIDTH, WORLD_HEIGHT * (h / w));
     state.getEnemies().setLevelProvider(levelProvider);
 
