@@ -3,8 +3,10 @@ package ee.joonasvali.spaceshooter.core;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import ee.joonasvali.spaceshooter.core.game.GameScreen;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +40,7 @@ public class SpaceShooterGame extends Game {
   }
 
   public void gotoMainMenu() {
-    setScreen(new MainMenuScreen(this, viewportWidth, viewportHeight));
+    setScreen(new MainMenuScreen(this, new MainMenuContent(this), viewportWidth, viewportHeight));
   }
 
   @Override
@@ -87,6 +89,14 @@ public class SpaceShooterGame extends Game {
 
   public void setExit() {
     exit = true;
+  }
+
+  public void launchGame(FileHandle level) {
+    setScreen(new GameScreen(this, level));
+  }
+
+  public void setChooseLevelsScreen() {
+    setScreen(new MainMenuScreen(this, new ChooseLevelsContent(this), viewportWidth, viewportHeight));
   }
 
   @Override

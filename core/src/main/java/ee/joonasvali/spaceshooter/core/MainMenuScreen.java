@@ -42,22 +42,17 @@ public class MainMenuScreen implements Screen {
   private Sprite background;
   private float width;
   private float height;
-  private TextButton startButton;
-  private TextButton creditsButton;
-  private TextButton exitButton;
   private InputMultiplexer inputMultiplexer = new InputMultiplexer();
   private InputHandler inputHandler = new InputHandler();
   private float deltaCount = 0;
   private final BitmapFont titleFont;
   private final BitmapFont normalFont;
-  private final FileHandle level;
 
 
-  public MainMenuScreen(SpaceShooterGame spaceShooterGame, float viewportWidth, float viewportHeight) {
+  public MainMenuScreen(SpaceShooterGame spaceShooterGame, MenuContent content, float viewportWidth, float viewportHeight) {
     this.game = spaceShooterGame;
     this.titleFont = spaceShooterGame.getFontFactory().createTitlefont();
     this.normalFont = spaceShooterGame.getFontFactory().createNormalfont();
-    this.level = Gdx.files.local("../levels/default.level");
 
     camera = new OrthographicCamera();
     textCamera = new OrthographicCamera();
@@ -77,49 +72,17 @@ public class MainMenuScreen implements Screen {
     skin.addRegions(new TextureAtlas("skin/skin.atlas"));
     skin.load(Gdx.files.internal("skin/skin.json"));
 
-
+    inputMultiplexer.addProcessor(inputHandler);
+    inputMultiplexer.addProcessor(stage);
 
     Table table = new Table();
     table.setFillParent(true);
 
-    startButton = new TextButton("Start game", skin);
-    startButton.addListener(new ClickListener() {
-      @Override
-      public void clicked(InputEvent event, float x, float y) {
-        goToGameScreen();
-      }
-    });
-    creditsButton = new TextButton("Credits", skin);
-    creditsButton.addListener(new ClickListener() {
-      @Override
-      public void clicked(InputEvent event, float x, float y) {
-        game.gotoCredits();
-      }
-    });
-    exitButton = new TextButton("Exit", skin);
-    exitButton.addListener(new ClickListener() {
-      @Override
-      public void clicked(InputEvent event, float x, float y) {
-        game.setExit();
-      }
-    });
-
-    table.add(startButton).width(200).height(50).pad(10);
-    table.row();
-    table.add(creditsButton).width(200).height(50).pad(10);
-    table.row();
-    table.add(exitButton).width(200).height(50).pad(10);
+    content.fill(table, skin, inputHandler);
 
     stage.addActor(table);
 
-
-    inputMultiplexer.addProcessor(inputHandler);
-    inputMultiplexer.addProcessor(stage);
     Gdx.input.setInputProcessor(inputMultiplexer);
-
-    inputHandler.addKeyBinding(Input.Keys.ESCAPE, game::setExit);
-    inputHandler.addKeyBinding(Input.Keys.SPACE, this::goToGameScreen);
-    inputHandler.addKeyBinding(Input.Keys.ENTER, this::goToGameScreen);
   }
 
   @Override
@@ -152,14 +115,6 @@ public class MainMenuScreen implements Screen {
 
     stage.act(Gdx.graphics.getDeltaTime());
     stage.draw();
-  }
-
-  private void goToGameScreen() {
-    launchGame(level);
-  }
-
-  private void launchGame(FileHandle level) {
-    game.setScreen(new GameScreen(game, level));
   }
 
   @Override
