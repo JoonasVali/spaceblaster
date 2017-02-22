@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -49,12 +50,14 @@ public class MainMenuScreen implements Screen {
   private float deltaCount = 0;
   private final BitmapFont titleFont;
   private final BitmapFont normalFont;
+  private final FileHandle level;
 
 
   public MainMenuScreen(SpaceShooterGame spaceShooterGame, float viewportWidth, float viewportHeight) {
     this.game = spaceShooterGame;
     this.titleFont = spaceShooterGame.getFontFactory().createTitlefont();
     this.normalFont = spaceShooterGame.getFontFactory().createNormalfont();
+    this.level = Gdx.files.local("../levels/default.level");
 
     camera = new OrthographicCamera();
     textCamera = new OrthographicCamera();
@@ -152,7 +155,11 @@ public class MainMenuScreen implements Screen {
   }
 
   private void goToGameScreen() {
-    game.setScreen(new GameScreen(game));
+    launchGame(level);
+  }
+
+  private void launchGame(FileHandle level) {
+    game.setScreen(new GameScreen(game, level));
   }
 
   @Override

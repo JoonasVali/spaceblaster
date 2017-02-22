@@ -12,9 +12,9 @@ import java.util.List;
  * @author Joonas Vali February 2017
  */
 public class LevelReader {
-  List<Level> levels = new ArrayList<>();
-  public LevelReader (FileHandle file) {
-    String[] lines = file.readString().split("\\r?\\n");
+  private List<Level> levels = new ArrayList<>();
+  public LevelReader (FileHandle handle) {
+    String[] lines = handle.readString().split("\\r?\\n");
 
     LinkedList<String> currentLevel = new LinkedList<>();
     boolean readingLevel = false;
