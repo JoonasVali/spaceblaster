@@ -1,23 +1,17 @@
 package ee.joonasvali.spaceshooter.core;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import ee.joonasvali.spaceshooter.core.game.GameScreen;
 import ee.joonasvali.spaceshooter.core.game.InputHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +21,7 @@ import org.slf4j.LoggerFactory;
  */
 public class MainMenuScreen implements Screen {
 
-  private static final String START_MESSAGE = "Press space to start";
+  private static final String CREDIT_MESSAGE = "Joonas Vali 2017";
   private static final String GAME_TITLE = "Space Blaster";
 
   private final Logger log = LoggerFactory.getLogger(MainMenuScreen.class);
@@ -44,15 +38,15 @@ public class MainMenuScreen implements Screen {
   private float height;
   private InputMultiplexer inputMultiplexer = new InputMultiplexer();
   private InputHandler inputHandler = new InputHandler();
-  private float deltaCount = 0;
+
   private final BitmapFont titleFont;
-  private final BitmapFont normalFont;
+  private final BitmapFont creditFont;
 
 
   public MainMenuScreen(SpaceShooterGame spaceShooterGame, MenuContent content, float viewportWidth, float viewportHeight) {
     this.game = spaceShooterGame;
     this.titleFont = spaceShooterGame.getFontFactory().createTitlefont();
-    this.normalFont = spaceShooterGame.getFontFactory().createNormalfont();
+    this.creditFont = spaceShooterGame.getFontFactory().createCreditsFontSmall();
 
     camera = new OrthographicCamera();
     textCamera = new OrthographicCamera();
@@ -87,7 +81,6 @@ public class MainMenuScreen implements Screen {
 
   @Override
   public void render(float delta) {
-    deltaCount += delta;
     Gdx.gl.glClearColor(0.1f, 0.1f, 0.2f, 1);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -106,10 +99,8 @@ public class MainMenuScreen implements Screen {
     float fwidth = Util.getTextWidth(GAME_TITLE, titleFont);
     titleFont.draw(game.getBatch(), GAME_TITLE, width / 2  - fwidth / 2, height / 1.4f);
 
-    if (((int)deltaCount) % 2 == 0) {
-      fwidth = Util.getTextWidth(START_MESSAGE, normalFont);
-      normalFont.draw(game.getBatch(), START_MESSAGE, width / 2 - fwidth / 2, 60);
-    }
+    fwidth = Util.getTextWidth(CREDIT_MESSAGE, creditFont);
+    creditFont.draw(game.getBatch(), CREDIT_MESSAGE, width / 2 - fwidth / 2, 30);
 
     game.getBatch().end();
 
@@ -147,7 +138,7 @@ public class MainMenuScreen implements Screen {
     log.info("MainMenuScreen disposed.");
     background.getTexture().dispose();
     skin.remove("default", BitmapFont.class);
-    normalFont.dispose();
+    creditFont.dispose();
     titleFont.dispose();
     skin.dispose();
     stage.dispose();
