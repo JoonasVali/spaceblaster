@@ -1,0 +1,5 @@
+Description of issues not yet fixed or features planned to be implemented.
+
+* Menu of levels doesn't extend. (Adding too many level files can have unexpected results.)
+
+*
