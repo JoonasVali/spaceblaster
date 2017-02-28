@@ -29,7 +29,9 @@ public class ChooseLevelsContent implements MenuContent {
     FileHandle[] files = Gdx.files.local(LEVELS_FOLDER).list("level");
 
     for (final FileHandle levelFile : files) {
-      TextButton normal = new TextButton(levelFile.nameWithoutExtension(), skin);
+      String name = levelFile.nameWithoutExtension();
+      name = Character.toUpperCase(name.charAt(0)) + name.substring(1);
+      TextButton normal = new TextButton(name, skin);
       normal.addListener(new ClickListener() {
         @Override
         public void clicked(InputEvent event, float x, float y) {
