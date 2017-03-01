@@ -14,6 +14,7 @@ public class SpaceShooterGame extends Game {
 
   private static final Logger log = LoggerFactory.getLogger(SpaceShooterGame.class);
 
+  private SoundManager soundManager;
   private SpriteBatch batch;
   private float elapsed;
 
@@ -24,10 +25,11 @@ public class SpaceShooterGame extends Game {
 
   private FontFactory fontFactory;
 
-
   @Override
   public void create() {
     log.info("Starting game");
+
+    this.soundManager = new SoundManager();
 
     batch = new SpriteBatch();
     fontFactory = new FontFactory();
@@ -36,7 +38,12 @@ public class SpaceShooterGame extends Game {
     float h = Gdx.graphics.getHeight();
     this.viewportWidth = 100;
     this.viewportHeight = 100 * (h / w);
+
     gotoMainMenu();
+  }
+
+  public SoundManager getSoundManager() {
+    return soundManager;
   }
 
   public void gotoMainMenu() {
@@ -79,6 +86,7 @@ public class SpaceShooterGame extends Game {
   @Override
   public void dispose() {
     log.info("SpaceShooterGame disposed.");
+    soundManager.dispose();
     batch.dispose();
   }
 

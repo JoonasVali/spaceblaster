@@ -1,6 +1,8 @@
 package ee.joonasvali.spaceshooter.core.game;
 
+import com.badlogic.gdx.audio.Sound;
 import ee.joonasvali.spaceshooter.core.ParticleEffectManager;
+import ee.joonasvali.spaceshooter.core.SoundManager;
 import ee.joonasvali.spaceshooter.core.game.player.Rocket;
 import ee.joonasvali.spaceshooter.core.game.weapons.WeaponProjectileManager;
 
@@ -17,10 +19,19 @@ public class GameState {
   private WeaponProjectileManager weaponProjectileManager;
   private ExplosionManager explosionManager;
   private ParticleEffectManager particleManager;
+  private SoundManager soundManager;
   private AtomicInteger score;
   private AtomicInteger lives;
   private boolean victory;
   private boolean defeat;
+
+  public SoundManager getSoundManager() {
+    return soundManager;
+  }
+
+  public void setSoundManager(SoundManager soundManager) {
+    this.soundManager = soundManager;
+  }
 
   public UIOverlay getUi() {
     return ui;
@@ -109,4 +120,6 @@ public class GameState {
   public void setParticleManager(ParticleEffectManager particleManager) {
     this.particleManager = particleManager;
   }
+
+
 }

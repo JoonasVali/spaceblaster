@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Disposable;
 import ee.joonasvali.spaceshooter.core.game.GameSpeedController;
+import ee.joonasvali.spaceshooter.core.game.GameState;
 import ee.joonasvali.spaceshooter.core.game.GameStepListener;
 
 import java.util.ArrayList;
@@ -25,12 +26,12 @@ public class WeaponProjectileManager implements Disposable, GameStepListener {
   private Map<Class, ProjectileProvider> providers = new HashMap<>();
 
 
-  public WeaponProjectileManager(float worldWidth, float worldHeight) {
+  public WeaponProjectileManager(GameState state, float worldWidth, float worldHeight) {
     this.worldWidth = worldWidth;
     this.worldHeight = worldHeight;
-    this.providers.put(Missile.class, new MissileProvider());
-    this.providers.put(GaussGunBullet.class, new GaussGunBulletProvider());
-    this.providers.put(CannonBullet.class, new CannonBulletProvider());
+    this.providers.put(Missile.class, new MissileProvider(state));
+    this.providers.put(GaussGunBullet.class, new GaussGunBulletProvider(state));
+    this.providers.put(CannonBullet.class, new CannonBulletProvider(state));
   }
 
   private void moveAndRemoveProjectiles() {

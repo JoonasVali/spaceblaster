@@ -28,6 +28,7 @@ public class MainMenuContent implements MenuContent {
     startButton.addListener(new ClickListener() {
       @Override
       public void clicked(InputEvent event, float x, float y) {
+        playClick();
         proceedToGameScreen();
       }
     });
@@ -35,6 +36,7 @@ public class MainMenuContent implements MenuContent {
     creditsButton.addListener(new ClickListener() {
       @Override
       public void clicked(InputEvent event, float x, float y) {
+        playClick();
         game.gotoCredits();
       }
     });
@@ -42,6 +44,7 @@ public class MainMenuContent implements MenuContent {
     exitButton.addListener(new ClickListener() {
       @Override
       public void clicked(InputEvent event, float x, float y) {
+        playClick();
         game.setExit();
       }
     });
@@ -55,6 +58,10 @@ public class MainMenuContent implements MenuContent {
     inputHandler.addKeyBinding(Input.Keys.ESCAPE, game::setExit);
     inputHandler.addKeyBinding(Input.Keys.SPACE, this::proceedToGameScreen);
     inputHandler.addKeyBinding(Input.Keys.ENTER, this::proceedToGameScreen);
+  }
+
+  private void playClick() {
+    game.getSoundManager().getMenuClickSound().play(0.5f);
   }
 
   private void proceedToGameScreen() {

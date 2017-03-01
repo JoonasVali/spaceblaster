@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Pool;
+import ee.joonasvali.spaceshooter.core.game.GameState;
 
 /**
  * @author Joonas Vali January 2017
@@ -20,10 +21,10 @@ public class CannonBulletProvider implements ProjectileProvider<CannonBullet>, D
   private final Sprite sprite;
   private final Sound sound;
 
-  public CannonBulletProvider() {
+  public CannonBulletProvider(GameState state) {
     this.texture = new Texture(Gdx.files.internal("cannon.png"));
     this.sprite = new Sprite(texture);
-    this.sound = Gdx.audio.newSound(Gdx.files.internal("sound/cannon.mp3"));
+    this.sound = state.getSoundManager().getCannonSound();
   }
 
 
@@ -68,7 +69,6 @@ public class CannonBulletProvider implements ProjectileProvider<CannonBullet>, D
 
   @Override
   public void dispose() {
-    sound.dispose();
     texture.dispose();
   }
 }

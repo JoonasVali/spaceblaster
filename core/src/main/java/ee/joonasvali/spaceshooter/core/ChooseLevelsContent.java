@@ -35,6 +35,7 @@ public class ChooseLevelsContent implements MenuContent {
       normal.addListener(new ClickListener() {
         @Override
         public void clicked(InputEvent event, float x, float y) {
+          playClick();
           game.launchGame(levelFile);
         }
       });
@@ -47,6 +48,7 @@ public class ChooseLevelsContent implements MenuContent {
     back.addListener(new ClickListener() {
       @Override
       public void clicked(InputEvent event, float x, float y) {
+        playClick();
         game.gotoMainMenu();
       }
     });
@@ -54,6 +56,13 @@ public class ChooseLevelsContent implements MenuContent {
     table.add(back).width(WIDTH).height(HEIGHT).pad(PADDING);
     table.row();
 
-    inputHandler.addKeyBinding(Input.Keys.ESCAPE, game::gotoMainMenu);
+    inputHandler.addKeyBinding(Input.Keys.ESCAPE, () -> {
+      playClick();
+      game.gotoMainMenu();
+    });
+  }
+
+  private void playClick() {
+    game.getSoundManager().getMenuClickSound().play(0.5f);
   }
 }
