@@ -49,12 +49,13 @@ public class GameScreen implements Screen, Disposable {
   public GameScreen(SpaceShooterGame game, FileHandle level) {
     this.game = game;
 
-    this.music = Gdx.audio.newMusic(Gdx.files.internal("sound/LB13_Nasdaq_byBobbyYarsulik.mp3"));
+    this.music = game.getSoundManager().createMusic();
     this.music.setVolume(MUSIC_VOLUME);
     this.music.setLooping(true);
 
     this.state = new GameState();
     state.setBackground(new Background(WORLD_WIDTH, WORLD_HEIGHT));
+    state.setSoundManager(game.getSoundManager());
     state.setScore(new AtomicInteger());
     state.setLives(new AtomicInteger(INITIAL_LIVES));
     state.setParticleManager(new ParticleEffectManager());
@@ -65,7 +66,7 @@ public class GameScreen implements Screen, Disposable {
     float h = Gdx.graphics.getHeight();
 
     state.setExplosionManager(new ExplosionManager());
-    state.setWeaponProjectileManager(new WeaponProjectileManager(WORLD_WIDTH, WORLD_HEIGHT * (h / w)));
+    state.setWeaponProjectileManager(new WeaponProjectileManager(state, WORLD_WIDTH, WORLD_HEIGHT * (h / w)));
 
     state.setRocket(new Rocket(state));
 

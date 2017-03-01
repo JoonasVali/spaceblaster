@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Pool;
+import ee.joonasvali.spaceshooter.core.game.GameState;
 
 /**
  * @author Joonas Vali January 2017
@@ -20,10 +21,10 @@ public class GaussGunBulletProvider implements ProjectileProvider<GaussGunBullet
   private final Sprite sprite;
   private final Sound sound;
 
-  public GaussGunBulletProvider() {
+  public GaussGunBulletProvider(GameState state) {
     this.texture = new Texture(Gdx.files.internal("gauss.png"));
     this.sprite = new Sprite(texture);
-    this.sound = Gdx.audio.newSound(Gdx.files.internal("sound/gauss.mp3"));
+    this.sound = state.getSoundManager().getGaussSound();
   }
 
 
@@ -68,7 +69,6 @@ public class GaussGunBulletProvider implements ProjectileProvider<GaussGunBullet
 
   @Override
   public void dispose() {
-    sound.dispose();
     texture.dispose();
   }
 }

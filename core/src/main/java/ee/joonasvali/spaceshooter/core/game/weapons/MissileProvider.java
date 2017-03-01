@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Pool;
+import ee.joonasvali.spaceshooter.core.game.GameState;
 
 /**
  * @author Joonas Vali January 2017
@@ -24,17 +25,16 @@ public class MissileProvider implements ProjectileProvider<Missile>, Disposable 
 
   private final Texture missileTexture;
   private final Sprite missileSprite;
-
   private final Sound[] sounds;
 
 
-  public MissileProvider() {
+  public MissileProvider(GameState state) {
     this.missileTexture = new Texture(Gdx.files.internal("missile.png"));
     this.missileSprite = new Sprite(missileTexture, MISSILE_TEXTURE_X, MISSILE_TEXTURE_Y, MISSILE_TEXTURE_WIDTH, MISSILE_TEXTURE_HEIGHT);
     this.sounds = new Sound[] {
-        Gdx.audio.newSound(Gdx.files.internal("sound/missile.mp3")),
-        Gdx.audio.newSound(Gdx.files.internal("sound/missile2.mp3")),
-        Gdx.audio.newSound(Gdx.files.internal("sound/missile3.mp3"))
+        state.getSoundManager().getMissileSound(),
+        state.getSoundManager().getMissileSound2(),
+        state.getSoundManager().getMissileSound3(),
     };
   }
 
@@ -80,9 +80,6 @@ public class MissileProvider implements ProjectileProvider<Missile>, Disposable 
 
   @Override
   public void dispose() {
-    for (Sound sound : sounds) {
-      sound.dispose();
-    }
     missileTexture.dispose();
   }
 

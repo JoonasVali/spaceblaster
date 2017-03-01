@@ -63,11 +63,11 @@ public class GameStateManager implements Disposable, GameStepListener {
 
     this.fireTrigger = new TriggerCounter(this::doEnemyFire, FIRE_FREQUENCY, true);
     this.hitSounds = new Sound[] {
-        Gdx.audio.newSound(Gdx.files.internal("sound/hit.mp3")),
-        Gdx.audio.newSound(Gdx.files.internal("sound/hit2.mp3"))
+        state.getSoundManager().getHitSound(),
+        state.getSoundManager().getHit2Sound()
     };
 
-    this.damageSound =  Gdx.audio.newSound(Gdx.files.internal("sound/damage.mp3"));
+    this.damageSound = state.getSoundManager().getDamageSound();
 
   }
 
@@ -122,10 +122,7 @@ public class GameStateManager implements Disposable, GameStepListener {
 
   @Override
   public void dispose() {
-    for (Sound hitSound : hitSounds) {
-      hitSound.dispose();
-    }
-    damageSound.dispose();
+
   }
 
   private ParticleEffectManager.PositionProvider getPositionProviderOf(Enemy e) {

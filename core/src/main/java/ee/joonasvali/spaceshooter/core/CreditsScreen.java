@@ -118,6 +118,10 @@ public class CreditsScreen implements Screen {
 
   }
 
+  private void playClick() {
+    game.getSoundManager().getMenuClickSound().play(0.5f);
+  }
+
   @Override
   public void render(float delta) {
     Gdx.gl.glClearColor(0.1f, 0.1f, 0.2f, 1);
@@ -146,6 +150,7 @@ public class CreditsScreen implements Screen {
   }
 
   private void goToMainMenuScreen() {
+    playClick();
     game.gotoMainMenu();
   }
 

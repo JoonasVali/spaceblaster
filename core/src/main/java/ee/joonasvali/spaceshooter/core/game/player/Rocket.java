@@ -51,8 +51,8 @@ public class Rocket implements Disposable, GameStepListener {
     texture = new Texture(Gdx.files.internal("rocket.png"));
 
     this.hitSounds = new Sound[] {
-        Gdx.audio.newSound(Gdx.files.internal("sound/hit.mp3")),
-        Gdx.audio.newSound(Gdx.files.internal("sound/hit2.mp3"))
+        state.getSoundManager().getHitSound(),
+        state.getSoundManager().getHit2Sound()
     };
 
     rectangle = new Rectangle(0, 0, ROCKET_SIZE, ROCKET_SIZE);
@@ -64,9 +64,6 @@ public class Rocket implements Disposable, GameStepListener {
 
   @Override
   public void dispose() {
-    for (Sound hitSound : hitSounds) {
-      hitSound.dispose();
-    }
     texture.dispose();
   }
 
