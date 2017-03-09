@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.Disposable;
 import ee.joonasvali.spaceshooter.core.ParticleEffectManager;
 import ee.joonasvali.spaceshooter.core.SpaceShooterGame;
 import ee.joonasvali.spaceshooter.core.Util;
+import ee.joonasvali.spaceshooter.core.game.difficulty.GameSettings;
 import ee.joonasvali.spaceshooter.core.game.level.LevelProvider;
 import ee.joonasvali.spaceshooter.core.game.level.LevelReader;
 import ee.joonasvali.spaceshooter.core.game.player.Rocket;
@@ -46,7 +47,8 @@ public class GameScreen implements Screen, Disposable {
   private final GameState state;
   private final Music music;
 
-  public GameScreen(SpaceShooterGame game, FileHandle level) {
+
+  public GameScreen(SpaceShooterGame game, FileHandle level, GameSettings gameSettings) {
     this.game = game;
 
     this.music = game.getSoundManager().createMusic();
@@ -54,6 +56,7 @@ public class GameScreen implements Screen, Disposable {
     this.music.setLooping(true);
 
     this.state = new GameState();
+    state.setGameSettings(gameSettings);
     state.setBackground(new Background(WORLD_WIDTH, WORLD_HEIGHT));
     state.setSoundManager(game.getSoundManager());
     state.setScore(new AtomicInteger());
