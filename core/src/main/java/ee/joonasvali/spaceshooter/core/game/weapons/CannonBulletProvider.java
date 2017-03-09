@@ -51,6 +51,11 @@ public class CannonBulletProvider implements ProjectileProvider<CannonBullet>, D
   }
 
   @Override
+  public int getCoolDown() {
+    return 5;
+  }
+
+  @Override
   public CannonBullet obtain() {
     CannonBullet projectile = missilePool.obtain();
     projectile.setSpeed(START_SPEED);

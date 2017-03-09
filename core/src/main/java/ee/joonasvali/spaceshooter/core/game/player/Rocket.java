@@ -12,9 +12,8 @@ import ee.joonasvali.spaceshooter.core.game.ExplosionManager;
 import ee.joonasvali.spaceshooter.core.game.GameSpeedController;
 import ee.joonasvali.spaceshooter.core.game.GameState;
 import ee.joonasvali.spaceshooter.core.game.GameStepListener;
-import ee.joonasvali.spaceshooter.core.game.RebirthEffect;
 import ee.joonasvali.spaceshooter.core.game.weapons.CannonBullet;
-import ee.joonasvali.spaceshooter.core.game.weapons.Missile;
+import ee.joonasvali.spaceshooter.core.game.weapons.CannonBulletProvider;
 import ee.joonasvali.spaceshooter.core.game.weapons.WeaponProjectile;
 import ee.joonasvali.spaceshooter.core.game.weapons.WeaponProjectileManager;
 
@@ -39,6 +38,7 @@ public class Rocket implements Disposable, GameStepListener {
   private Effect effect;
   private boolean alive;
   private int countDownToRebirth;
+  private int weaponCooldown;
 
   private final Sound[] hitSounds;
   private float xTarget;
@@ -99,6 +99,7 @@ public class Rocket implements Disposable, GameStepListener {
 
   @Override
   public void onStepAction(GameSpeedController.Control control) {
+    cooldown();
     if (effect != null) {
       effect.onStepAction(control);
       if (!effect.isActive()) {
@@ -130,18 +131,25 @@ public class Rocket implements Disposable, GameStepListener {
     }
   }
 
+  private void cooldown() {
+    if (weaponCooldown > 0) {
+      weaponCooldown--;
+    }
+  }
+
   private boolean isInvincible() {
     return effect instanceof RebirthEffect;
   }
 
   public void doFire() {
-    if (!alive) {
+    if (!alive || weaponCooldown > 0) {
       return;
     }
     this.weaponProjectileManager.createProjectileAt(CannonBullet.class,
         this,this.getX() + Rocket.ROCKET_SIZE / 2, this.getY() + Rocket.ROCKET_SIZE / 2,
         (float) Math.random() * 10 - 5
     );
+    this.weaponCooldown = weaponProjectileManager.getCooldown(CannonBullet.class);
   }
 
   private void rebirth() {
