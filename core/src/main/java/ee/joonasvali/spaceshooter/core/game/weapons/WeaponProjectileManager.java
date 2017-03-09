@@ -101,4 +101,12 @@ public class WeaponProjectileManager implements Disposable, GameStepListener {
   public void onStepEffect() {
 
   }
+
+  public int getCooldown(Class<? extends WeaponProjectile> projectileClass) {
+    ProjectileProvider provider = providers.get(projectileClass);
+    if (provider != null) {
+      return provider.getCoolDown();
+    }
+    return 0;
+  }
 }

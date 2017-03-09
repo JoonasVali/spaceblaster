@@ -51,6 +51,11 @@ public class GaussGunBulletProvider implements ProjectileProvider<GaussGunBullet
   }
 
   @Override
+  public int getCoolDown() {
+    return 60;
+  }
+
+  @Override
   public GaussGunBullet obtain() {
     GaussGunBullet projectile = missilePool.obtain();
     projectile.setSpeed(START_SPEED);

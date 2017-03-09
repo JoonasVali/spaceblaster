@@ -62,6 +62,11 @@ public class MissileProvider implements ProjectileProvider<Missile>, Disposable 
   }
 
   @Override
+  public int getCoolDown() {
+    return 40;
+  }
+
+  @Override
   public Missile obtain() {
     Missile projectile = missilePool.obtain();
     projectile.setSpeed(MISSILE_START_SPEED);

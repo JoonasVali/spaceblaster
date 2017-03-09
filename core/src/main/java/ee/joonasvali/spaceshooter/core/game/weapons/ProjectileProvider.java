@@ -11,4 +11,5 @@ public interface ProjectileProvider<T extends WeaponProjectile> {
   void free(WeaponProjectile projectile);
   void draw(SpriteBatch batch, WeaponProjectile projectile);
   Sound getSound();
+  int getCoolDown();
 }
