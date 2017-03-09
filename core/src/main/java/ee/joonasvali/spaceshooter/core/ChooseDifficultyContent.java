@@ -1,6 +1,5 @@
 package ee.joonasvali.spaceshooter.core;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -12,45 +11,42 @@ import ee.joonasvali.spaceshooter.core.game.InputHandler;
 import ee.joonasvali.spaceshooter.core.game.difficulty.DifficultyLevel;
 
 /**
- * @author Joonas Vali February 2017
+ * @author Joonas Vali March 2017
  */
-public class ChooseLevelsContent implements MenuContent {
+public class ChooseDifficultyContent implements MenuContent {
   private static final int WIDTH = 200;
   private static final int HEIGHT = 50;
   private static final int PADDING = 10;
-  public static final String LEVELS_FOLDER = "../levels";
-  private SpaceShooterGame game;
+  private final SpaceShooterGame game;
+  private final FileHandle levelFile;
 
-  public ChooseLevelsContent(SpaceShooterGame game) {
+  public ChooseDifficultyContent(SpaceShooterGame game, FileHandle levelFile) {
     this.game = game;
+    this.levelFile = levelFile;
   }
 
   @Override
   public void fill(Table table, Skin skin, InputHandler inputHandler) {
-    FileHandle[] files = Gdx.files.local(LEVELS_FOLDER).list("level");
 
-    for (final FileHandle levelFile : files) {
-      String name = levelFile.nameWithoutExtension();
-      name = Character.toUpperCase(name.charAt(0)) + name.substring(1);
-      TextButton normal = new TextButton(name, skin);
-      normal.addListener(new ClickListener() {
+    for (DifficultyLevel level : DifficultyLevel.values()) {
+      TextButton easy = new TextButton(getLabelOfDifficultyLevel(level), skin);
+      easy.addListener(new ClickListener() {
         @Override
         public void clicked(InputEvent event, float x, float y) {
           playClick();
-          game.setChooseDifficultyScreen(levelFile);
+          game.launchGame(levelFile, level);
         }
       });
-      table.add(normal).width(WIDTH).height(HEIGHT).pad(PADDING);
+      table.add(easy).width(WIDTH).height(HEIGHT).pad(PADDING);
       table.row();
     }
 
-
-    TextButton back = new TextButton("Back to menu", skin);
+    TextButton back = new TextButton("Back", skin);
     back.addListener(new ClickListener() {
       @Override
       public void clicked(InputEvent event, float x, float y) {
         playClick();
-        game.gotoMainMenu();
+        game.setChooseLevelsScreen();
       }
     });
     table.row();
@@ -59,8 +55,13 @@ public class ChooseLevelsContent implements MenuContent {
 
     inputHandler.addKeyBinding(Input.Keys.ESCAPE, () -> {
       playClick();
-      game.gotoMainMenu();
+      game.setChooseLevelsScreen();
     });
+  }
+
+  private String getLabelOfDifficultyLevel(DifficultyLevel level) {
+    String lev = level.name().toLowerCase();
+    return Character.toUpperCase(lev.charAt(0)) + lev.substring(1);
   }
 
   private void playClick() {

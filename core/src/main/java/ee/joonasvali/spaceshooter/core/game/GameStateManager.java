@@ -27,8 +27,6 @@ public class GameStateManager implements Disposable, GameStepListener {
   private static final Logger log = LoggerFactory.getLogger(GameStateManager.class);
   private static final float FORMATION_SPEED_INCREASE = 0.02f;
 
-  private static final int FIRE_FREQUENCY = 35;
-
   private static final int FORMATION_DROP = 2;
   private static final float MAX_SPEED = 0.5f;
   public static final int STEPS_TO_SKIP_BEFORE_NEXT_LEVEL = 250;
@@ -61,7 +59,7 @@ public class GameStateManager implements Disposable, GameStepListener {
     this.worldHeight = screenHeight;
     this.state = state;
 
-    this.fireTrigger = new TriggerCounter(this::doEnemyFire, FIRE_FREQUENCY, true);
+    this.fireTrigger = new TriggerCounter(this::doEnemyFire, state.getGameSettings().getEnemyFireFrequency(), true);
     this.hitSounds = new Sound[] {
         state.getSoundManager().getHitSound(),
         state.getSoundManager().getHit2Sound()

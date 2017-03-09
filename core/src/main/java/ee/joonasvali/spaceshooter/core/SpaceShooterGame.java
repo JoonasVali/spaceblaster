@@ -7,6 +7,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import ee.joonasvali.spaceshooter.core.game.GameScreen;
+import ee.joonasvali.spaceshooter.core.game.difficulty.DifficultyLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,12 +100,16 @@ public class SpaceShooterGame extends Game {
     exit = true;
   }
 
-  public void launchGame(FileHandle level) {
-    setScreen(new GameScreen(this, level));
+  public void launchGame(FileHandle level, DifficultyLevel difficultyLevel) {
+    setScreen(new GameScreen(this, level, difficultyLevel.getGameSettings()));
   }
 
   public void setChooseLevelsScreen() {
     setScreen(new MainMenuScreen(this, new ChooseLevelsContent(this), viewportWidth, viewportHeight));
+  }
+
+  public void setChooseDifficultyScreen(FileHandle level) {
+    setScreen(new MainMenuScreen(this, new ChooseDifficultyContent(this, level), viewportWidth, viewportHeight));
   }
 
   @Override

@@ -42,11 +42,14 @@ public class MainMenuScreen implements Screen {
   private final BitmapFont titleFont;
   private final BitmapFont creditFont;
 
+  private final String contentId;
+
 
   public MainMenuScreen(SpaceShooterGame spaceShooterGame, MenuContent content, float viewportWidth, float viewportHeight) {
     this.game = spaceShooterGame;
     this.titleFont = spaceShooterGame.getFontFactory().createTitlefont();
     this.creditFont = spaceShooterGame.getFontFactory().createCreditsFontSmall();
+    this.contentId = content.getClass().getCanonicalName();
 
     camera = new OrthographicCamera();
     textCamera = new OrthographicCamera();
@@ -135,7 +138,7 @@ public class MainMenuScreen implements Screen {
 
   @Override
   public void dispose() {
-    log.info("MainMenuScreen disposed.");
+    log.info("MainMenuScreen disposed. (" + contentId + ")");
     background.getTexture().dispose();
     skin.remove("default", BitmapFont.class);
     creditFont.dispose();
