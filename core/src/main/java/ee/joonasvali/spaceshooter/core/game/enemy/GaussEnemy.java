@@ -8,8 +8,8 @@ import ee.joonasvali.spaceshooter.core.game.weapons.GaussGunBullet;
  * @author Joonas Vali February 2017
  */
 public class GaussEnemy extends Enemy implements GameStepListener {
-  public GaussEnemy(int health, int bounty, int x, int y) {
-    super(GaussGunBullet.class, health, bounty, x, y);
+  public GaussEnemy(int health, int bounty, float changeOfPowerup, int x, int y) {
+    super(GaussGunBullet.class, health, bounty, changeOfPowerup, x, y);
   }
 
   @Override

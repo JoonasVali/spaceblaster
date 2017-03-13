@@ -27,6 +27,7 @@ public class GameState {
   private boolean defeat;
   private final int worldWidth;
   private final int worldHeight;
+  private PowerupManager powerupManager;
 
   public GameState(int worldWidth, int worldHeight) {
     this.worldWidth = worldWidth;
@@ -143,5 +144,13 @@ public class GameState {
 
   public int getWorldHeight() {
     return worldHeight;
+  }
+
+  public void setPowerupManager(PowerupManager powerupManager) {
+    this.powerupManager = powerupManager;
+  }
+
+  public PowerupManager getPowerupManager() {
+    return powerupManager;
   }
 }

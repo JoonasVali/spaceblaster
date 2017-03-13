@@ -159,7 +159,7 @@ public class GameStateManager implements Disposable, GameStepListener {
       }
     }
 
-    List<Enemy> dead = new ArrayList<>();
+    List<Enemy> dead = new ArrayList<>(); // TODO, optimize. no point in creating new list every step
 
     for (Enemy e : formation.getEnemies()) {
       Optional<WeaponProjectile> m = weaponProjectileManager.projectileCollisionWith(e, e);
@@ -171,6 +171,7 @@ public class GameStateManager implements Disposable, GameStepListener {
 
         if (e.decreaseHealthBy(m.get().getDamage())) {
           createExplosion(e);
+          createPowerupIfNecessary(e);
           state.getParticleManager().createParticleEmitter(ParticleEffectManager.EXPLOSION, e.getX() + e.getWidth() / 2, e.getY() + e.getHeight() / 2, 0);
           dead.add(e);
 
@@ -209,6 +210,12 @@ public class GameStateManager implements Disposable, GameStepListener {
     }
 
     fireTrigger.countDown();
+  }
+
+  private void createPowerupIfNecessary(Enemy e) {
+    if (Math.random() < e.getChanceOfPowerup()) {
+      state.getPowerupManager().createPowerup(e.getX(), e.getY(), 0.4f);
+    }
   }
 
   private void checkIfNeedToLoadLevel() {

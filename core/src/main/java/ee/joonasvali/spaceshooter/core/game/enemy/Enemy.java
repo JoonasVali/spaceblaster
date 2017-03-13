@@ -17,13 +17,15 @@ public class Enemy extends Rectangle {
   private float offsetY;
   private Class<? extends WeaponProjectile> weapon;
   private boolean born;
+  private float chanceOfPowerup;
 
-  public Enemy(Class<? extends WeaponProjectile> weapon, int health, int bounty, int x, int y) {
+  public Enemy(Class<? extends WeaponProjectile> weapon, int health, int bounty, float chanceOfPowerup, int x, int y) {
     this.weapon = weapon;
     this.bounty = bounty;
     this.matrixPosX = x;
     this.matrixPosY = y;
     this.health = health;
+    this.chanceOfPowerup = chanceOfPowerup;
   }
 
   public float getOffsetX() {
@@ -81,5 +83,9 @@ public class Enemy extends Rectangle {
 
   public void onFire() {
 
+  }
+
+  public float getChanceOfPowerup() {
+    return chanceOfPowerup;
   }
 }
