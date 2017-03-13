@@ -14,10 +14,11 @@ public class Background implements Disposable, GameStepListener {
   private final Sprite mapSprite;
   private int gameStepsCounted = 0;
 
-  public Background(float worldWidth, float worldHeight) {
+  public Background(float renderSize) {
     mapSprite = new Sprite(new Texture(Gdx.files.internal("space.png")));
     mapSprite.setPosition(0, 0);
-    mapSprite.setSize(worldWidth, worldHeight);
+    // Background doesn't need to scale to screen height, so we set its size rectangular
+    mapSprite.setSize(renderSize, renderSize);
   }
 
   @Override

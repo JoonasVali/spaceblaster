@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Joonas Vali January 2017
  */
 public class UIOverlay implements Disposable, GameStepListener {
-  private static final int UNITS = 1000;
+  private static final int TOTAL_WIDTH_UNITS = 1000;
   private static final int LIFE_WIDTH = 20;
   private static final int LIFE_HEIGHT = 20;
   private static final float LIVES_POSITION_X = 0.95f;
@@ -52,7 +52,7 @@ public class UIOverlay implements Disposable, GameStepListener {
 
     // Constructs a new OrthographicCamera, using the given viewport width and height
     // Height is multiplied by aspect ratio.
-    width = UNITS;
+    width = TOTAL_WIDTH_UNITS;
     height = width * (h / w);
 
     cam = new OrthographicCamera(width, height);

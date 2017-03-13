@@ -41,7 +41,7 @@ public class GameScreen implements Screen, Disposable {
   private LevelProvider levelProvider;
 
   private static final int WORLD_WIDTH = 100;
-  private static final int WORLD_HEIGHT = 100;
+
 
   private SpaceShooterGame game;
   private final GameState state;
@@ -51,34 +51,38 @@ public class GameScreen implements Screen, Disposable {
   public GameScreen(SpaceShooterGame game, FileHandle level, GameSettings gameSettings) {
     this.game = game;
 
+    float w = Gdx.graphics.getWidth();
+    float h = Gdx.graphics.getHeight();
+
+    int worldWidth = WORLD_WIDTH;
+    int worldHeight = (int) (WORLD_WIDTH * (h / w)); // Make world height match monitor ratio
+
+    this.state = new GameState(worldWidth, worldHeight);
+
     this.music = game.getSoundManager().createMusic();
     this.music.setVolume(MUSIC_VOLUME);
     this.music.setLooping(true);
 
-    this.state = new GameState();
     state.setGameSettings(gameSettings);
-    state.setBackground(new Background(WORLD_WIDTH, WORLD_HEIGHT));
+
+    state.setBackground(new Background(WORLD_WIDTH));
     state.setSoundManager(game.getSoundManager());
     state.setScore(new AtomicInteger());
     state.setLives(new AtomicInteger(INITIAL_LIVES));
     state.setParticleManager(new ParticleEffectManager());
     state.setUi(new UIOverlay(game.getFontFactory(), state.getScore(), state.getLives()));
 
-
-    float w = Gdx.graphics.getWidth();
-    float h = Gdx.graphics.getHeight();
-
     state.setExplosionManager(new ExplosionManager());
-    state.setWeaponProjectileManager(new WeaponProjectileManager(state, WORLD_WIDTH, WORLD_HEIGHT * (h / w)));
+    state.setWeaponProjectileManager(new WeaponProjectileManager(state));
 
     state.setRocket(new Rocket(state));
 
     inputHandler = new InputHandler();
     inputMultiplexer.addProcessor(inputHandler);
 
-    state.setEnemies(new GameStateManager(WORLD_WIDTH, WORLD_HEIGHT * (h / w), state));
+    state.setEnemies(new GameStateManager(state));
     LevelReader reader = new LevelReader(level);
-    this.levelProvider = new LevelProvider(reader, WORLD_WIDTH, WORLD_HEIGHT * (h / w));
+    this.levelProvider = new LevelProvider(reader, worldWidth, worldHeight);
     state.getEnemies().setLevelProvider(levelProvider);
 
     speedController.registerGameStepListener(state.getWeaponProjectileManager());
@@ -105,12 +109,9 @@ public class GameScreen implements Screen, Disposable {
 
 
   private void createCamera() {
-    float w = Gdx.graphics.getWidth();
-    float h = Gdx.graphics.getHeight();
-
     // Constructs a new OrthographicCamera, using the given viewport width and height
     // Height is multiplied by aspect ratio.
-    cam = new OrthographicCamera(WORLD_WIDTH, WORLD_HEIGHT * (h / w));
+    cam = new OrthographicCamera(state.getWorldWidth(), state.getWorldHeight());
 
     cam.position.set(cam.viewportWidth / 2f, cam.viewportHeight / 2f, 0);
     cam.update();
