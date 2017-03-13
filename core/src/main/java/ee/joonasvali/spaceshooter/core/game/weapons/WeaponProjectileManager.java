@@ -26,9 +26,9 @@ public class WeaponProjectileManager implements Disposable, GameStepListener {
   private Map<Class, ProjectileProvider> providers = new HashMap<>();
 
 
-  public WeaponProjectileManager(GameState state, float worldWidth, float worldHeight) {
-    this.worldWidth = worldWidth;
-    this.worldHeight = worldHeight;
+  public WeaponProjectileManager(GameState state) {
+    this.worldWidth = state.getWorldWidth();
+    this.worldHeight = state.getWorldHeight();
     this.providers.put(Missile.class, new MissileProvider(state));
     this.providers.put(GaussGunBullet.class, new GaussGunBulletProvider(state));
     this.providers.put(CannonBullet.class, new CannonBulletProvider(state));

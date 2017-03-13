@@ -51,12 +51,12 @@ public class GameStateManager implements Disposable, GameStepListener {
   private boolean loadNextLevelInProgress;
 
 
-  public GameStateManager(float screenWidth, float screenHeight, GameState state) {
+  public GameStateManager(GameState state) {
     this.weaponProjectileManager = state.getWeaponProjectileManager();
     this.explosionManager = state.getExplosionManager();
     this.score = state.getScore();
-    this.worldWidth = screenWidth;
-    this.worldHeight = screenHeight;
+    this.worldWidth = state.getWorldWidth();
+    this.worldHeight = state.getWorldHeight();
     this.state = state;
 
     this.fireTrigger = new TriggerCounter(this::doEnemyFire, state.getGameSettings().getEnemyFireFrequency(), true);

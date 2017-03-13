@@ -25,6 +25,13 @@ public class GameState {
   private GameSettings gameSettings;
   private boolean victory;
   private boolean defeat;
+  private final int worldWidth;
+  private final int worldHeight;
+
+  public GameState(int worldWidth, int worldHeight) {
+    this.worldWidth = worldWidth;
+    this.worldHeight = worldHeight;
+  }
 
   public SoundManager getSoundManager() {
     return soundManager;
@@ -128,5 +135,13 @@ public class GameState {
 
   public void setGameSettings(GameSettings gameSettings) {
     this.gameSettings = gameSettings;
+  }
+
+  public int getWorldWidth() {
+    return worldWidth;
+  }
+
+  public int getWorldHeight() {
+    return worldHeight;
   }
 }
