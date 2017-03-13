@@ -12,6 +12,7 @@ import ee.joonasvali.spaceshooter.core.game.ExplosionManager;
 import ee.joonasvali.spaceshooter.core.game.GameSpeedController;
 import ee.joonasvali.spaceshooter.core.game.GameState;
 import ee.joonasvali.spaceshooter.core.game.GameStepListener;
+import ee.joonasvali.spaceshooter.core.game.Powerup;
 import ee.joonasvali.spaceshooter.core.game.weapons.CannonBullet;
 import ee.joonasvali.spaceshooter.core.game.weapons.CannonBulletProvider;
 import ee.joonasvali.spaceshooter.core.game.weapons.WeaponProjectile;
@@ -128,6 +129,11 @@ public class Rocket implements Disposable, GameStepListener {
         explosionManager.createExplosion(m.getX(), m.getY(), m.getWidth(), m.getHeight());
         kill();
       });
+    }
+
+    Optional<Powerup> p = state.getPowerupManager().collisionWith(rectangle);
+    if (p.isPresent()) {
+      state.getPowerupManager().remove(p.get());
     }
   }
 

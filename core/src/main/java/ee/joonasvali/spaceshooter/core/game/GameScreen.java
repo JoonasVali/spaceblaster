@@ -69,6 +69,7 @@ public class GameScreen implements Screen, Disposable {
     state.setSoundManager(game.getSoundManager());
     state.setScore(new AtomicInteger());
     state.setLives(new AtomicInteger(INITIAL_LIVES));
+    state.setPowerupManager(new PowerupManager(state));
     state.setParticleManager(new ParticleEffectManager());
     state.setUi(new UIOverlay(game.getFontFactory(), state.getScore(), state.getLives()));
 
@@ -91,6 +92,7 @@ public class GameScreen implements Screen, Disposable {
     speedController.registerGameStepListener(state.getBackground());
     speedController.registerGameStepListener(state.getExplosionManager());
     speedController.registerGameStepListener(state.getUi());
+    speedController.registerGameStepListener(state.getPowerupManager());
 
     Gdx.input.setInputProcessor(inputMultiplexer);
 
@@ -132,6 +134,7 @@ public class GameScreen implements Screen, Disposable {
 
     state.getExplosionManager().draw(batch);
     state.getWeaponProjectileManager().drawMissiles(batch);
+    state.getPowerupManager().draw(batch);
     state.getEnemies().drawEnemies(batch, delta);
     state.getRocket().draw(batch);
     state.getParticleManager().draw(batch, delta);
@@ -182,6 +185,7 @@ public class GameScreen implements Screen, Disposable {
     state.getBackground().dispose();
     state.getUi().dispose();
     state.getParticleManager().dispose();
+    state.getPowerupManager().dispose();
     levelProvider.dispose();
   }
 

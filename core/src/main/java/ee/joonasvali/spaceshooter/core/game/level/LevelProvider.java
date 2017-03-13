@@ -97,19 +97,19 @@ public class LevelProvider implements Disposable {
   }
 
   private Enemy createAClassEnemy(int x, int y) {
-    Enemy e = new Enemy(CannonBullet.class, 1000, 100, x, y);
+    Enemy e = new Enemy(CannonBullet.class, 1000, 100, 0.025f, x, y);
     spriteMap.put(e, sprite);
     return e;
   }
 
   private Enemy createBClassEnemy(int x, int y) {
-    Enemy e = new Enemy(Missile.class, 2000, 150, x, y);
+    Enemy e = new Enemy(Missile.class, 2000, 150, 0.05f, x, y);
     spriteMap.put(e, sprite2);
     return e;
   }
 
   private Enemy createCClassEnemy(int x, int y) {
-    Enemy e = new GaussEnemy(3000, 200, x, y);
+    Enemy e = new GaussEnemy(3000, 200, 0.055f, x, y);
     spriteMap.put(e, sprite3);
     return e;
   }

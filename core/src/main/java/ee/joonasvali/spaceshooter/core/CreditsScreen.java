@@ -43,7 +43,7 @@ public class CreditsScreen implements Screen {
   private Sprite background;
   private float width;
   private float height;
-  private TextButton backButton;
+
   private InputMultiplexer inputMultiplexer = new InputMultiplexer();
   private InputHandler inputHandler = new InputHandler();
 
@@ -76,7 +76,7 @@ public class CreditsScreen implements Screen {
     Table table = new Table();
     table.setFillParent(true);
 
-    backButton = new TextButton("Back", skin);
+    TextButton backButton = new TextButton("Back", skin);
     backButton.addListener(new ClickListener() {
       @Override
       public void clicked(InputEvent event, float x, float y) {
