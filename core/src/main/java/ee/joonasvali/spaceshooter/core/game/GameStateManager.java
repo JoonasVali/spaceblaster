@@ -49,6 +49,8 @@ public class GameStateManager implements Disposable, GameStepListener {
   private Sound damageSound;
 
   private boolean loadNextLevelInProgress;
+  // Used to keep list of enemies who die in current step (It's field to keep it from being allocated every step)
+  private List<Enemy> deadList = new ArrayList<>(2);
 
 
   public GameStateManager(GameState state) {
@@ -159,8 +161,6 @@ public class GameStateManager implements Disposable, GameStepListener {
       }
     }
 
-    List<Enemy> dead = new ArrayList<>(); // TODO, optimize. no point in creating new list every step
-
     for (Enemy e : formation.getEnemies()) {
       Optional<WeaponProjectile> m = weaponProjectileManager.projectileCollisionWith(e, e);
       if (m.isPresent()) {
@@ -173,7 +173,7 @@ public class GameStateManager implements Disposable, GameStepListener {
           createExplosion(e);
           createPowerupIfNecessary(e);
           state.getParticleManager().createParticleEmitter(ParticleEffectManager.EXPLOSION, e.getX() + e.getWidth() / 2, e.getY() + e.getHeight() / 2, 0);
-          dead.add(e);
+          deadList.add(e);
 
           // Add score only if player shot the projectile.
           if (projectile.getAuthor() instanceof Rocket) {
@@ -188,8 +188,10 @@ public class GameStateManager implements Disposable, GameStepListener {
       }
     }
 
-
-    formation.removeAll(dead);
+    if (!deadList.isEmpty()) {
+      formation.removeAll(deadList);
+      deadList.clear();
+    }
 
     formation.getEnemies().stream().filter(e -> e instanceof GameStepListener).forEach(e -> ((GameStepListener)e).onStepAction(control));
 
