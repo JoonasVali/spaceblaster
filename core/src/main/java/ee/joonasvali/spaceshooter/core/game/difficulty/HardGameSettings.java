@@ -8,4 +8,9 @@ public class HardGameSettings implements GameSettings {
   public int getEnemyFireFrequency() {
     return 25;
   }
+
+  @Override
+  public float getPowerUpSpeed() {
+    return 0.4f;
+  }
 }

@@ -9,6 +9,7 @@ import ee.joonasvali.spaceshooter.core.game.GameState;
 import ee.joonasvali.spaceshooter.core.game.GameStepListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +24,8 @@ public class WeaponProjectileManager implements Disposable, GameStepListener {
   private float worldWidth;
 
   private List<WeaponProjectile> activeProjectiles = new ArrayList<>();
-  private Map<Class, ProjectileProvider> providers = new HashMap<>();
+  private Map<Class<? extends WeaponProjectile>, ProjectileProvider> providers = new HashMap<>();
+  private Class<WeaponProjectile>[] weaponClasses;
 
 
   public WeaponProjectileManager(GameState state) {
@@ -32,6 +34,7 @@ public class WeaponProjectileManager implements Disposable, GameStepListener {
     this.providers.put(Missile.class, new MissileProvider(state));
     this.providers.put(GaussGunBullet.class, new GaussGunBulletProvider(state));
     this.providers.put(CannonBullet.class, new CannonBulletProvider(state));
+    weaponClasses = this.providers.keySet().toArray(new Class[this.providers.size()]);
   }
 
   private void moveAndRemoveProjectiles() {
@@ -108,5 +111,16 @@ public class WeaponProjectileManager implements Disposable, GameStepListener {
       return provider.getCoolDown();
     }
     return 0;
+  }
+
+  @SuppressWarnings("unchecked")
+  public Class<WeaponProjectile>[] getWeaponClasses(Class<? extends WeaponProjectile> exclude) {
+    List<Class<? extends WeaponProjectile>> values = new ArrayList<>(Arrays.asList(weaponClasses));
+    values.remove(exclude);
+    return values.toArray(new Class[values.size()]);
+  }
+
+  public Class<WeaponProjectile>[] getWeaponClasses() {
+    return weaponClasses;
   }
 }

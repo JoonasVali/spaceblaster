@@ -52,7 +52,7 @@ public class GaussGunBulletProvider implements ProjectileProvider<GaussGunBullet
 
   @Override
   public int getCoolDown() {
-    return 60;
+    return 30;
   }
 
   @Override

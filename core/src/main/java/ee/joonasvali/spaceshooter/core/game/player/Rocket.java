@@ -18,6 +18,7 @@ import ee.joonasvali.spaceshooter.core.game.weapons.CannonBulletProvider;
 import ee.joonasvali.spaceshooter.core.game.weapons.WeaponProjectile;
 import ee.joonasvali.spaceshooter.core.game.weapons.WeaponProjectileManager;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -25,6 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Joonas Vali December 2016
  */
 public class Rocket implements Disposable, GameStepListener {
+  private static final Class<? extends WeaponProjectile> DEFAULT_WEAPON_CLASS = CannonBullet.class;
   public static final int ROCKET_SIZE = 3;
   private static final float ROCKET_SPEED = 1;
   public static final int TIME_TO_REBIRTH = 150;
@@ -35,6 +37,8 @@ public class Rocket implements Disposable, GameStepListener {
   private final ExplosionManager explosionManager;
   private final AtomicInteger lives;
   private final GameState state;
+
+  private Class<? extends WeaponProjectile> weaponClass = DEFAULT_WEAPON_CLASS;
 
   private Effect effect;
   private boolean alive;
@@ -134,7 +138,14 @@ public class Rocket implements Disposable, GameStepListener {
     Optional<Powerup> p = state.getPowerupManager().collisionWith(rectangle);
     if (p.isPresent()) {
       state.getPowerupManager().remove(p.get());
+      setNewRandomWeapon();
     }
+  }
+
+  private void setNewRandomWeapon() {
+    weaponCooldown = 0;
+    Class<WeaponProjectile>[] wpClasses = weaponProjectileManager.getWeaponClasses(weaponClass);
+    this.weaponClass = wpClasses[(int) (Math.random() * wpClasses.length)];
   }
 
   private void cooldown() {
@@ -151,11 +162,11 @@ public class Rocket implements Disposable, GameStepListener {
     if (!alive || weaponCooldown > 0) {
       return;
     }
-    this.weaponProjectileManager.createProjectileAt(CannonBullet.class,
+    this.weaponProjectileManager.createProjectileAt(weaponClass,
         this,this.getX() + Rocket.ROCKET_SIZE / 2, this.getY() + Rocket.ROCKET_SIZE / 2,
         (float) Math.random() * 10 - 5
     );
-    this.weaponCooldown = weaponProjectileManager.getCooldown(CannonBullet.class);
+    this.weaponCooldown = weaponProjectileManager.getCooldown(weaponClass);
   }
 
   private void rebirth() {
@@ -163,6 +174,7 @@ public class Rocket implements Disposable, GameStepListener {
       alive = true;
       effect = new RebirthEffect(200, 5);
     }
+    this.weaponClass = DEFAULT_WEAPON_CLASS;
   }
 
   public float getWidth() {
