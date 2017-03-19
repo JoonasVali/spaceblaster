@@ -74,14 +74,16 @@ public class EnemyFormation {
   }
 
   public void removeAll(List<Enemy> death) {
-    for (int i = 0; i < width; i++) {
-      for (int j = 0; j < height; j++) {
-        if (formation[i][j] != null && death.contains(formation[i][j])) {
-          formation[i][j] = null;
+    if (!death.isEmpty()) {
+      for (int i = 0; i < width; i++) {
+        for (int j = 0; j < height; j++) {
+          if (formation[i][j] != null && death.contains(formation[i][j])) {
+            formation[i][j] = null;
+          }
         }
       }
+      refreshEnemiesList();
     }
-    refreshEnemiesList();
   }
 
   public float getMaxX() {
