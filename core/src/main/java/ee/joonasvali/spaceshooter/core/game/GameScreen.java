@@ -65,7 +65,6 @@ public class GameScreen implements Screen, Disposable {
 
     state.setGameSettings(gameSettings);
 
-    state.setBackground(new Background(WORLD_WIDTH));
     state.setSoundManager(game.getSoundManager());
     state.setScore(new AtomicInteger());
     state.setLives(new AtomicInteger(INITIAL_LIVES));
@@ -85,6 +84,7 @@ public class GameScreen implements Screen, Disposable {
     LevelReader reader = new LevelReader(level);
     this.levelProvider = new LevelProvider(reader, worldWidth, worldHeight);
     state.getEnemies().setLevelProvider(levelProvider);
+    state.setBackground(new Background(levelProvider.getBackgroundFileName(), worldWidth, worldHeight));
 
     speedController.registerGameStepListener(state.getWeaponProjectileManager());
     speedController.registerGameStepListener(state.getEnemies());
