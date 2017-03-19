@@ -1,6 +1,9 @@
 package ee.joonasvali.spaceshooter.core.game.level;
 
 import com.badlogic.gdx.files.FileHandle;
+import ee.joonasvali.spaceshooter.core.game.Background;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -12,18 +15,38 @@ import java.util.List;
  * @author Joonas Vali February 2017
  */
 public class LevelReader {
+  private static final Logger log = LoggerFactory.getLogger(LevelReader.class);
   private List<Level> levels = new ArrayList<>();
+  private final String backgroundFileName;
+
   public LevelReader (FileHandle handle) {
     String[] lines = handle.readString().split("\\r?\\n");
-
+    String background = Background.DEFAULT_FILE_NAME;
     LinkedList<String> currentLevel = new LinkedList<>();
     boolean readingLevel = false;
     for (int i = 0; i < lines.length; i++) {
       String line = lines[i].trim();
+
+      // See if this line is defining background of the level:
+      if (line.startsWith("background")) {
+        try {
+          line = line.replaceAll("\\s+", "");
+          if (line.startsWith("background=")) {
+            background = line.split("=")[1];
+          } else {
+            log.error("background invalid format: " + line);
+          }
+        } catch (Exception ex) {
+          log.error("background invalid format: " + line, ex);
+        }
+        continue;
+      }
+
       if (line.startsWith("#")) {
         // Comment
         continue;
       }
+
       if (line.isEmpty()) {
         if (readingLevel) {
           String name = currentLevel.removeFirst(); // The first of level defines a level name
@@ -42,6 +65,7 @@ public class LevelReader {
       levels.add(new Level(currentLevel.toArray(new String[currentLevel.size()]), name));
       currentLevel.clear();
     }
+    this.backgroundFileName = background;
   }
 
   public int getNumberOfLevels() {
@@ -50,6 +74,10 @@ public class LevelReader {
 
   public LevelDescriptor getLevel(int index) {
     return levels.get(index);
+  }
+
+  public String getBackgroundFileName() {
+    return backgroundFileName;
   }
 
   public class Level implements LevelDescriptor {

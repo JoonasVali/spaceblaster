@@ -39,6 +39,7 @@ public class LevelProvider implements Disposable {
   private final float worldWidth;
   private final float worldHeight;
   private final LevelReader reader;
+  private String backgroundFileName;
 
   public LevelProvider(LevelReader reader, float worldWidth, float worldHeight) {
     this.reader = reader;
@@ -54,6 +55,7 @@ public class LevelProvider implements Disposable {
     this.sprite.flip(false, true);
     this.sprite2.flip(false, true);
     this.sprite3.flip(false, true);
+    backgroundFileName = reader.getBackgroundFileName();
   }
 
   public EnemyFormation nextLevel() {
@@ -132,5 +134,9 @@ public class LevelProvider implements Disposable {
       return reader.getLevel(nextLevel).getName();
     }
     return null;
+  }
+
+  public String getBackgroundFileName() {
+    return backgroundFileName;
   }
 }

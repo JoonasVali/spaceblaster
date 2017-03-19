@@ -27,18 +27,18 @@ public class PowerupManager implements Disposable, GameStepListener {
   };
 
   private final GameState state;
-  private final Texture powerup;
+  private final Texture powerupSprite;
 
   private final ArrayList<Powerup> powerups = new ArrayList<>();
 
   public PowerupManager(GameState state) {
-    this.powerup = new Texture(Gdx.files.internal("powerup.png"));
+    this.powerupSprite = new Texture(Gdx.files.internal("powerup.png"));
     this.state = state;
   }
 
   @Override
   public void dispose() {
-    powerup.dispose();
+    powerupSprite.dispose();
     powerups.clear();
   }
 
@@ -67,7 +67,7 @@ public class PowerupManager implements Disposable, GameStepListener {
 
   public void draw(SpriteBatch batch) {
     powerups.forEach(p -> {
-      batch.draw(powerup, p.getX(), p.getY(), p.getWidth(), p.getHeight());
+      batch.draw(powerupSprite, p.getX(), p.getY(), p.getWidth(), p.getHeight());
     });
   }
 
