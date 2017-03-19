@@ -6,4 +6,6 @@ package ee.joonasvali.spaceshooter.core.game.difficulty;
 public interface GameSettings {
 
   int getEnemyFireFrequency();
+
+  float getPowerUpSpeed();
 }

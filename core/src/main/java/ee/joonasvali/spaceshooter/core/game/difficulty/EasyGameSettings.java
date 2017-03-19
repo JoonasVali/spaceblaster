@@ -8,4 +8,9 @@ public class EasyGameSettings implements GameSettings {
   public int getEnemyFireFrequency() {
     return 45;
   }
+
+  @Override
+  public float getPowerUpSpeed() {
+    return 0.2f;
+  }
 }

@@ -8,4 +8,11 @@ public class NormalGameSettings implements GameSettings {
   public int getEnemyFireFrequency() {
     return 35;
   }
+
+  @Override
+  public float getPowerUpSpeed() {
+    return 0.3f;
+  }
+
+
 }

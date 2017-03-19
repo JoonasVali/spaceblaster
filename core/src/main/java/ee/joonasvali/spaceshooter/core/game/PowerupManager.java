@@ -17,6 +17,8 @@ import java.util.Optional;
  */
 public class PowerupManager implements Disposable, GameStepListener {
   private static final Logger log = LoggerFactory.getLogger(PowerupManager.class);
+  public static final int POWER_UP_WIDTH = 2;
+  public static final int POWER_UP_HEIGHT = 2;
   private final Pool<Powerup> pool = new Pool<Powerup>() {
     @Override
     protected Powerup newObject() {
@@ -40,8 +42,6 @@ public class PowerupManager implements Disposable, GameStepListener {
     powerups.clear();
   }
 
-
-
   @Override
   public void onStepAction(GameSpeedController.Control control) {
     powerups.forEach(p -> p.setY(p.getY() - p.getSpeed()));
@@ -59,8 +59,8 @@ public class PowerupManager implements Disposable, GameStepListener {
     Powerup p = pool.obtain();
     p.setX(x);
     p.setY(y);
-    p.setWidth(3);
-    p.setHeight(3);
+    p.setWidth(POWER_UP_WIDTH);
+    p.setHeight(POWER_UP_HEIGHT);
     p.setSpeed(speed);
     powerups.add(p);
   }

@@ -216,7 +216,7 @@ public class GameStateManager implements Disposable, GameStepListener {
 
   private void createPowerupIfNecessary(Enemy e) {
     if (Math.random() < e.getChanceOfPowerup()) {
-      state.getPowerupManager().createPowerup(e.getX(), e.getY(), 0.4f);
+      state.getPowerupManager().createPowerup(e.getX(), e.getY(), state.getGameSettings().getPowerUpSpeed());
     }
   }
 
