@@ -10,6 +10,7 @@ import ee.joonasvali.spaceshooter.core.game.enemy.EnemyFormation;
 import ee.joonasvali.spaceshooter.core.game.enemy.GaussEnemy;
 import ee.joonasvali.spaceshooter.core.game.weapons.CannonBullet;
 import ee.joonasvali.spaceshooter.core.game.weapons.Missile;
+import ee.joonasvali.spaceshooter.core.game.weapons.TripleShotBullet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,9 +28,11 @@ public class LevelProvider implements Disposable {
   private static final int ENEMY_SIZE = 3;
 
   private final Texture texture;
+
   private final Sprite sprite;
   private final Sprite sprite2;
   private final Sprite sprite3;
+  private final Sprite sprite4;
 
   private final Map<Enemy, Sprite> spriteMap = new IdentityHashMap<>();
 
@@ -52,9 +55,12 @@ public class LevelProvider implements Disposable {
     sprite2.setColor(new Color(255 / 255f, 162 / 255f, 29 / 255f, 1f));
     this.sprite3 = new Sprite(texture);
     sprite3.setColor(new Color(173 / 255f, 207 / 255f, 255 / 255f, 1f));
+    this.sprite4 = new Sprite(texture);
+    sprite4.setColor(new Color(145 / 255f, 0 / 255f, 14 / 255f, 1f));
     this.sprite.flip(false, true);
     this.sprite2.flip(false, true);
     this.sprite3.flip(false, true);
+    this.sprite4.flip(false, true);
     backgroundFileName = reader.getBackgroundFileName();
   }
 
@@ -79,6 +85,7 @@ public class LevelProvider implements Disposable {
             case 'a' : enemy = createAClassEnemy(x, y); break;
             case 'b' : enemy = createBClassEnemy(x, y); break;
             case 'c' : enemy = createCClassEnemy(x, y); break;
+            case 'd' : enemy = createDClassEnemy(x, y); break;
           }
         }
       }
@@ -95,7 +102,7 @@ public class LevelProvider implements Disposable {
   }
 
   private boolean isValidEnemy(char enemyDesc) {
-    return enemyDesc == 'a' || enemyDesc == 'b' || enemyDesc == 'c';
+    return enemyDesc == 'a' || enemyDesc == 'b' || enemyDesc == 'c' || enemyDesc == 'd';
   }
 
   private Enemy createAClassEnemy(int x, int y) {
@@ -115,6 +122,13 @@ public class LevelProvider implements Disposable {
     spriteMap.put(e, sprite3);
     return e;
   }
+
+  private Enemy createDClassEnemy(int x, int y) {
+    Enemy e = new Enemy(TripleShotBullet.class, 4000, 300, 0.055f, x, y);
+    spriteMap.put(e, sprite4);
+    return e;
+  }
+
 
   public Sprite getSprite(Enemy enemy) {
     return spriteMap.getOrDefault(enemy, sprite);
