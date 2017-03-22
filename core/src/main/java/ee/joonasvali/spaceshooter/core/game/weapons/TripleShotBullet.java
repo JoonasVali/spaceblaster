@@ -30,6 +30,7 @@ public class TripleShotBullet extends WeaponProjectile {
 
   @Override
   public void reset() {
+    super.reset();
     count = 0;
   }
 }

@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 /**
@@ -23,12 +24,9 @@ public class WeaponProjectileManager implements Disposable, GameStepListener {
   private float worldHeight;
   private float worldWidth;
 
-  private List<WeaponProjectile> activeProjectiles = new ArrayList<>();
-  private final List<WeaponProjectile> newActiveProjectiles = new ArrayList<>();
+  private List<WeaponProjectile> activeProjectiles = new CopyOnWriteArrayList<>();
   private Map<Class<? extends WeaponProjectile>, ProjectileProvider> providers = new HashMap<>();
   private Class<WeaponProjectile>[] weaponClasses;
-  private boolean isCurrentlyMovingProjectiles = false;
-
 
   public WeaponProjectileManager(GameState state) {
     this.worldWidth = state.getWorldWidth();
@@ -41,23 +39,14 @@ public class WeaponProjectileManager implements Disposable, GameStepListener {
   }
 
   private void moveAndRemoveProjectiles() {
-    try {
-      isCurrentlyMovingProjectiles = true;
-      activeProjectiles.forEach(WeaponProjectile::nextPosition);
+    activeProjectiles.forEach(WeaponProjectile::nextPosition);
 
-      List<WeaponProjectile> outOfBounds =
-          activeProjectiles.stream().filter(
-              m -> m.getY() > worldHeight + 5 || m.getY() < -5 || m.getX() > worldWidth + 5 || m.getX() < -5
-          ).collect(Collectors.toList());
+    List<WeaponProjectile> outOfBounds =
+        activeProjectiles.stream().filter(
+            m -> m.getY() > worldHeight + 5 || m.getY() < -5 || m.getX() > worldWidth + 5 || m.getX() < -5
+        ).collect(Collectors.toList());
 
-      outOfBounds.forEach(this::removeProjectile);
-
-      // Add projectiles that might have been added during this iteration over existing projectiles.
-      activeProjectiles.addAll(newActiveProjectiles);
-      newActiveProjectiles.clear();
-    } finally {
-      isCurrentlyMovingProjectiles = false;
-    }
+    outOfBounds.forEach(this::removeProjectile);
   }
 
   public void removeProjectile(WeaponProjectile m) {
@@ -79,9 +68,7 @@ public class WeaponProjectileManager implements Disposable, GameStepListener {
     if (sound != null) {
       sound.play(0.5f);
     }
-    // Allows to add new projectiles while iterating over existing.
-    List<WeaponProjectile> projectileList = !isCurrentlyMovingProjectiles ? activeProjectiles : newActiveProjectiles;
-    projectileList.add(projectile);
+    activeProjectiles.add(projectile);
     return projectile;
   }
 
