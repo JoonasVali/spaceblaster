@@ -42,7 +42,7 @@ public class GameScreen implements Screen, Disposable {
 
   private static final int WORLD_WIDTH = 100;
 
-
+  private final boolean isValid;
   private SpaceShooterGame game;
   private final GameState state;
   private final Music music;
@@ -82,6 +82,7 @@ public class GameScreen implements Screen, Disposable {
 
     state.setEnemies(new GameStateManager(state));
     LevelReader reader = new LevelReader(level);
+    isValid = reader.isValid();
     this.levelProvider = new LevelProvider(reader, worldWidth, worldHeight);
     state.getEnemies().setLevelProvider(levelProvider);
     state.setBackground(new Background(levelProvider.getBackgroundFileName(), worldWidth, worldHeight));
@@ -109,6 +110,10 @@ public class GameScreen implements Screen, Disposable {
 
   }
 
+  public boolean isValid() {
+    return isValid;
+  }
+
 
   private void createCamera() {
     // Constructs a new OrthographicCamera, using the given viewport width and height
@@ -122,28 +127,32 @@ public class GameScreen implements Screen, Disposable {
 
   @Override
   public void render(float delta) {
-    cam.update();
-    SpriteBatch batch = game.getBatch();
-    batch.setProjectionMatrix(cam.combined);
+    try {
+      cam.update();
+      SpriteBatch batch = game.getBatch();
+      batch.setProjectionMatrix(cam.combined);
 
-    handleInput();
-    speedController.passTime(delta);
+      handleInput();
+      speedController.passTime(delta);
 
-    batch.begin();
-    state.getBackground().draw(batch);
+      batch.begin();
+      state.getBackground().draw(batch);
 
-    state.getExplosionManager().draw(batch);
-    state.getWeaponProjectileManager().drawMissiles(batch);
-    state.getPowerupManager().draw(batch);
-    state.getEnemies().drawEnemies(batch, delta);
-    state.getRocket().draw(batch);
-    state.getParticleManager().draw(batch, delta);
+      state.getExplosionManager().draw(batch);
+      state.getWeaponProjectileManager().drawMissiles(batch);
+      state.getPowerupManager().draw(batch);
+      state.getEnemies().drawEnemies(batch, delta);
+      state.getRocket().draw(batch);
+      state.getParticleManager().draw(batch, delta);
 
-    state.getUi().draw(batch);
+      state.getUi().draw(batch);
 
 
-    batch.end();
-
+      batch.end();
+    } catch (Throwable t) {
+      log.error("Game crashed.", t);
+      game.gotoMainMenu();
+    }
   }
 
   @Override

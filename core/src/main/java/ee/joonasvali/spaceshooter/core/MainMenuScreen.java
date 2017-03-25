@@ -84,31 +84,37 @@ public class MainMenuScreen implements Screen {
 
   @Override
   public void render(float delta) {
-    Gdx.gl.glClearColor(0.1f, 0.1f, 0.2f, 1);
-    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+    try {
+      Gdx.gl.glClearColor(0.1f, 0.1f, 0.2f, 1);
+      Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-    camera.update();
-    game.getBatch().setProjectionMatrix(camera.combined);
-    // render behind text here
+      camera.update();
+      game.getBatch().setProjectionMatrix(camera.combined);
+      // render behind text here
 
-    textCamera.update();
-    game.getBatch().setProjectionMatrix(textCamera.combined);
+      textCamera.update();
+      game.getBatch().setProjectionMatrix(textCamera.combined);
 
-    game.getBatch().begin();
+      game.getBatch().begin();
 
-    background.draw(game.getBatch());
+      background.draw(game.getBatch());
 
 
-    float fwidth = Util.getTextWidth(GAME_TITLE, titleFont);
-    titleFont.draw(game.getBatch(), GAME_TITLE, width / 2  - fwidth / 2, height / 1.4f);
+      float fwidth = Util.getTextWidth(GAME_TITLE, titleFont);
+      titleFont.draw(game.getBatch(), GAME_TITLE, width / 2 - fwidth / 2, height / 1.4f);
 
-    fwidth = Util.getTextWidth(CREDIT_MESSAGE, creditFont);
-    creditFont.draw(game.getBatch(), CREDIT_MESSAGE, width / 2 - fwidth / 2, 30);
+      fwidth = Util.getTextWidth(CREDIT_MESSAGE, creditFont);
+      creditFont.draw(game.getBatch(), CREDIT_MESSAGE, width / 2 - fwidth / 2, 30);
 
-    game.getBatch().end();
+      game.getBatch().end();
 
-    stage.act(Gdx.graphics.getDeltaTime());
-    stage.draw();
+      stage.act(Gdx.graphics.getDeltaTime());
+      stage.draw();
+    } catch (Throwable t) {
+      log.error("Game crashed", t);
+      dispose();
+      throw new RuntimeException(t);
+    }
   }
 
   @Override

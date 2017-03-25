@@ -101,7 +101,13 @@ public class SpaceShooterGame extends Game {
   }
 
   public void launchGame(FileHandle level, DifficultyLevel difficultyLevel) {
-    setScreen(new GameScreen(this, level, difficultyLevel.getGameSettings()));
+    GameScreen screen = new GameScreen(this, level, difficultyLevel.getGameSettings());
+    if (screen.isValid()) {
+      setScreen(screen);
+    } else {
+      screen.dispose();
+      gotoMainMenu();
+    }
   }
 
   public void setChooseLevelsScreen() {
