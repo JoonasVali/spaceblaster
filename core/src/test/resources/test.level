@@ -1,0 +1,28 @@
+#This is a comment
+
+background=space.png
+
+EPILOGUE
+abababab
+000bb000
+
+LEVEL 1
+bbbbbbbb
+00000000
+aaaaaaaa
+aaaaaaaa
+aaaaaaaa
+
+# Here's another comment
+
+LEVEL 2
+ccccccccc
+baaaaaaab
+baaaaaaab
+baaaaaaab
+
+LEVEL 3
+ccccccccc
+aadddddaa
+ccaaaaacc
+

@@ -20,7 +20,10 @@ public class LevelReader {
   private final String backgroundFileName;
 
   public LevelReader (FileHandle handle) {
-    String[] lines = handle.readString().split("\\r?\\n");
+    this(handle.readString().split("\\r?\\n"));
+  }
+
+  public LevelReader (String[] lines) {
     String background = Background.DEFAULT_FILE_NAME;
     LinkedList<String> currentLevel = new LinkedList<>();
     boolean readingLevel = false;
@@ -66,6 +69,29 @@ public class LevelReader {
       currentLevel.clear();
     }
     this.backgroundFileName = background;
+  }
+
+  public boolean isValid() {
+    if (levels.isEmpty()) {
+      log.error("Level not valid, because no levels detected.");
+      return false;
+    }
+
+    for (LevelDescriptor desc : levels) {
+      if (desc.getWidth() == 0 || desc.getHeight() == 0) {
+        log.error("Level file not valid, because level '" + desc.getName() + "' has width " + desc.getWidth() + " and height " + desc.getHeight());
+        return false;
+      }
+      String[] level = desc.getLevel();
+      for (String line : level) {
+        if (line.length() != desc.getWidth()) {
+          log.error("Level file not valid, because level '" + desc.getName() + "' has width " + desc.getWidth() + ", " + System.lineSeparator() +
+              "but one of it's lines '" + line + "' has width: " + line.length() + ". They should match. (Make the level rectangular)");
+          return false;
+        }
+      }
+    }
+    return true;
   }
 
   public int getNumberOfLevels() {
