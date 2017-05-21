@@ -8,6 +8,9 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g3d.utils.ShaderProvider;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Disposable;
 import ee.joonasvali.spaceshooter.core.ParticleEffectManager;
 import ee.joonasvali.spaceshooter.core.SpaceShooterGame;
@@ -47,6 +50,7 @@ public class GameScreen implements Screen, Disposable {
   private final GameState state;
   private final Music music;
 
+  ShaderProgram program;
 
   public GameScreen(SpaceShooterGame game, FileHandle level, GameSettings gameSettings) {
     this.game = game;
@@ -108,6 +112,20 @@ public class GameScreen implements Screen, Disposable {
 
     createCamera();
 
+
+
+    ShaderProgram.pedantic = false;
+    final String VERTEX = Gdx.files.internal("shaders/test.vert").readString();
+    final String FRAGMENT = Gdx.files.internal("shaders/test.frag").readString();
+    program = new ShaderProgram(VERTEX, FRAGMENT);
+    if (!program.isCompiled()) {
+      System.err.println(program.getLog());
+      throw new IllegalStateException("Game can't start, no shader.");
+    }
+    String log = program.getLog();
+    if (!log.isEmpty()) {
+      this.log.info(log);
+    }
   }
 
   public boolean isValid() {
@@ -130,6 +148,7 @@ public class GameScreen implements Screen, Disposable {
     try {
       cam.update();
       SpriteBatch batch = game.getBatch();
+
       batch.setProjectionMatrix(cam.combined);
 
       handleInput();
@@ -141,14 +160,20 @@ public class GameScreen implements Screen, Disposable {
       state.getExplosionManager().draw(batch);
       state.getWeaponProjectileManager().drawMissiles(batch);
       state.getPowerupManager().draw(batch);
+
+      ShaderProgram orig = batch.getShader();
+      batch.setShader(program);
       state.getEnemies().drawEnemies(batch, delta);
+      batch.setShader(orig);
+
+
       state.getRocket().draw(batch);
       state.getParticleManager().draw(batch, delta);
 
       state.getUi().draw(batch);
 
-
       batch.end();
+
     } catch (Throwable t) {
       log.error("Game crashed.", t);
       game.gotoMainMenu();
