@@ -1,5 +1,5 @@
 Space Blaster by Joonas Vali, 2017
-Version ${project.version}
+Version ${project.version} for ${os.version.string}
 
 Launch game from 'run'
 
