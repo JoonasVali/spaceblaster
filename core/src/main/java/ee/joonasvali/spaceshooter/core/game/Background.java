@@ -18,7 +18,7 @@ public class Background implements Disposable, GameStepListener {
   private float widthMid;
 
   public Background(String backgroundFileName, float worldWidth, float worldHeight) {
-    mapSprite = new Sprite(new Texture(Gdx.files.internal("backgrounds/" + backgroundFileName)));
+    mapSprite = new Sprite(new Texture(Gdx.files.local("backgrounds/" + backgroundFileName)));
     heightMid = worldHeight / 2;
     widthMid = worldWidth / 2;
     // Background doesn't need to scale to screen height, so we set its size rectangular

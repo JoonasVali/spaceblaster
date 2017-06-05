@@ -45,6 +45,14 @@
     </fileSet>
 
     <fileSet>
+      <directory>${basedir}/backgrounds</directory>
+      <outputDirectory>/backgrounds</outputDirectory>
+      <includes>
+        <include>**/*</include>
+      </includes>
+    </fileSet>
+
+    <fileSet>
       <directory>${program.target}</directory>
       <outputDirectory>lib</outputDirectory>
       <includes>

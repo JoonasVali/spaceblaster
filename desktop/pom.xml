@@ -13,11 +13,11 @@
   <name>MyDemoGame desktop</name>
 
   <properties>
-    <mainClass>ee.joonasvali.spaceshooter.java.MyDemoGameDesktop</mainClass>
+    <mainClass>ee.joonasvali.spaceshooter.java.SpaceShooterDesktop</mainClass>
 
     <name>SpaceBlaster</name>
     <name.uppercase>SPACEBLASTER</name.uppercase>
-    <boot.class>ee.joonasvali.spaceshooter.java.MyDemoGameDesktop</boot.class>
+    <boot.class>ee.joonasvali.spaceshooter.java.SpaceShooterDesktop</boot.class>
     <author>Joonas Vali</author>
     <timestamp>${maven.build.timestamp}</timestamp>
     <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>

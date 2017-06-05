@@ -6,7 +6,7 @@ import ee.joonasvali.spaceshooter.core.SpaceShooterGame;
 
 import java.awt.Toolkit;
 
-public class MyDemoGameDesktop {
+public class SpaceShooterDesktop {
   public static void main(String[] args) {
     LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
     config.width = Toolkit.getDefaultToolkit().getScreenSize().width;
