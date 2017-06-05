@@ -1,0 +1,65 @@
+<assembly>
+  <id>bin</id>
+  <!-- Specifies that our binary distribution is a dir -->
+  <formats>
+    <format>dir</format>
+  </formats>
+
+  <dependencySets>
+    <dependencySet>
+      <useProjectArtifact>false</useProjectArtifact>
+      <outputDirectory>lib</outputDirectory>
+      <unpack>false</unpack>
+    </dependencySet>
+  </dependencySets>
+
+  <fileSets>
+    <fileSet>
+      <directory>${binfolder}/unix</directory>
+      <outputDirectory>/</outputDirectory>
+      <filtered>true</filtered> <!-- Causes maven placeholders to be replaced in the files -->
+      <includes>
+        <include>**/*</include>
+      </includes>
+      <lineEnding>unix</lineEnding>
+      <fileMode>0755</fileMode>
+    </fileSet>
+
+    <fileSet>
+      <directory>${basedir}/levels</directory>
+      <outputDirectory>/levels</outputDirectory>
+      <includes>
+        <include>**/*</include>
+      </includes>
+      <lineEnding>unix</lineEnding>
+      <fileMode>0755</fileMode>
+    </fileSet>
+
+    <fileSet>
+      <directory>${basedir}/doc</directory>
+      <filtered>true</filtered> <!-- Causes maven placeholders to be replaced in the files -->
+      <outputDirectory>/</outputDirectory>
+      <includes>
+        <include>**/*</include>
+      </includes>
+      <lineEnding>unix</lineEnding>
+      <fileMode>0755</fileMode>
+    </fileSet>
+
+    <fileSet>
+      <directory>${program.target}</directory>
+      <outputDirectory>lib</outputDirectory>
+      <includes>
+        <include>*.jar</include>
+      </includes>
+    </fileSet>
+
+    <fileSet>
+      <directory>${gdx.native.lib}</directory>
+      <outputDirectory>native-libs</outputDirectory>
+      <includes>
+        <include>**/*</include>
+      </includes>
+    </fileSet>
+  </fileSets>
+</assembly>
