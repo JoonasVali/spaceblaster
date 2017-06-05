@@ -15,20 +15,38 @@
   <properties>
     <mainClass>ee.joonasvali.spaceshooter.java.MyDemoGameDesktop</mainClass>
 
-    <name>SpaceShooter</name>
-    <name.uppercase>SPACESHOOTER</name.uppercase>
+    <name>SpaceBlaster</name>
+    <name.uppercase>SPACEBLASTER</name.uppercase>
     <boot.class>ee.joonasvali.spaceshooter.java.MyDemoGameDesktop</boot.class>
     <author>Joonas Vali</author>
     <timestamp>${maven.build.timestamp}</timestamp>
     <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
     <binfolder>${basedir}/bin</binfolder>
-    <asm.file>${basedir}/assembly/assembly.xml</asm.file>
+
     <gdx.native.lib>${basedir}/target/natives</gdx.native.lib>
     <program.target>${basedir}/target</program.target>
     <project.dist>${program.target}/dist</project.dist>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
+
+  <profiles>
+    <profile>
+      <id>win</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <asm.file>${basedir}/assembly/assembly-win.xml</asm.file>
+      </properties>
+    </profile>
+    <profile>
+      <id>unix</id>
+      <properties>
+        <asm.file>${basedir}/assembly/assembly-unix.xml</asm.file>
+      </properties>
+    </profile>
+  </profiles>
 
   <dependencies>
     <dependency>

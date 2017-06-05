@@ -1,9 +1,15 @@
-Space Blaster by Joonas Vali, 2017
-Version ${project.version}
+Build the game using maven:
 
-Launch game from 'run'
+For windows version:
+  mvn clean package -Pwin
 
-Space Blaster is free software made for educational purposes.
+For unix/mac version:
+  mvn clean package -Punix
+
+The application will be ready to distribute under {project.folder}/desktop/target/dist
+
+
+LICENSE:
 
 This is free and unencumbered software released into the public domain.
 

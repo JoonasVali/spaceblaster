@@ -18,7 +18,7 @@ public class ChooseLevelsContent implements MenuContent {
   private static final int WIDTH = 200;
   private static final int HEIGHT = 50;
   private static final int PADDING = 10;
-  public static final String LEVELS_FOLDER = "../levels";
+  public static final String LEVELS_FOLDER = "levels";
   private SpaceShooterGame game;
 
   public ChooseLevelsContent(SpaceShooterGame game) {

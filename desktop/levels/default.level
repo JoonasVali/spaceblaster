@@ -1,7 +1,9 @@
 #This is where the game reads the levels. It's a simple level editor.
-#Use values 'a' 'b' 'c' to mark enemies, or '0' for empty space
+#Use values 'a' 'b' 'c' 'd' to mark enemies, or '0' for empty space
 #You can add levels by creating new .level file.
 #The label before the formation marks what is displayed in game for a level.
+
+#The level needs to be an x*y matrix, e.g all rows and columns must be the same size.
 
 #This sets the rotating background
 background=space.png

@@ -16,7 +16,7 @@
 
     <fileSet>
       <directory>${binfolder}/win</directory>
-      <outputDirectory>bin</outputDirectory>
+      <outputDirectory>/</outputDirectory>
       <!-- Causes maven placeholders to be replaced in the files -->
       <filtered>true</filtered>
       <includes>
@@ -26,28 +26,17 @@
     </fileSet>
 
     <fileSet>
-      <directory>${binfolder}/unix</directory>
-      <outputDirectory>bin</outputDirectory>
-      <filtered>true</filtered> <!-- Causes maven placeholders to be replaced in the files -->
-      <includes>
-        <include>**/*</include>
-      </includes>
-      <lineEnding>unix</lineEnding>
-      <fileMode>0755</fileMode>
-    </fileSet>
-
-    <fileSet>
       <directory>${basedir}/levels</directory>
       <outputDirectory>/levels</outputDirectory>
       <includes>
         <include>**/*</include>
       </includes>
       <lineEnding>windows</lineEnding>
-      <!-- TODO what about unix? -->
     </fileSet>
 
     <fileSet>
       <directory>${basedir}/doc</directory>
+      <filtered>true</filtered> <!-- Causes maven placeholders to be replaced in the files -->
       <outputDirectory>/</outputDirectory>
       <includes>
         <include>**/*</include>
