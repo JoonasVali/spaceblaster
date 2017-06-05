@@ -37,12 +37,14 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <properties>
+        <os.version.string>Windows</os.version.string>
         <asm.file>${basedir}/assembly/assembly-win.xml</asm.file>
       </properties>
     </profile>
     <profile>
       <id>unix</id>
       <properties>
+        <os.version.string>Mac and Linux</os.version.string>
         <asm.file>${basedir}/assembly/assembly-unix.xml</asm.file>
       </properties>
     </profile>
