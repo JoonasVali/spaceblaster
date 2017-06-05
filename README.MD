@@ -4,13 +4,13 @@ I made it to get to know LibGDX a little better, and I'm hoping there will be at
 
 Currently the game contains:
 
-* Small range of enemy types with capability of adding more in the future without hassle.
-* Small Selection of weapons to get from enemies
-* Space Invader's like movement
+* Small range of enemy types with capability of adding more in the future without hassle
+* Small selection of weapons to get from enemies
+* Space Invader's like movement system
 * Life and health system
-* Episodes and Levels
+* Episodes and levels
 * Simplest and the most straight forward level editing capability (in text file)
-* Difficulty Choice
+* Difficulty choice
 * Menus
 * LibGDX particle system implementation for effects
 
