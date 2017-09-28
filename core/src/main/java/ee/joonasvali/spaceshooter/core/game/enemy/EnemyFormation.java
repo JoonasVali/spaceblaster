@@ -3,7 +3,6 @@ package ee.joonasvali.spaceshooter.core.game.enemy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 /**
  * @author Joonas Vali January 2017
