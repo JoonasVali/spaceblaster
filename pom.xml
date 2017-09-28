@@ -10,11 +10,10 @@
 
 
   <properties>
-    <android.version>4.1.1.4</android.version>
-    <android.maven.version>3.8.1</android.maven.version>
-    <gwt.version>2.6.0</gwt.version>
-    <gwt.maven.version>2.6.0</gwt.maven.version>
     <gdx.version>1.9.5</gdx.version>
+    <maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
+    <maven.jar.plugin.version>3.0.2</maven.jar.plugin.version>
+    <maven.assembly.plugin.version>2.6</maven.assembly.plugin.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -71,10 +70,10 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.3.2</version>
+        <version>${maven.compiler.plugin.version}</version>
         <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
+          <source>9</source>
+          <target>9</target>
         </configuration>
       </plugin>
     </plugins>

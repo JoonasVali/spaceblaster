@@ -3,7 +3,6 @@ package ee.joonasvali.spaceshooter.core.game.player;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import ee.joonasvali.spaceshooter.core.game.GameSpeedController;
-import ee.joonasvali.spaceshooter.core.game.player.Effect;
 
 /**
  * @author Joonas Vali January 2017

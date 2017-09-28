@@ -14,11 +14,9 @@ import ee.joonasvali.spaceshooter.core.game.GameState;
 import ee.joonasvali.spaceshooter.core.game.GameStepListener;
 import ee.joonasvali.spaceshooter.core.game.Powerup;
 import ee.joonasvali.spaceshooter.core.game.weapons.CannonBullet;
-import ee.joonasvali.spaceshooter.core.game.weapons.CannonBulletProvider;
 import ee.joonasvali.spaceshooter.core.game.weapons.WeaponProjectile;
 import ee.joonasvali.spaceshooter.core.game.weapons.WeaponProjectileManager;
 
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 

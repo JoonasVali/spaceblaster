@@ -9,7 +9,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import ee.joonasvali.spaceshooter.core.game.InputHandler;
-import ee.joonasvali.spaceshooter.core.game.difficulty.DifficultyLevel;
 
 /**
  * @author Joonas Vali February 2017
