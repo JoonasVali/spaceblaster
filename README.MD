@@ -1,3 +1,4 @@
+## Introduction: ##
 SpaceBlaster is a free unlicensed "Space Invaders" like game written in Java.
 
 I made it to get to know LibGDX a little better, and I'm hoping there will be at least one person who will benefit from my work. :)
@@ -5,6 +6,8 @@ I made it to get to know LibGDX a little better, and I'm hoping there will be at
 ## Demo Video: ##
 https://www.youtube.com/watch?v=hDvjagaqedQ
 
+
+## Contents: ##
 Currently the game contains:
 
 * Small range of enemy types with capability of adding more in the future without hassle
@@ -17,7 +20,8 @@ Currently the game contains:
 * Menus
 * LibGDX particle system implementation for effects
 
-
+## How to build: ##
+You need maven and java 10 JDK installed on your machine.
 Build the game using maven:
 
 For windows version:
@@ -29,7 +33,7 @@ For unix/mac version:
 The application will be ready to distribute under {project.folder}/desktop/target/dist
 
 
-LICENSE:
+## LICENSE: ##
 
 This is free and unencumbered software released into the public domain.
 
