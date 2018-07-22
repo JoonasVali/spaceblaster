@@ -3,12 +3,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>ee.joonasvali.spaceshooter</groupId>
-    <artifactId>spaceshooter</artifactId>
+    <groupId>ee.joonasvali.spaceblaster</groupId>
+    <artifactId>spaceblaster</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>spaceshooter-core</artifactId>
+  <artifactId>spaceblaster-core</artifactId>
   <packaging>jar</packaging>
   <name>MyDemoGame Core</name>
   <dependencies>
@@ -22,7 +22,7 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.1.2</version>
+      <version>1.2.3</version>
     </dependency>
 
     <dependency>

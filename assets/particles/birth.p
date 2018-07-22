@@ -142,4 +142,4 @@ additive: true
 behind: false
 premultipliedAlpha: false
 - Image Path -
-/K:/Progemine/Java/spaceshooter/particle.png
+/K:/Progemine/Java/spaceblaster/particle.png

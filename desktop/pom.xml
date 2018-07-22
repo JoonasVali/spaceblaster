@@ -3,21 +3,21 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>ee.joonasvali.spaceshooter</groupId>
-    <artifactId>spaceshooter</artifactId>
+    <groupId>ee.joonasvali.spaceblaster</groupId>
+    <artifactId>spaceblaster</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>spaceshooter-desktop</artifactId>
+  <artifactId>spaceblaster-desktop</artifactId>
   <packaging>jar</packaging>
   <name>MyDemoGame desktop</name>
 
   <properties>
-    <mainClass>ee.joonasvali.spaceshooter.java.SpaceShooterDesktop</mainClass>
+    <mainClass>ee.joonasvali.spaceblaster.java.SpaceBlasterDesktop</mainClass>
 
     <name>SpaceBlaster</name>
     <name.uppercase>SPACEBLASTER</name.uppercase>
-    <boot.class>ee.joonasvali.spaceshooter.java.SpaceShooterDesktop</boot.class>
+    <boot.class>ee.joonasvali.spaceblaster.java.SpaceBlasterDesktop</boot.class>
     <author>Joonas Vali</author>
     <timestamp>${maven.build.timestamp}</timestamp>
     <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
@@ -52,8 +52,8 @@
 
   <dependencies>
     <dependency>
-      <groupId>ee.joonasvali.spaceshooter</groupId>
-      <artifactId>spaceshooter-core</artifactId>
+      <groupId>ee.joonasvali.spaceblaster</groupId>
+      <artifactId>spaceblaster-core</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
 
@@ -111,7 +111,7 @@
             <descriptor>${asm.file}</descriptor>
           </descriptors>
 
-          <finalName>${artifactId}</finalName>
+          <finalName>${project.artifactId}</finalName>
           <appendAssemblyId>false</appendAssemblyId>
         </configuration>
 
@@ -134,9 +134,16 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>${maven.compiler.plugin.version}</version>
         <configuration>
-          <source>9</source>
-          <target>9</target>
+          <source>10</source>
+          <target>10</target>
         </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>RELEASE</version> <!-- Use newer version of ASM for java 10 support-->
+          </dependency>
+        </dependencies>
       </plugin>
 
       <!-- Adds native files to the application, like Slick2D native files-->
@@ -167,7 +174,7 @@
               <mainClass>${boot.class}</mainClass>
             </manifest>
             <manifestEntries>
-              <Class-Path>${artifactId}.jar</Class-Path>
+              <Class-Path>${project.artifactId}.jar</Class-Path>
             </manifestEntries>
           </archive>
         </configuration>
@@ -187,7 +194,7 @@
               <outputDirectory>${project.dist}</outputDirectory>
               <resources>
                 <resource>
-                  <directory>${program.target}/${artifactId}/${artifactId}</directory>
+                  <directory>${program.target}/${project.artifactId}/${project.artifactId}</directory>
                 </resource>
               </resources>
             </configuration>

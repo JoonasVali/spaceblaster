@@ -2,6 +2,9 @@ SpaceBlaster is a free unlicensed "Space Invaders" like game written in Java.
 
 I made it to get to know LibGDX a little better, and I'm hoping there will be at least one person who will benefit from my work. :)
 
+## Demo Video: ##
+https://www.youtube.com/watch?v=hDvjagaqedQ
+
 Currently the game contains:
 
 * Small range of enemy types with capability of adding more in the future without hassle

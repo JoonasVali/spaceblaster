@@ -1,6 +1,6 @@
-module ee.joonasvali.spaceshooter.core {
+module ee.joonasvali.spaceblaster.core {
   requires gdx;
   requires gdx.freetype;
   requires slf4j.api;
-  exports ee.joonasvali.spaceshooter.core;
+  exports ee.joonasvali.spaceblaster.core;
 }

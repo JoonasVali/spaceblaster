@@ -1,4 +1,4 @@
-package ee.joonasvali.spaceshooter.core.game.level;
+package ee.joonasvali.spaceblaster.core.game.level;
 
 import org.junit.Assert;
 import org.junit.Test;
