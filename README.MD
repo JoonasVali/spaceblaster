@@ -28,11 +28,9 @@ the correct operating system.
 You need maven and java 10 JDK installed on your machine.
 Build the game using maven:
 
-For windows version:
-  `mvn clean package -Pwin`
+For windows version: `mvn clean package -Pwin`
 
-For unix/mac version:
-  `mvn clean package -Punix`
+For unix/mac version: `mvn clean package -Punix`
 
 The application will be ready to distribute under {project.folder}/desktop/target/dist
 
@@ -41,11 +39,14 @@ To build Unix version on Windows, or vice versa, you need to have toolchain conf
 on your machine for the target version. https://maven.apache.org/guides/mini/guide-using-toolchains.html 
 and the necessary JDK present in your computer.
 So, when you configure the toolchain you pass the necessary values to maven build with the `dist.jdk` VM argument 
-
-    `-Ddist.jdk=key1=value1,key2=value2`
+```
+-Ddist.jdk=key1=value1,key2=value2
+```
 
 For example if I wanted to build Unix distribution on Windows machine : 
-    `mvn clean package -Punix -Ddist.jdk=version=10,vendor=openjdk,platform=linux-x64`                
+```
+mvn clean package -Punix -Ddist.jdk=version=10,vendor=openjdk,platform=linux-x64
+```
 
 ### Can you exclude the bundled Java Runtime image? ###
 
