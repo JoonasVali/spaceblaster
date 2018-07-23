@@ -8,7 +8,7 @@
 #This sets the rotating background
 background=space.png
 
-EPILOGUE
+PROLOGUE
 abababab
 000bb000
 
@@ -30,3 +30,8 @@ ccccccccc
 aadddddaa
 ccaaaaacc
 
+EPILOGUE
+c0c0c0c0c
+0c0c0c0c0
+0d0d0d0d0
+0d0d0d0d0
