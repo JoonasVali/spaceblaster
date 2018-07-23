@@ -14,20 +14,19 @@
 
   <properties>
     <mainClass>ee.joonasvali.spaceblaster.java.SpaceBlasterDesktop</mainClass>
-
     <name>SpaceBlaster</name>
     <name.uppercase>SPACEBLASTER</name.uppercase>
     <boot.class>ee.joonasvali.spaceblaster.java.SpaceBlasterDesktop</boot.class>
     <author>Joonas Vali</author>
     <timestamp>${maven.build.timestamp}</timestamp>
     <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
-    <binfolder>${basedir}/bin</binfolder>
-
-    <gdx.native.lib>${basedir}/target/natives</gdx.native.lib>
-    <program.target>${basedir}/target</program.target>
-    <project.dist>${program.target}/dist</project.dist>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <binfolder>${basedir}/bin</binfolder>
+    <program.target>${basedir}/target</program.target>
+    <gdx.native.lib>${program.target}/natives</gdx.native.lib>
+    <project.dist>${program.target}/dist</project.dist>
+    <dist.jdk/>
   </properties>
 
   <profiles>
@@ -103,6 +102,39 @@
     </resources>
 
     <plugins>
+      <plugin>
+        <!-- https://github.com/moditect/moditect -->
+        <!-- this plugin is responsible for generating module-infos inside dependencies, so we could jlink it -->
+        <groupId>org.moditect</groupId>
+        <artifactId>moditect-maven-plugin</artifactId>
+        <version>1.0.0.Beta1</version>
+        <executions>
+          <execution>
+            <id>create-runtime-image</id>
+            <phase>package</phase>
+            <goals>
+              <goal>create-runtime-image</goal>
+            </goals>
+            <configuration>
+              <modules>
+                <module>java.base</module>
+                <module>java.desktop</module>
+                <module>java.naming</module>
+                <module>jdk.unsupported</module>
+              </modules>
+              <!-- You can use toolchain to build JVM image for different OS, just specify -Ddist.jdk=... in maven commands. -->
+              <!-- If this is not provided, default, current JVM is being distributed with the game. -->
+              <!-- https://maven.apache.org/guides/mini/guide-using-toolchains.html -->
+              <baseJdk>${dist.jdk}</baseJdk>
+              <outputDirectory>
+                ${project.dist}/jre
+              </outputDirectory>
+            </configuration>
+          </execution>
+
+        </executions>
+      </plugin>
+
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <version>${maven.assembly.plugin.version}</version>
