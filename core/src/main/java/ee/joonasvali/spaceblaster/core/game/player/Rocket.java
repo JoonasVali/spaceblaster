@@ -28,6 +28,7 @@ public class Rocket implements Disposable, GameStepListener {
   public static final int ROCKET_SIZE = 3;
   private static final float ROCKET_SPEED = 1;
   public static final int TIME_TO_REBIRTH = 150;
+  public static final float ROCKET_EXPLOSION_VOLUME = 0.75f;
   private final Sprite sprite;
   private final Rectangle rectangle;
   private final Texture texture;
@@ -43,7 +44,7 @@ public class Rocket implements Disposable, GameStepListener {
   private int countDownToRebirth;
   private int weaponCooldown;
 
-  private final Sound[] hitSounds;
+  private final Sound[] explosionSounds;
   private float xTarget;
 
   public Rocket(GameState state) {
@@ -53,9 +54,8 @@ public class Rocket implements Disposable, GameStepListener {
     this.state = state;
     texture = new Texture(Gdx.files.internal("rocket.png"));
 
-    this.hitSounds = new Sound[] {
-        state.getSoundManager().getHitSound(),
-        state.getSoundManager().getHit2Sound()
+    this.explosionSounds = new Sound[] {
+        state.getSoundManager().getRocketExplosionSound(),
     };
 
     rectangle = new Rectangle(0, 0, ROCKET_SIZE, ROCKET_SIZE);
@@ -137,6 +137,7 @@ public class Rocket implements Disposable, GameStepListener {
     if (p.isPresent()) {
       state.getPowerupManager().remove(p.get());
       setNewRandomWeapon();
+      state.getPowerupManager().playPowerupSound();
     }
   }
 
@@ -189,7 +190,7 @@ public class Rocket implements Disposable, GameStepListener {
     }
     explosionManager.createExplosion(getX(), getY(), getWidth(), getHeight());
     state.getParticleManager().createParticleEmitter(ParticleEffectManager.EXPLOSION, getX() + getWidth() / 2, getY() + getHeight() / 2, 0);
-    hitSounds[(int) (Math.random() * hitSounds.length)].play(0.5f);
+    explosionSounds[(int) (Math.random() * explosionSounds.length)].play(ROCKET_EXPLOSION_VOLUME);
     this.alive = false;
     countDownToRebirth = TIME_TO_REBIRTH;
     lives.decrementAndGet();

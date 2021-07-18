@@ -1,11 +1,13 @@
 package ee.joonasvali.spaceblaster.core.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Pool;
+import ee.joonasvali.spaceblaster.core.SoundManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,10 +32,12 @@ public class PowerupManager implements Disposable, GameStepListener {
   private final Texture powerupSprite;
 
   private final ArrayList<Powerup> powerups = new ArrayList<>();
+  private final Sound sound;
 
   public PowerupManager(GameState state) {
     this.powerupSprite = new Texture(Gdx.files.internal("powerup.png"));
     this.state = state;
+    this.sound = state.getSoundManager().getPowerupSound();
   }
 
   @Override
@@ -83,5 +87,9 @@ public class PowerupManager implements Disposable, GameStepListener {
   public void remove(Powerup p) {
     powerups.remove(p);
     pool.free(p);
+  }
+
+  public void playPowerupSound() {
+    this.sound.play();
   }
 }

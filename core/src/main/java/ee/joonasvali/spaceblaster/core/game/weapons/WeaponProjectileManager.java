@@ -56,7 +56,17 @@ public class WeaponProjectileManager implements Disposable, GameStepListener {
 
 
   public WeaponProjectile createProjectileAt(Class<? extends WeaponProjectile> type, Object author, float x, float y, float angle) {
-    ProjectileProvider provider = providers.get(type);
+    ProjectileProvider<?> provider = providers.get(type);
+    WeaponProjectile projectile = createProjectileSoundless(type, author, x, y, angle);
+    Sound sound = provider.getSound();
+    if (sound != null) {
+      sound.play(0.5f);
+    }
+    return projectile;
+  }
+
+  public WeaponProjectile createProjectileSoundless(Class<? extends WeaponProjectile> type, Object author, float x, float y, float angle) {
+    ProjectileProvider<?> provider = providers.get(type);
     if (provider == null) {
       throw new IllegalArgumentException("Projectile provider missing for: " + type);
     }
@@ -64,10 +74,6 @@ public class WeaponProjectileManager implements Disposable, GameStepListener {
     projectile.setPosition(x, y);
     projectile.setAngle(angle);
     projectile.setAuthor(author);
-    Sound sound = provider.getSound();
-    if (sound != null) {
-      sound.play(0.5f);
-    }
     activeProjectiles.add(projectile);
     return projectile;
   }

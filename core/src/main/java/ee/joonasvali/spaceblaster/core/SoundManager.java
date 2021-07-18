@@ -28,6 +28,10 @@ public class SoundManager implements Disposable {
   private Sound missileSound3;
   private Sound gaussSound;
   private Sound cannonSound;
+  private Sound powerupSound;
+  private Sound rocketExplosionSound;
+  private Sound trishotSound1;
+  private Sound trishotSound2;
 
   public SoundManager() {
     this.menuClick = Gdx.audio.newSound(Gdx.files.internal("sound/menuclick.mp3"));
@@ -39,6 +43,10 @@ public class SoundManager implements Disposable {
     this.missileSound3 = Gdx.audio.newSound(Gdx.files.internal("sound/missile3.mp3"));
     this.gaussSound = Gdx.audio.newSound(Gdx.files.internal("sound/gauss.mp3"));
     this.cannonSound = Gdx.audio.newSound(Gdx.files.internal("sound/cannon.mp3"));
+    this.trishotSound1 = Gdx.audio.newSound(Gdx.files.internal("sound/trishot1.mp3"));
+    this.trishotSound2 = Gdx.audio.newSound(Gdx.files.internal("sound/trishot2.mp3"));
+    this.rocketExplosionSound = Gdx.audio.newSound(Gdx.files.internal("sound/rocket-explosion.mp3"));
+    this.powerupSound = Gdx.audio.newSound(Gdx.files.internal("sound/powerup.mp3"));
   }
 
   @Override
@@ -52,6 +60,10 @@ public class SoundManager implements Disposable {
     missileSound3.dispose();
     gaussSound.dispose();
     cannonSound.dispose();
+    trishotSound1.dispose();
+    trishotSound2.dispose();
+    rocketExplosionSound.dispose();
+    powerupSound.dispose();
   }
 
   public Music createMusic() {
@@ -92,5 +104,21 @@ public class SoundManager implements Disposable {
 
   public Sound getCannonSound() {
     return cannonSound;
+  }
+
+  public Sound getPowerupSound() {
+    return powerupSound;
+  }
+
+  public Sound getRocketExplosionSound() {
+    return rocketExplosionSound;
+  }
+
+  public Sound getTrishotSound1() {
+    return trishotSound1;
+  }
+
+  public Sound getTrishotSound2() {
+    return trishotSound2;
   }
 }

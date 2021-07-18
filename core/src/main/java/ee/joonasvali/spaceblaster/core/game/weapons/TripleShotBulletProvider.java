@@ -19,13 +19,15 @@ public class TripleShotBulletProvider implements ProjectileProvider<TripleShotBu
 
   private final Texture texture;
   private final Sprite sprite;
-  private final Sound sound;
+  private final Sound fireSound;
+  private final Sound splitSound;
   private final GameState state;
 
   public TripleShotBulletProvider(GameState state) {
     this.texture = new Texture(Gdx.files.internal("gauss.png"));
     this.sprite = new Sprite(texture);
-    this.sound = state.getSoundManager().getGaussSound();
+    this.fireSound = state.getSoundManager().getTrishotSound1();
+    this.splitSound = state.getSoundManager().getTrishotSound2();
     this.state = state;
   }
 
@@ -52,7 +54,11 @@ public class TripleShotBulletProvider implements ProjectileProvider<TripleShotBu
 
   @Override
   public Sound getSound() {
-    return sound;
+    return fireSound;
+  }
+
+  public Sound getSplitSound() {
+    return splitSound;
   }
 
   @Override
