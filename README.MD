@@ -28,7 +28,7 @@ need to have Java installed on their machine, as long as they get the distributi
 the correct operating system.
 
 ## How to build: ##
-You need maven and java 10 JDK installed on your machine.
+You need maven and java 12 JDK installed on your machine.
 Build the game using maven:
 
 For windows version: `mvn clean package -Pwin`

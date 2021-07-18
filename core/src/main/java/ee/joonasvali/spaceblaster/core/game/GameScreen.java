@@ -8,10 +8,12 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import ee.joonasvali.spaceblaster.core.ParticleEffectManager;
 import ee.joonasvali.spaceblaster.core.SpaceBlasterGame;
-import ee.joonasvali.spaceblaster.core.Util;
 import ee.joonasvali.spaceblaster.core.game.difficulty.GameSettings;
 import ee.joonasvali.spaceblaster.core.game.level.LevelProvider;
 import ee.joonasvali.spaceblaster.core.game.level.LevelReader;
@@ -38,9 +40,11 @@ public class GameScreen implements Screen, Disposable {
   private GameSpeedController speedController = new GameSpeedController(1000 / FPS);
 
   private OrthographicCamera cam;
+  private Viewport viewport;
   private LevelProvider levelProvider;
 
   private static final int WORLD_WIDTH = 100;
+  private static final int WORLD_HEIGHT = 60;
 
   private final boolean isValid;
   private SpaceBlasterGame game;
@@ -51,11 +55,8 @@ public class GameScreen implements Screen, Disposable {
   public GameScreen(SpaceBlasterGame game, FileHandle level, GameSettings gameSettings) {
     this.game = game;
 
-    float w = Gdx.graphics.getWidth();
-    float h = Gdx.graphics.getHeight();
-
     int worldWidth = WORLD_WIDTH;
-    int worldHeight = (int) (WORLD_WIDTH * (h / w)); // Make world height match monitor ratio
+    int worldHeight = WORLD_HEIGHT;
 
     this.state = new GameState(worldWidth, worldHeight);
 
@@ -116,12 +117,11 @@ public class GameScreen implements Screen, Disposable {
 
 
   private void createCamera() {
-    // Constructs a new OrthographicCamera, using the given viewport width and height
-    // Height is multiplied by aspect ratio.
-    cam = new OrthographicCamera(state.getWorldWidth(), state.getWorldHeight());
+    cam = new OrthographicCamera();
+    viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, cam);
+    viewport.apply();
 
-    cam.position.set(cam.viewportWidth / 2f, cam.viewportHeight / 2f, 0);
-    cam.update();
+    cam.position.set(WORLD_WIDTH / 2f, WORLD_HEIGHT / 2f, 0);
   }
 
 
@@ -157,9 +157,9 @@ public class GameScreen implements Screen, Disposable {
 
   @Override
   public void resize(int width, int height) {
-    cam.viewportWidth = 100f;
-    cam.viewportHeight = 100f * height / width;
-    cam.update();
+    log.info("World size change: " + width + " " + height);
+    viewport.update(width, height);
+    cam.position.set(WORLD_WIDTH / 2f, WORLD_HEIGHT / 2f, 0);
   }
 
   @Override
@@ -202,7 +202,10 @@ public class GameScreen implements Screen, Disposable {
   private void handleInput() {
     int mouseX = Gdx.input.getX();
     int mouseY = Gdx.input.getY();
-    state.getRocket().setPosition(Math.min(Util.unProjectX(cam, mouseX, mouseY), WORLD_WIDTH - Rocket.ROCKET_SIZE), ROCKET_DISTANCE_FROM_BOTTOM);
+    state.getRocket().setPosition(
+        Math.max(0, Math.min(viewport.unproject(new Vector2(mouseX, mouseY)).x, WORLD_WIDTH - Rocket.ROCKET_SIZE)),
+        ROCKET_DISTANCE_FROM_BOTTOM
+    );
   }
 
 

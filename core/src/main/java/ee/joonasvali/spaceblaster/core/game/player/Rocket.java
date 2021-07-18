@@ -71,7 +71,7 @@ public class Rocket implements Disposable, GameStepListener {
   }
 
   public void setPosition(float x, float y) {
-    xTarget = x;
+    xTarget = Math.max(0, x);
     rectangle.y = y;
     // Y is fixed right now.
     sprite.setY(y);

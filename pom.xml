@@ -10,8 +10,8 @@
 
 
   <properties>
-    <gdx.version>1.9.8</gdx.version>
-    <maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
+    <gdx.version>1.10.0</gdx.version>
+    <maven.compiler.plugin.version>3.8.0</maven.compiler.plugin.version>
     <maven.jar.plugin.version>3.1.0</maven.jar.plugin.version>
     <maven.assembly.plugin.version>2.6</maven.assembly.plugin.version>
   </properties>
@@ -73,8 +73,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>${maven.compiler.plugin.version}</version>
         <configuration>
-          <source>10</source>
-          <target>10</target>
+          <source>12</source>
+          <target>12</target>
         </configuration>
         <dependencies>
           <dependency>
