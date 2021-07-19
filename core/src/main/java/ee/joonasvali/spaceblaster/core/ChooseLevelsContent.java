@@ -14,8 +14,8 @@ import ee.joonasvali.spaceblaster.core.game.InputHandler;
  * @author Joonas Vali February 2017
  */
 public class ChooseLevelsContent implements MenuContent {
-  private static final int WIDTH = 200;
-  private static final int HEIGHT = 50;
+  private static final int WIDTH = 300;
+  private static final int HEIGHT = 60;
   private static final int PADDING = 10;
   public static final String LEVELS_FOLDER = "levels";
   private SpaceBlasterGame game;

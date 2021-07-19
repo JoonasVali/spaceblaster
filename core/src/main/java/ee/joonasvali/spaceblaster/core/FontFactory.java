@@ -13,7 +13,7 @@ public class FontFactory {
   private static final String BEBASNEUE_PATH = "fonts/BebasNeue.otf";
 
   public BitmapFont createTitlefont() {
-    return createCoolvetica(Color.YELLOW, 30, 1, 3, 3);
+    return createCoolvetica(Color.YELLOW, 50, 1, 3, 3);
   }
 
   public BitmapFont createNormalfont() {
@@ -21,7 +21,7 @@ public class FontFactory {
   }
 
   public BitmapFont createMenufont() {
-    return createCoolvetica(Color.WHITE, 25, 1, 0, 0);
+    return createCoolvetica(Color.WHITE, 35, 2, 0, 0);
   }
 
   public BitmapFont createFont12(Color color) {
@@ -60,9 +60,9 @@ public class FontFactory {
   }
 
   public BitmapFont createCreditsFont() {
-    return createCoolvetica(Color.WHITE, 16, 1, 1, 1);
+    return createCoolvetica(Color.WHITE, 24, 1, 1, 1);
   }
   public BitmapFont createCreditsFontSmall() {
-    return createCoolvetica(Color.WHITE, 12, 1, 1, 1);
+    return createCoolvetica(Color.WHITE, 15, 1, 1, 1);
   }
 }

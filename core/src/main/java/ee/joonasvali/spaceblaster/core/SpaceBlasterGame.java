@@ -21,9 +21,6 @@ public class SpaceBlasterGame extends Game {
 
   private boolean exit;
 
-  private float viewportWidth;
-  private float viewportHeight;
-
   private FontFactory fontFactory;
 
   @Override
@@ -35,11 +32,6 @@ public class SpaceBlasterGame extends Game {
     batch = new SpriteBatch();
     fontFactory = new FontFactory();
 
-    float w = Gdx.graphics.getWidth();
-    float h = Gdx.graphics.getHeight();
-    this.viewportWidth = 100;
-    this.viewportHeight = 100 * (h / w);
-
     gotoMainMenu();
   }
 
@@ -48,7 +40,7 @@ public class SpaceBlasterGame extends Game {
   }
 
   public void gotoMainMenu() {
-    setScreen(new MainMenuScreen(this, new MainMenuContent(this), viewportWidth, viewportHeight));
+    setScreen(new MainMenuScreen(this, new MainMenuContent(this)));
   }
 
   @Override
@@ -111,11 +103,11 @@ public class SpaceBlasterGame extends Game {
   }
 
   public void setChooseLevelsScreen() {
-    setScreen(new MainMenuScreen(this, new ChooseLevelsContent(this), viewportWidth, viewportHeight));
+    setScreen(new MainMenuScreen(this, new ChooseLevelsContent(this)));
   }
 
   public void setChooseDifficultyScreen(FileHandle level) {
-    setScreen(new MainMenuScreen(this, new ChooseDifficultyContent(this, level), viewportWidth, viewportHeight));
+    setScreen(new MainMenuScreen(this, new ChooseDifficultyContent(this, level)));
   }
 
   @Override
@@ -129,6 +121,6 @@ public class SpaceBlasterGame extends Game {
   }
 
   public void gotoCredits() {
-    setScreen(new CreditsScreen(this, viewportWidth, viewportHeight));
+    setScreen(new CreditsScreen(this));
   }
 }

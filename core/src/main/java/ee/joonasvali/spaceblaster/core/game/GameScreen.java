@@ -157,7 +157,6 @@ public class GameScreen implements Screen, Disposable {
 
   @Override
   public void resize(int width, int height) {
-    log.info("World size change: " + width + " " + height);
     viewport.update(width, height);
     cam.position.set(WORLD_WIDTH / 2f, WORLD_HEIGHT / 2f, 0);
   }

@@ -12,6 +12,8 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import ee.joonasvali.spaceblaster.core.game.InputHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,23 +31,29 @@ public class MainMenuScreen implements Screen {
   private final SpaceBlasterGame game;
 
 
+  private final float viewportWidth = 1000;
+  private final float viewportHeight = 600;
+
   private Skin skin;
   private Stage stage;
   private final OrthographicCamera camera;
   private OrthographicCamera textCamera;
   private Sprite background;
-  private float width;
-  private float height;
+
   private InputMultiplexer inputMultiplexer = new InputMultiplexer();
   private InputHandler inputHandler = new InputHandler();
 
   private final BitmapFont titleFont;
   private final BitmapFont creditFont;
 
+  private Viewport viewport;
+  private Viewport textViewport;
+
+
   private final String contentId;
 
 
-  public MainMenuScreen(SpaceBlasterGame spaceShooterGame, MenuContent content, float viewportWidth, float viewportHeight) {
+  public MainMenuScreen(SpaceBlasterGame spaceShooterGame, MenuContent content) {
     this.game = spaceShooterGame;
     this.titleFont = spaceShooterGame.getFontFactory().createTitlefont();
     this.creditFont = spaceShooterGame.getFontFactory().createCreditsFontSmall();
@@ -55,13 +63,18 @@ public class MainMenuScreen implements Screen {
     textCamera = new OrthographicCamera();
     stage = new Stage();
 
-    camera.setToOrtho(false, viewportWidth, viewportHeight);
-    width = 1000;
-    height = 1000 * (viewportHeight / viewportWidth);
-    textCamera.setToOrtho(false, width, height);
+    viewport = new FitViewport(viewportWidth, viewportHeight, camera);
+    viewport.apply();
+
+    camera.position.set(viewportWidth / 2f, viewportHeight / 2f, 0);
+
+    textViewport = new FitViewport(viewportWidth, viewportHeight, textCamera);
+    textViewport.apply();
+
+    textCamera.position.set(viewportWidth / 2f, viewportHeight / 2f, 0);
+
     background = new Sprite(new Texture(Gdx.files.internal("mainmenuback.png")),0,131,1024,740);
     background.setOrigin(0,0);
-    background.setScale(width / background.getWidth());
 
     skin = new Skin();
     // font disposed with skin.
@@ -85,10 +98,11 @@ public class MainMenuScreen implements Screen {
   @Override
   public void render(float delta) {
     try {
-      Gdx.gl.glClearColor(0.1f, 0.1f, 0.2f, 1);
+      camera.update();
+
+      Gdx.gl.glClearColor(0f, 0f, 0f, 1);
       Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-      camera.update();
       game.getBatch().setProjectionMatrix(camera.combined);
       // render behind text here
 
@@ -101,10 +115,10 @@ public class MainMenuScreen implements Screen {
 
 
       float fwidth = Util.getTextWidth(GAME_TITLE, titleFont);
-      titleFont.draw(game.getBatch(), GAME_TITLE, width / 2 - fwidth / 2, height / 1.4f);
+      titleFont.draw(game.getBatch(), GAME_TITLE, viewportWidth / 2 - fwidth / 2, viewportHeight / 1.4f);
 
       fwidth = Util.getTextWidth(CREDIT_MESSAGE, creditFont);
-      creditFont.draw(game.getBatch(), CREDIT_MESSAGE, width / 2 - fwidth / 2, 30);
+      creditFont.draw(game.getBatch(), CREDIT_MESSAGE, viewportWidth / 2 - fwidth / 2, 30);
 
       game.getBatch().end();
 
@@ -119,7 +133,9 @@ public class MainMenuScreen implements Screen {
 
   @Override
   public void resize(int width, int height) {
-    stage.getViewport().update(width, height, true);
+    viewport.update(width, height);
+    camera.position.set(viewportWidth / 2f, viewportHeight / 2f, 0);
+    textCamera.position.set(viewportWidth / 2f, viewportHeight / 2f, 0);
   }
 
   @Override

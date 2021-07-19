@@ -17,6 +17,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import ee.joonasvali.spaceblaster.core.game.InputHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,13 +43,17 @@ public class CreditsScreen implements Screen {
   private final OrthographicCamera camera;
   private OrthographicCamera textCamera;
   private Sprite background;
-  private float width;
-  private float height;
 
   private InputMultiplexer inputMultiplexer = new InputMultiplexer();
   private InputHandler inputHandler = new InputHandler();
 
-  public CreditsScreen(SpaceBlasterGame spaceShooterGame, float viewportWidth, float viewportHeight) {
+  private final float viewportWidth = 1000;
+  private final float viewportHeight = 600;
+
+  private Viewport viewport;
+  private Viewport textViewport;
+
+  public CreditsScreen(SpaceBlasterGame spaceShooterGame) {
     this.game = spaceShooterGame;
     this.smallfont = spaceShooterGame.getFontFactory().createCreditsFontSmall();
     this.titleFont = spaceShooterGame.getFontFactory().createTitlefont();
@@ -56,15 +62,18 @@ public class CreditsScreen implements Screen {
     textCamera = new OrthographicCamera();
     stage = new Stage();
 
-    camera.setToOrtho(false, viewportWidth, viewportHeight);
-    width = 1000;
-    height = 1000 * (viewportHeight / viewportWidth);
-    textCamera.setToOrtho(false, width, height);
+    viewport = new FitViewport(viewportWidth, viewportHeight, camera);
+    viewport.apply();
+
+    camera.position.set(viewportWidth / 2f, viewportHeight / 2f, 0);
+
+    textViewport = new FitViewport(viewportWidth, viewportHeight, textCamera);
+    textViewport.apply();
+
+    textCamera.position.set(viewportWidth / 2f, viewportHeight / 2f, 0);
+
     background = new Sprite(new Texture(Gdx.files.internal("mainmenuback.png")),0,131,1024,740);
     background.setOrigin(0,0);
-    background.setScale(width / background.getWidth());
-
-
 
     skin = new Skin();
     // Skin font disposed together with skin.
@@ -124,10 +133,11 @@ public class CreditsScreen implements Screen {
 
   @Override
   public void render(float delta) {
-    Gdx.gl.glClearColor(0.1f, 0.1f, 0.2f, 1);
+    camera.update();
+
+    Gdx.gl.glClearColor(0f, 0f, 0f, 1);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-    camera.update();
     game.getBatch().setProjectionMatrix(camera.combined);
     // render behind text here
 
@@ -139,10 +149,10 @@ public class CreditsScreen implements Screen {
     background.draw(game.getBatch());
 
     float fwidth = Util.getTextWidth(GAME_TITLE, titleFont);
-    titleFont.draw(game.getBatch(), GAME_TITLE, width / 2  - fwidth / 2, height / 1.4f);
+    titleFont.draw(game.getBatch(), GAME_TITLE, viewportWidth / 2  - fwidth / 2, viewportHeight / 1.4f);
 
     fwidth = Util.getTextWidth(DISCLAIMER, smallfont);
-    smallfont.draw(game.getBatch(), DISCLAIMER, width / 2 - fwidth / 2, 20);
+    smallfont.draw(game.getBatch(), DISCLAIMER, viewportWidth / 2 - fwidth / 2, 20);
     game.getBatch().end();
 
     stage.act(Gdx.graphics.getDeltaTime());
@@ -156,7 +166,9 @@ public class CreditsScreen implements Screen {
 
   @Override
   public void resize(int width, int height) {
-    stage.getViewport().update(width, height, true);
+    viewport.update(width, height);
+    camera.position.set(viewportWidth / 2f, viewportHeight / 2f, 0);
+    textCamera.position.set(viewportWidth / 2f, viewportHeight / 2f, 0);
   }
 
   @Override

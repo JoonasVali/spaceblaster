@@ -14,8 +14,8 @@ import ee.joonasvali.spaceblaster.core.game.difficulty.DifficultyLevel;
  * @author Joonas Vali March 2017
  */
 public class ChooseDifficultyContent implements MenuContent {
-  private static final int WIDTH = 200;
-  private static final int HEIGHT = 50;
+  private static final int WIDTH = 300;
+  private static final int HEIGHT = 60;
   private static final int PADDING = 10;
   private final SpaceBlasterGame game;
   private final FileHandle levelFile;
