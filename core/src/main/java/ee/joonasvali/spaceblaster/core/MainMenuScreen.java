@@ -30,14 +30,12 @@ public class MainMenuScreen implements Screen {
 
   private final SpaceBlasterGame game;
 
-
   private final float viewportWidth = 1000;
   private final float viewportHeight = 600;
 
   private Skin skin;
   private Stage stage;
   private final OrthographicCamera camera;
-  private OrthographicCamera textCamera;
   private Sprite background;
 
   private InputMultiplexer inputMultiplexer = new InputMultiplexer();
@@ -47,8 +45,6 @@ public class MainMenuScreen implements Screen {
   private final BitmapFont creditFont;
 
   private Viewport viewport;
-  private Viewport textViewport;
-
 
   private final String contentId;
 
@@ -60,7 +56,6 @@ public class MainMenuScreen implements Screen {
     this.contentId = content.getClass().getCanonicalName();
 
     camera = new OrthographicCamera();
-    textCamera = new OrthographicCamera();
     stage = new Stage();
 
     viewport = new FitViewport(viewportWidth, viewportHeight, camera);
@@ -68,10 +63,6 @@ public class MainMenuScreen implements Screen {
 
     camera.position.set(viewportWidth / 2f, viewportHeight / 2f, 0);
 
-    textViewport = new FitViewport(viewportWidth, viewportHeight, textCamera);
-    textViewport.apply();
-
-    textCamera.position.set(viewportWidth / 2f, viewportHeight / 2f, 0);
 
     background = new Sprite(new Texture(Gdx.files.internal("mainmenuback.png")),0,131,1024,740);
     background.setOrigin(0,0);
@@ -104,10 +95,7 @@ public class MainMenuScreen implements Screen {
       Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
       game.getBatch().setProjectionMatrix(camera.combined);
-      // render behind text here
 
-      textCamera.update();
-      game.getBatch().setProjectionMatrix(textCamera.combined);
 
       game.getBatch().begin();
 
@@ -135,7 +123,6 @@ public class MainMenuScreen implements Screen {
   public void resize(int width, int height) {
     viewport.update(width, height);
     camera.position.set(viewportWidth / 2f, viewportHeight / 2f, 0);
-    textCamera.position.set(viewportWidth / 2f, viewportHeight / 2f, 0);
   }
 
   @Override

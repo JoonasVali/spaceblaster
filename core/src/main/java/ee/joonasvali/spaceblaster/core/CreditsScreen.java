@@ -41,7 +41,6 @@ public class CreditsScreen implements Screen {
   private Skin tableSkin;
   private Stage stage;
   private final OrthographicCamera camera;
-  private OrthographicCamera textCamera;
   private Sprite background;
 
   private InputMultiplexer inputMultiplexer = new InputMultiplexer();
@@ -51,7 +50,6 @@ public class CreditsScreen implements Screen {
   private final float viewportHeight = 600;
 
   private Viewport viewport;
-  private Viewport textViewport;
 
   public CreditsScreen(SpaceBlasterGame spaceShooterGame) {
     this.game = spaceShooterGame;
@@ -59,18 +57,12 @@ public class CreditsScreen implements Screen {
     this.titleFont = spaceShooterGame.getFontFactory().createTitlefont();
 
     camera = new OrthographicCamera();
-    textCamera = new OrthographicCamera();
     stage = new Stage();
 
     viewport = new FitViewport(viewportWidth, viewportHeight, camera);
     viewport.apply();
 
     camera.position.set(viewportWidth / 2f, viewportHeight / 2f, 0);
-
-    textViewport = new FitViewport(viewportWidth, viewportHeight, textCamera);
-    textViewport.apply();
-
-    textCamera.position.set(viewportWidth / 2f, viewportHeight / 2f, 0);
 
     background = new Sprite(new Texture(Gdx.files.internal("mainmenuback.png")),0,131,1024,740);
     background.setOrigin(0,0);
@@ -105,7 +97,7 @@ public class CreditsScreen implements Screen {
     table.row();
     table.add("LibGDX skin by Czyzby").pad(20);
     table.row();
-    table.add("Fonts 'BebasNeue' and 'Coolvetica' - Ryoichi Tsunekawa & Ray Larabie").pad(20);
+    table.add("Fonts 'Ethnocentric' and 'Pricedown' - Ray Larabie").pad(20);
     table.row();
     table.row();
     table.add("Music \"Nasdaq\" by Bobby Yarsulik");
@@ -139,11 +131,6 @@ public class CreditsScreen implements Screen {
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
     game.getBatch().setProjectionMatrix(camera.combined);
-    // render behind text here
-
-    textCamera.update();
-    game.getBatch().setProjectionMatrix(textCamera.combined);
-
     game.getBatch().begin();
 
     background.draw(game.getBatch());
@@ -168,7 +155,6 @@ public class CreditsScreen implements Screen {
   public void resize(int width, int height) {
     viewport.update(width, height);
     camera.position.set(viewportWidth / 2f, viewportHeight / 2f, 0);
-    textCamera.position.set(viewportWidth / 2f, viewportHeight / 2f, 0);
   }
 
   @Override

@@ -25,10 +25,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class Rocket implements Disposable, GameStepListener {
   private static final Class<? extends WeaponProjectile> DEFAULT_WEAPON_CLASS = CannonBullet.class;
-  public static final int ROCKET_SIZE = 3;
+  public static final float ROCKET_SIZE = 3;
   private static final float ROCKET_SPEED = 1;
   public static final int TIME_TO_REBIRTH = 150;
   public static final float ROCKET_EXPLOSION_VOLUME = 0.75f;
+  public static final float ROCKET_FIRE_ANGLE_VARIATION = 3;
   private final Sprite sprite;
   private final Rectangle rectangle;
   private final Texture texture;
@@ -163,7 +164,7 @@ public class Rocket implements Disposable, GameStepListener {
     }
     this.weaponProjectileManager.createProjectileAt(weaponClass,
         this,this.getX() + Rocket.ROCKET_SIZE / 2, this.getY() + Rocket.ROCKET_SIZE / 2,
-        (float) Math.random() * 10 - 5
+        (float) Math.random() * ROCKET_FIRE_ANGLE_VARIATION - ROCKET_FIRE_ANGLE_VARIATION / 2
     );
     this.weaponCooldown = weaponProjectileManager.getCooldown(weaponClass);
   }
