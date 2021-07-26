@@ -20,24 +20,28 @@ public class SoundManager implements Disposable {
 
   public static final String MUSIC_PATH = "sound/LB13_Nasdaq_byBobbyYarsulik.mp3";
   private final Sound menuClick;
-  private final Sound hit;
-  private final Sound hit2;
+  private final Sound enemyDestroy1;
+  private final Sound enemyDestroy2;
+  private final Sound enemyDestroy3;
   private final Sound damageSound;
-  private Sound missileSound;
-  private Sound missileSound2;
-  private Sound missileSound3;
-  private Sound gaussSound;
-  private Sound cannonSound;
-  private Sound powerupSound;
-  private Sound rocketExplosionSound;
-  private Sound trishotSound1;
-  private Sound trishotSound2;
+  private final Sound missileSound;
+  private final Sound missileSound2;
+  private final Sound missileSound3;
+  private final Sound gaussSound;
+  private final Sound cannonSound;
+  private final Sound powerupSound;
+  private final Sound rocketExplosionSound;
+  private final Sound trishotSound1;
+  private final Sound trishotSound2;
+  private final Sound enemiesRespawnSound;
 
   public SoundManager() {
     this.menuClick = Gdx.audio.newSound(Gdx.files.internal("sound/menuclick.mp3"));
-    this.hit = Gdx.audio.newSound(Gdx.files.internal("sound/hit.mp3"));
-    this.hit2 = Gdx.audio.newSound(Gdx.files.internal("sound/hit2.mp3"));
+    this.enemyDestroy1 = Gdx.audio.newSound(Gdx.files.internal("sound/enemy_destroy1.mp3"));
+    this.enemyDestroy2 = Gdx.audio.newSound(Gdx.files.internal("sound/enemy_destroy2.mp3"));
+    this.enemyDestroy3 = Gdx.audio.newSound(Gdx.files.internal("sound/enemy_destroy3.mp3"));
     this.damageSound = Gdx.audio.newSound(Gdx.files.internal("sound/damage.mp3"));
+    this.enemiesRespawnSound = Gdx.audio.newSound(Gdx.files.internal("sound/enemies.mp3"));
     this.missileSound = Gdx.audio.newSound(Gdx.files.internal("sound/missile.mp3"));
     this.missileSound2 = Gdx.audio.newSound(Gdx.files.internal("sound/missile2.mp3"));
     this.missileSound3 = Gdx.audio.newSound(Gdx.files.internal("sound/missile3.mp3"));
@@ -52,8 +56,9 @@ public class SoundManager implements Disposable {
   @Override
   public void dispose() {
     menuClick.dispose();
-    hit.dispose();
-    hit2.dispose();
+    enemyDestroy1.dispose();
+    enemyDestroy2.dispose();
+    enemyDestroy3.dispose();
     damageSound.dispose();
     missileSound.dispose();
     missileSound2.dispose();
@@ -64,6 +69,7 @@ public class SoundManager implements Disposable {
     trishotSound2.dispose();
     rocketExplosionSound.dispose();
     powerupSound.dispose();
+    enemiesRespawnSound.dispose();
   }
 
   public Music createMusic() {
@@ -74,12 +80,16 @@ public class SoundManager implements Disposable {
     return menuClick;
   }
 
-  public Sound getHitSound() {
-    return hit;
+  public Sound getEnemyDestroy1() {
+    return enemyDestroy1;
   }
 
-  public Sound getHit2Sound() {
-    return hit2;
+  public Sound getEnemyDestroy2() {
+    return enemyDestroy2;
+  }
+
+  public Sound getEnemyDestroy3() {
+    return enemyDestroy3;
   }
 
   public Sound getDamageSound() {
@@ -120,5 +130,9 @@ public class SoundManager implements Disposable {
 
   public Sound getTrishotSound2() {
     return trishotSound2;
+  }
+
+  public Sound getEnemiesRespawnSound() {
+    return enemiesRespawnSound;
   }
 }

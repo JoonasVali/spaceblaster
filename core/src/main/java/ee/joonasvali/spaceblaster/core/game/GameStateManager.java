@@ -44,7 +44,7 @@ public class GameStateManager implements Disposable, GameStepListener {
 
   private int birthCountdown;
   private LevelProvider levels;
-  private Sound[] hitSounds;
+  private Sound[] destroySounds;
   private Sound damageSound;
 
   private boolean loadNextLevelInProgress;
@@ -61,9 +61,10 @@ public class GameStateManager implements Disposable, GameStepListener {
     this.state = state;
 
     this.fireTrigger = new TriggerCounter(this::doEnemyFire, state.getGameSettings().getEnemyFireFrequency(), true);
-    this.hitSounds = new Sound[] {
-        state.getSoundManager().getHitSound(),
-        state.getSoundManager().getHit2Sound()
+    this.destroySounds = new Sound[] {
+        state.getSoundManager().getEnemyDestroy1(),
+        state.getSoundManager().getEnemyDestroy2(),
+        state.getSoundManager().getEnemyDestroy3(),
     };
 
     this.damageSound = state.getSoundManager().getDamageSound();
@@ -77,6 +78,7 @@ public class GameStateManager implements Disposable, GameStepListener {
   private void doLoadNextLevel() {
     formationSpeed = 0.1f;
     this.formation = levels.nextLevel();
+    this.state.getSoundManager().getEnemiesRespawnSound().play(1f);
   }
 
   private Sprite getSprite(Enemy enemy) {
@@ -179,8 +181,8 @@ public class GameStateManager implements Disposable, GameStepListener {
             score.addAndGet(e.getBounty());
           }
 
-          Sound sound = hitSounds[(int) (Math.random() * hitSounds.length)];
-          sound.play(0.5f);
+          Sound sound = destroySounds[(int) (Math.random() * destroySounds.length)];
+          sound.play(0.3f + (float)(Math.random() * 0.15f));
 
         }
         weaponProjectileManager.removeProjectile(m.get());

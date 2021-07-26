@@ -78,6 +78,6 @@ public class FontFactory {
     return createEthnocentricShadowed(Color.WHITE, 24, 1, 1, 1);
   }
   public BitmapFont createCreditsFontSmall() {
-    return createEthnocentricShadowed(Color.WHITE, 15, 1, 1, 1);
+    return createEthnocentricShadowed(Color.WHITE, 12, 1, 1, 1);
   }
 }

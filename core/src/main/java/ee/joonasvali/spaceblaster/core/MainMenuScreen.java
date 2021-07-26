@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  */
 public class MainMenuScreen implements Screen {
 
-  private static final String CREDIT_MESSAGE = "Joonas Vali 2017";
+  private static final String CREDIT_MESSAGE = "Joonas Vali 2017-2021";
   private static final String GAME_TITLE = "Space Blaster";
 
   private final Logger log = LoggerFactory.getLogger(MainMenuScreen.class);

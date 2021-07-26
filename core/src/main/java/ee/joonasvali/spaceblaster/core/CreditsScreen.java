@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 public class CreditsScreen implements Screen {
 
   private static final String GAME_TITLE = "Space Blaster";
-  private static final String DISCLAIMER = GAME_TITLE + " is freeware and created for educational purposes. Joonas Vali 2017";
+  private static final String DISCLAIMER = GAME_TITLE + " is freeware and created for educational purposes. Joonas Vali 2017-2021";
 
   private final Logger log = LoggerFactory.getLogger(CreditsScreen.class);
   private final SpaceBlasterGame game;

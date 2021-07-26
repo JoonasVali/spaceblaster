@@ -25,7 +25,7 @@ public class TripleShotBullet extends WeaponProjectile {
       bullet = (TripleShotBullet) provider.getState().getWeaponProjectileManager()
           .createProjectileAt(TripleShotBullet.class, getAuthor(), this.getX(), this.getY(), this.getAngle() + 10);
       bullet.count = TIME_BEFORE_EXPLODE + 1;
-      this.provider.getSplitSound().play(0.5f);
+      this.provider.getSplitSound().play(0.3f);
     }
   }
 
