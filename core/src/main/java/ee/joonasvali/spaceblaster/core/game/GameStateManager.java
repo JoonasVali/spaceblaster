@@ -45,7 +45,7 @@ public class GameStateManager implements Disposable, GameStepListener {
   private int birthCountdown;
   private LevelProvider levels;
   private Sound[] destroySounds;
-  private Sound damageSound;
+  private Sound[] damageSounds;
 
   private boolean loadNextLevelInProgress;
   // Used to keep list of enemies who die in current step (It's field to keep it from being allocated every step)
@@ -67,7 +67,12 @@ public class GameStateManager implements Disposable, GameStepListener {
         state.getSoundManager().getEnemyDestroy3(),
     };
 
-    this.damageSound = state.getSoundManager().getDamageSound();
+    this.damageSounds = new Sound[] {
+        state.getSoundManager().getHitSound1(),
+        state.getSoundManager().getHitSound2(),
+        state.getSoundManager().getHitSound3(),
+        state.getSoundManager().getHitSound4(),
+    };
 
   }
 
@@ -167,7 +172,7 @@ public class GameStateManager implements Disposable, GameStepListener {
       if (m.isPresent()) {
         WeaponProjectile projectile = m.get();
         explosionManager.createExplosion(projectile.getX() - projectile.getWidth() / 2, projectile.getY() - projectile.getHeight() / 2, 1, 1);
-        damageSound.play(0.2f, 1f - (float) Math.random() / 5f, 0f);
+
         state.getParticleManager().createParticleEmitter(ParticleEffectManager.HIT, projectile.getX(), projectile.getY(), projectile.getAngle());
 
         if (e.decreaseHealthBy(m.get().getDamage())) {
@@ -184,6 +189,9 @@ public class GameStateManager implements Disposable, GameStepListener {
           Sound sound = destroySounds[(int) (Math.random() * destroySounds.length)];
           sound.play(0.3f + (float)(Math.random() * 0.15f));
 
+        } else {
+          Sound sound = damageSounds[(int) (Math.random() * damageSounds.length)];
+          sound.play(0.4f + (float)(Math.random() * 0.15f));
         }
         weaponProjectileManager.removeProjectile(m.get());
       }

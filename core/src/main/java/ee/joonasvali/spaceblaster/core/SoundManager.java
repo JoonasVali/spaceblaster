@@ -23,7 +23,10 @@ public class SoundManager implements Disposable {
   private final Sound enemyDestroy1;
   private final Sound enemyDestroy2;
   private final Sound enemyDestroy3;
-  private final Sound damageSound;
+  private final Sound hitSound1;
+  private final Sound hitSound2;
+  private final Sound hitSound3;
+  private final Sound hitSound4;
   private final Sound missileSound;
   private final Sound missileSound2;
   private final Sound missileSound3;
@@ -40,7 +43,10 @@ public class SoundManager implements Disposable {
     this.enemyDestroy1 = Gdx.audio.newSound(Gdx.files.internal("sound/enemy_destroy1.mp3"));
     this.enemyDestroy2 = Gdx.audio.newSound(Gdx.files.internal("sound/enemy_destroy2.mp3"));
     this.enemyDestroy3 = Gdx.audio.newSound(Gdx.files.internal("sound/enemy_destroy3.mp3"));
-    this.damageSound = Gdx.audio.newSound(Gdx.files.internal("sound/damage.mp3"));
+    this.hitSound1 = Gdx.audio.newSound(Gdx.files.internal("sound/hit.mp3"));
+    this.hitSound2 = Gdx.audio.newSound(Gdx.files.internal("sound/hit2.mp3"));
+    this.hitSound3 = Gdx.audio.newSound(Gdx.files.internal("sound/hit3.mp3"));
+    this.hitSound4 = Gdx.audio.newSound(Gdx.files.internal("sound/hit4.mp3"));
     this.enemiesRespawnSound = Gdx.audio.newSound(Gdx.files.internal("sound/enemies.mp3"));
     this.missileSound = Gdx.audio.newSound(Gdx.files.internal("sound/missile.mp3"));
     this.missileSound2 = Gdx.audio.newSound(Gdx.files.internal("sound/missile2.mp3"));
@@ -59,7 +65,10 @@ public class SoundManager implements Disposable {
     enemyDestroy1.dispose();
     enemyDestroy2.dispose();
     enemyDestroy3.dispose();
-    damageSound.dispose();
+    hitSound1.dispose();
+    hitSound2.dispose();
+    hitSound3.dispose();
+    hitSound4.dispose();
     missileSound.dispose();
     missileSound2.dispose();
     missileSound3.dispose();
@@ -92,8 +101,20 @@ public class SoundManager implements Disposable {
     return enemyDestroy3;
   }
 
-  public Sound getDamageSound() {
-    return damageSound;
+  public Sound getHitSound1() {
+    return hitSound1;
+  }
+
+  public Sound getHitSound2() {
+    return hitSound2;
+  }
+
+  public Sound getHitSound3() {
+    return hitSound3;
+  }
+
+  public Sound getHitSound4() {
+    return hitSound4;
   }
 
   public Sound getMissileSound() {
