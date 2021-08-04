@@ -27,7 +27,6 @@ public class CannonBulletProvider implements ProjectileProvider<CannonBullet>, D
     this.sound = state.getSoundManager().getCannonSound();
   }
 
-
   private Pool<CannonBullet> missilePool = new Pool<CannonBullet>() {
     @Override
     protected CannonBullet newObject() {
@@ -52,7 +51,7 @@ public class CannonBulletProvider implements ProjectileProvider<CannonBullet>, D
 
   @Override
   public int getCoolDown() {
-    return 5;
+    return 10;
   }
 
   @Override

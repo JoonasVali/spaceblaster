@@ -63,7 +63,7 @@ public class MissileProvider implements ProjectileProvider<Missile>, Disposable 
 
   @Override
   public int getCoolDown() {
-    return 15;
+    return 25;
   }
 
   @Override
