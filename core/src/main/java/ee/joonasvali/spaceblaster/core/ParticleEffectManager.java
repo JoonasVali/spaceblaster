@@ -22,6 +22,7 @@ import java.util.Map;
 public class ParticleEffectManager implements Disposable {
   private static final float PARTICLE_SCALE_FACTOR = 0.03f;
   public static final String HIT = "hit";
+  public static final String MISSILE = "missile";
   public static final String EXPLOSION = "explosion";
   public static final String BIRTH = "birth";
 
@@ -30,6 +31,7 @@ public class ParticleEffectManager implements Disposable {
 
   public ParticleEffectManager() {
     effects.put(HIT, new ParticleEffectType("particles/hit.p", PARTICLE_SCALE_FACTOR));
+    effects.put(MISSILE, new ParticleEffectType("particles/missile.p", PARTICLE_SCALE_FACTOR));
     effects.put(EXPLOSION, new ParticleEffectType("particles/explosion.p", PARTICLE_SCALE_FACTOR));
     effects.put(BIRTH, new ParticleEffectType("particles/birth.p", 0.2f));
   }

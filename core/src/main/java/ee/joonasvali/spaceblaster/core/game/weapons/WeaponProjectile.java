@@ -2,6 +2,9 @@ package ee.joonasvali.spaceblaster.core.game.weapons;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Pool;
+import ee.joonasvali.spaceblaster.core.ParticleEffectManager;
+
+import java.util.Optional;
 
 /**
  * @author Joonas Vali January 2017
@@ -71,5 +74,9 @@ public abstract class WeaponProjectile extends Rectangle implements Pool.Poolabl
 
   public void setDamage(int damage) {
     this.damage = damage;
+  }
+
+  public Optional<String> getParticlEffectKey() {
+    return Optional.empty();
   }
 }

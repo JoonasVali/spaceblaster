@@ -4,9 +4,11 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Disposable;
+import ee.joonasvali.spaceblaster.core.ParticleEffectManager;
 import ee.joonasvali.spaceblaster.core.game.GameSpeedController;
 import ee.joonasvali.spaceblaster.core.game.GameState;
 import ee.joonasvali.spaceblaster.core.game.GameStepListener;
+import ee.joonasvali.spaceblaster.core.game.enemy.Enemy;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,8 +29,10 @@ public class WeaponProjectileManager implements Disposable, GameStepListener {
   private List<WeaponProjectile> activeProjectiles = new CopyOnWriteArrayList<>();
   private Map<Class<? extends WeaponProjectile>, ProjectileProvider> providers = new HashMap<>();
   private Class<WeaponProjectile>[] weaponClasses;
+  private ParticleEffectManager particleManager;
 
   public WeaponProjectileManager(GameState state) {
+    this.particleManager = state.getParticleManager();
     this.worldWidth = state.getWorldWidth();
     this.worldHeight = state.getWorldHeight();
     this.providers.put(Missile.class, new MissileProvider(state));
@@ -53,7 +57,19 @@ public class WeaponProjectileManager implements Disposable, GameStepListener {
     activeProjectiles.remove(m);
     m.getProjectileProvider().free(m);
   }
+  public ParticleEffectManager.PositionProvider createPositionProvider(WeaponProjectile projectile) {
+    return new ParticleEffectManager.PositionProvider() {
+      @Override
+      public float getX() {
+        return projectile.getX() + projectile.getWidth() / 2;
+      }
 
+      @Override
+      public float getY() {
+        return projectile.getY() + projectile.getHeight() / 2;
+      }
+    };
+  }
 
   public WeaponProjectile createProjectileAt(Class<? extends WeaponProjectile> type, Object author, float x, float y, float angle) {
     ProjectileProvider<?> provider = providers.get(type);
@@ -75,6 +91,9 @@ public class WeaponProjectileManager implements Disposable, GameStepListener {
     projectile.setAngle(angle);
     projectile.setAuthor(author);
     activeProjectiles.add(projectile);
+    projectile.getParticlEffectKey().ifPresent(
+        (key) -> particleManager.createParticleEmitter(key, createPositionProvider(projectile), 0)
+    );
     return projectile;
   }
 

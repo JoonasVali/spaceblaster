@@ -19,6 +19,7 @@ import com.badlogic.gdx.utils.Disposable;
 public class SoundManager implements Disposable {
 
   public static final String MUSIC_PATH = "sound/LB13_Nasdaq_byBobbyYarsulik.mp3";
+  public static final String CANNON_SOUND_PATH = "sound/cannon.mp3";
   private final Sound menuClick;
   private final Sound enemyDestroy1;
   private final Sound enemyDestroy2;
