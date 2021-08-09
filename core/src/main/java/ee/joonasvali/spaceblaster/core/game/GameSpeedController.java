@@ -11,13 +11,13 @@ import java.util.Set;
  */
 public class GameSpeedController {
   private float lastTime;
-  private final float msInStep;
+  private final float secondsInStep;
   private final Set<GameStepListener> stepListeners = new HashSet<>();
   private final Map<GameStepListener, Integer> skippers = new IdentityHashMap<>();
   private final Control control;
 
   public GameSpeedController(int msInStep) {
-    this.msInStep = msInStep / 1000f;
+    this.secondsInStep = msInStep / 1000f;
     control = new Control();
   }
 
@@ -31,7 +31,7 @@ public class GameSpeedController {
 
   public void passTime(float delta) {
     lastTime += delta;
-    while (lastTime > msInStep) {
+    while (lastTime > secondsInStep) {
       for (GameStepListener stepListener : stepListeners) {
         boolean skip = needsSkip(stepListener);
         if (!skip) {
@@ -52,7 +52,7 @@ public class GameSpeedController {
       }
 
       countDownSkippers();
-      lastTime -= msInStep;
+      lastTime -= secondsInStep;
     }
   }
 
