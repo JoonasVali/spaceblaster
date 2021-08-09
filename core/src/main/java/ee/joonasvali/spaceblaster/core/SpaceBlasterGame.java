@@ -4,7 +4,9 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import ee.joonasvali.spaceblaster.core.game.GameScreen;
 import ee.joonasvali.spaceblaster.core.game.difficulty.DifficultyLevel;
@@ -18,6 +20,7 @@ public class SpaceBlasterGame extends Game {
   private SoundManager soundManager;
   private SpriteBatch batch;
   private float elapsed;
+  private Pixmap cursorImage;
 
   private boolean exit;
 
@@ -31,6 +34,19 @@ public class SpaceBlasterGame extends Game {
 
     batch = new SpriteBatch();
     fontFactory = new FontFactory();
+
+    Pixmap cursorRaw = new Pixmap(Gdx.files.internal("cursor.png"));
+    this.cursorImage = new Pixmap(cursorRaw.getWidth() * 2, cursorRaw.getHeight() * 2, cursorRaw.getFormat());
+    cursorImage.setFilter(Pixmap.Filter.NearestNeighbour);
+    cursorImage.drawPixmap(cursorRaw, 0, 0, cursorRaw.getWidth(), cursorRaw.getHeight(), 0, 0, cursorImage.getWidth(), cursorImage.getHeight());
+    cursorRaw.dispose();
+
+    int xHotspot = cursorImage.getWidth() / 2;
+    int yHotspot = cursorImage.getHeight() / 2;
+
+    Cursor cursor = Gdx.graphics.newCursor(cursorImage, xHotspot, yHotspot);
+
+    Gdx.graphics.setCursor(cursor);
 
     gotoMainMenu();
   }
@@ -79,6 +95,7 @@ public class SpaceBlasterGame extends Game {
   @Override
   public void dispose() {
     log.info("SpaceBlasterGame disposed.");
+    cursorImage.dispose();
     soundManager.dispose();
     batch.dispose();
   }
