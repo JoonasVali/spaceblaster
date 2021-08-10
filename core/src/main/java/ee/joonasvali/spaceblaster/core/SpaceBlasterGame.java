@@ -41,10 +41,7 @@ public class SpaceBlasterGame extends Game {
     cursorImage.drawPixmap(cursorRaw, 0, 0, cursorRaw.getWidth(), cursorRaw.getHeight(), 0, 0, cursorImage.getWidth(), cursorImage.getHeight());
     cursorRaw.dispose();
 
-    int xHotspot = cursorImage.getWidth() / 2;
-    int yHotspot = cursorImage.getHeight() / 2;
-
-    Cursor cursor = Gdx.graphics.newCursor(cursorImage, xHotspot, yHotspot);
+    Cursor cursor = Gdx.graphics.newCursor(cursorImage, 0, 0);
 
     Gdx.graphics.setCursor(cursor);
 

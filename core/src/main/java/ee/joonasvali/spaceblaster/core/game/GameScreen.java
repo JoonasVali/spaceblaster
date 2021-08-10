@@ -202,7 +202,7 @@ public class GameScreen implements Screen, Disposable {
     int mouseX = Gdx.input.getX();
     int mouseY = Gdx.input.getY();
     state.getRocket().setPosition(
-        Math.max(0, Math.min(viewport.unproject(new Vector2(mouseX, mouseY)).x, WORLD_WIDTH - Rocket.ROCKET_SIZE)),
+        Math.max(0, Math.min(viewport.unproject(new Vector2(mouseX, mouseY)).x - (Rocket.ROCKET_SIZE / 2), WORLD_WIDTH - Rocket.ROCKET_SIZE)),
         ROCKET_DISTANCE_FROM_BOTTOM
     );
   }
