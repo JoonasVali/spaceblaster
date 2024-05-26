@@ -39,7 +39,6 @@ public class EventLog {
     log.add(event);
   }
 
-  private long startTimeGame;
   private long startTimeLevel;
 
   private float minPlayerX;
@@ -47,7 +46,6 @@ public class EventLog {
 
   public void eventLoadLevel(String levelName, List<Enemy> enemies, int currentLevel) {
     recalculateCurrentState();
-    startTimeLevel = System.currentTimeMillis();
     System.out.println("EventLog.eventLoadLevel");
     statistics.initializeRound(levelName,
         Math.max(0, currentLevel + 1),
@@ -61,7 +59,6 @@ public class EventLog {
 
   public void eventStartGame(String episodeName, GameSettings gameSettings, int levelsTotal) {
     recalculateCurrentState();
-    startTimeGame = System.currentTimeMillis();
     System.out.println("EventLog.eventStartGame");
     statistics.initializeGame(
         episodeName,
@@ -91,6 +88,8 @@ public class EventLog {
     } else if (enemy.getProjectileType() == TripleShotBullet.class) {
       statistics.enemiesLeftWithTripleShotCount--;
     }
+
+    statistics.lastKillTimestamp = System.currentTimeMillis();
     // TODO generate event:
   }
 
@@ -98,6 +97,7 @@ public class EventLog {
     recalculateCurrentState();
     System.out.println("EventLog.playerKilled");
 
+    statistics.lastDeathTimestamp = System.currentTimeMillis();
     if (killedByTouchingEnemy) {
       statistics.enemyTouchedPlayerDeathsCount++;
     }
@@ -136,8 +136,6 @@ public class EventLog {
   }
 
   private void recalculateCurrentState() {
-    long currentTime = System.currentTimeMillis();
-    statistics.recalculateTimes(currentTime - statistics.timeSinceLastEventMs);
     statistics.playerScore = gameState.getScore().get();
     statistics.playerLivesLeft = gameState.getLives().get();
     statistics.playerDead = !gameState.getRocket().isAlive();
@@ -206,7 +204,6 @@ public class EventLog {
           }).orElse(null);
 
       if (closestEnemy != null) {
-        // TODO verify this logic:
         float d = Math.abs(closestEnemy.getX() - playerPosX) + Math.abs(closestEnemy.getY() - playerPosY);
         if (d < 20) {
           statistics.enemyCloseness = EnemyCloseness.CLOSE;
@@ -285,7 +282,7 @@ public class EventLog {
     } else if (powerup == CannonBullet.class) {
       statistics.powerUpsCannonCollectedCount++;
     }
-    statistics.timeFromLastPowerupCollectedMs = 0L;
+    statistics.lastPowerupTimestamp = System.currentTimeMillis();
     // TODO generate event:
   }
 
@@ -293,7 +290,7 @@ public class EventLog {
     recalculateCurrentState();
     System.out.println("EventLog.powerUpMissed");
     statistics.powerUpsMissedCount++;
-    statistics.timeFromLastPowerupMissedMs = 0L;
+    statistics.lastPowerupMissedTimestamp = System.currentTimeMillis();
     // TODO generate event:
   }
 
@@ -301,7 +298,7 @@ public class EventLog {
     recalculateCurrentState();
     System.out.println("EventLog.enemyHit " + e);
     if (hitByPlayer) {
-      statistics.timeSinceLastHitMs = 0L;
+      statistics.lastHitTimestamp = System.currentTimeMillis();
     } else {
       statistics.enemiesHitEnemiesThisRoundCount++;
     }

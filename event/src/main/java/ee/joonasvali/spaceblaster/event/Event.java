@@ -7,7 +7,7 @@ public class Event {
   public String levelName;
   public String episodeName;
 
-  public long timeSinceRoundStartMs;
+  public long roundStartTimestamp;
   public int roundsFinishedCount;
 
   public int enemiesLeftThisRoundCount;
@@ -38,7 +38,7 @@ public class Event {
     int enemiesStartedWithTripleShotCount
   ) {
     this.levelName = levelName;
-    this.timeSinceRoundStartMs = 0;
+    this.roundStartTimestamp = System.currentTimeMillis();
     this.roundsFinishedCount = roundsFinishedCount;
     this.enemiesLeftThisRoundCount = enemiesStartedWithGaussGunCount + enemiesStartedWithMissileCount + enemiesStartedWithCannonCount + enemiesStartedWithTripleShotCount;
     this.enemiesKilledThisRoundCount = 0;
@@ -68,37 +68,16 @@ public class Event {
     this.playerWeapon = PlayerWeapon.CANNON;
     this.playerPositionX = PositionX.CENTER;
     this.totalRoundsCount = totalRounds;
-  }
-
-  public void recalculateTimes(long timePassedSinceLastEvent) {
-    this.totalGameTimeMs += timePassedSinceLastEvent;
-    this.timeSinceRoundStartMs += timePassedSinceLastEvent;
-    this.timeSinceLastEventMs = timePassedSinceLastEvent;
-    if (timeSinceLastDeathMs != null) {
-      timeSinceLastDeathMs += timePassedSinceLastEvent;
-    }
-    if (timeSinceLastKillMs != null) {
-      timeSinceLastKillMs += timePassedSinceLastEvent;
-    }
-    if (timeSinceLastHitMs != null) {
-      timeSinceLastHitMs += timePassedSinceLastEvent;
-    }
-    if (timeFromLastPowerupCollectedMs != null) {
-      timeFromLastPowerupCollectedMs += timePassedSinceLastEvent;
-    }
-    if (timeFromLastPowerupMissedMs != null) {
-      timeFromLastPowerupMissedMs += timePassedSinceLastEvent;
-    }
+    this.gameStartTimestamp = System.currentTimeMillis();
   }
 
   public GameDifficulty gameDifficulty;
 
 
-  public long totalGameTimeMs;
-  public long timeSinceLastEventMs;
-  public Long timeSinceLastDeathMs;
-  public Long timeSinceLastKillMs;
-  public Long timeSinceLastHitMs;
+  public long gameStartTimestamp;
+  public Long lastDeathTimestamp;
+  public Long lastKillTimestamp;
+  public Long lastHitTimestamp;
   public int totalRoundsCount;
 
   public int playerLivesLeft;
@@ -118,8 +97,8 @@ public class Event {
   public int powerUpsTripleShotCollectedCount;
   public int powerUpsCannonCollectedCount;
 
-  public Long timeFromLastPowerupCollectedMs;
-  public Long timeFromLastPowerupMissedMs;
+  public Long lastPowerupTimestamp;
+  public Long lastPowerupMissedTimestamp;
 
   public EnemySpeed enemySpeed;
   public EnemyCloseness enemyCloseness;

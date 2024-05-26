@@ -122,11 +122,11 @@ public class UIOverlay implements Disposable, GameStepListener {
       strb.append("Powerups collected Missile: ").append(stats.powerUpsMissileCollectedCount).append("\n");
       strb.append("Powerups collected Cannon: ").append(stats.powerUpsCannonCollectedCount).append("\n");
       strb.append("Powerups collected Triple: ").append(stats.powerUpsTripleShotCollectedCount).append("\n");
-      strb.append("Time since last powerup collected: ").append(stats.timeFromLastPowerupCollectedMs).append("\n");
-      strb.append("Time since last powerup missed: ").append(stats.timeFromLastPowerupMissedMs).append("\n");
-      strb.append("Time since last death: ").append(stats.timeSinceLastDeathMs).append("\n");
-      strb.append("Time since last kill: ").append(stats.timeSinceLastKillMs).append("\n");
-      strb.append("Time since last hit: ").append(stats.timeSinceLastHitMs).append("\n");
+      strb.append("Time since last powerup collected: ").append(timestampToSeconds(stats.lastPowerupTimestamp)).append("\n");
+      strb.append("Time since last powerup missed: ").append(timestampToSeconds(stats.lastPowerupMissedTimestamp)).append("\n");
+      strb.append("Time since last death: ").append(timestampToSeconds(stats.lastDeathTimestamp)).append("\n");
+      strb.append("Time since last kill: ").append(timestampToSeconds(stats.lastKillTimestamp)).append("\n");
+      strb.append("Time since last hit: ").append(timestampToSeconds(stats.lastHitTimestamp)).append("\n");
       strb.append("Enemy touched player deaths: ").append(stats.enemyTouchedPlayerDeathsCount).append("\n");
       strb.append("Player under enemy:").append(stats.playerIsUnderEnemyFormation).append("\n");
       strb.append("Enemy bullet flying towards player:").append(stats.enemyBulletFlyingTowardsPlayer).append("\n");
@@ -143,11 +143,18 @@ public class UIOverlay implements Disposable, GameStepListener {
       strb.append("Enemies started with Missile: ").append(stats.enemiesStartedWithMissileCount).append("\n");
       strb.append("Enemies started with Cannon: ").append(stats.enemiesStartedWithCannonCount).append("\n");
       strb.append("Enemies started with Triple: ").append(stats.enemiesStartedWithTripleShotCount).append("\n");
-      strb.append("Time since round start: ").append(stats.timeSinceRoundStartMs).append("\n");
+      strb.append("Time since round start: ").append(timestampToSeconds(stats.roundStartTimestamp)).append("\n");
       strb.append("Rounds finished: ").append(stats.roundsFinishedCount).append("\n");
 
       eventLogText = strb.toString();
     }
+  }
+
+  public String timestampToSeconds(Long timestamp) {
+    if (timestamp == null) {
+      return "N/A";
+    }
+    return (System.currentTimeMillis() - timestamp) / 1000 + "s";
   }
 
   @Override
