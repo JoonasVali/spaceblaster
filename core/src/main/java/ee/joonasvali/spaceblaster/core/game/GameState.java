@@ -1,5 +1,6 @@
 package ee.joonasvali.spaceblaster.core.game;
 
+import ee.joonasvali.spaceblaster.core.event.EventLog;
 import ee.joonasvali.spaceblaster.core.ParticleEffectManager;
 import ee.joonasvali.spaceblaster.core.SoundManager;
 import ee.joonasvali.spaceblaster.core.game.difficulty.GameSettings;
@@ -15,7 +16,7 @@ public class GameState {
   private UIOverlay ui;
   private Background background;
   private Rocket rocket;
-  private GameStateManager enemies;
+  private GameStateManager gameStateManager;
   private WeaponProjectileManager weaponProjectileManager;
   private ExplosionManager explosionManager;
   private ParticleEffectManager particleManager;
@@ -28,6 +29,7 @@ public class GameState {
   private final int worldWidth;
   private final int worldHeight;
   private PowerupManager powerupManager;
+  private EventLog eventLog;
 
   public GameState(int worldWidth, int worldHeight) {
     this.worldWidth = worldWidth;
@@ -66,12 +68,12 @@ public class GameState {
     this.rocket = rocket;
   }
 
-  public GameStateManager getEnemies() {
-    return enemies;
+  public GameStateManager getGameStateManager() {
+    return gameStateManager;
   }
 
   public void setEnemies(GameStateManager enemies) {
-    this.enemies = enemies;
+    this.gameStateManager = enemies;
   }
 
   public WeaponProjectileManager getWeaponProjectileManager() {
@@ -152,5 +154,13 @@ public class GameState {
 
   public PowerupManager getPowerupManager() {
     return powerupManager;
+  }
+
+  public EventLog getEventLog() {
+    return eventLog;
+  }
+
+  public void setEventLog(EventLog eventLog) {
+    this.eventLog = eventLog;
   }
 }

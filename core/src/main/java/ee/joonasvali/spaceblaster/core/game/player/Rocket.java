@@ -131,6 +131,7 @@ public class Rocket implements Disposable, GameStepListener {
         weaponProjectileManager.removeProjectile(m);
         explosionManager.createExplosion(m.getX(), m.getY(), m.getWidth(), m.getHeight());
         kill();
+        state.getEventLog().playerKilled(false);
       });
     }
 
@@ -166,6 +167,7 @@ public class Rocket implements Disposable, GameStepListener {
         this,this.getX() + Rocket.ROCKET_SIZE / 2, this.getY() + Rocket.ROCKET_SIZE / 2,
         (float) Math.random() * ROCKET_FIRE_ANGLE_VARIATION - ROCKET_FIRE_ANGLE_VARIATION / 2
     );
+    this.state.getEventLog().playerFired(weaponClass);
     this.weaponCooldown = weaponProjectileManager.getCooldown(weaponClass);
   }
 
@@ -205,5 +207,17 @@ public class Rocket implements Disposable, GameStepListener {
     if (effect != null) {
       effect.onStepEffect();
     }
+  }
+
+  public Class<? extends WeaponProjectile> getWeaponClass() {
+    return weaponClass;
+  }
+
+  public boolean isAlive() {
+    return alive;
+  }
+
+  public boolean isMoving() {
+    return xTarget != getX();
   }
 }

@@ -148,4 +148,8 @@ public class WeaponProjectileManager implements Disposable, GameStepListener {
   public Class<WeaponProjectile>[] getWeaponClasses() {
     return weaponClasses;
   }
+
+  public List<WeaponProjectile> getProjectiles() {
+    return activeProjectiles;
+  }
 }

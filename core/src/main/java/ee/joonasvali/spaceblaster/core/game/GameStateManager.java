@@ -28,6 +28,7 @@ public class GameStateManager implements Disposable, GameStepListener {
 
   private static final int FORMATION_DROP = 2;
   private static final float MAX_SPEED = 0.5f;
+  private static final float MIN_SPEED = 0.1f;
   public static final int STEPS_TO_SKIP_BEFORE_NEXT_LEVEL = 250;
   public static final int BIRTH_RATE = 5;
   private final TriggerCounter fireTrigger;
@@ -81,9 +82,10 @@ public class GameStateManager implements Disposable, GameStepListener {
   }
 
   private void doLoadNextLevel() {
-    formationSpeed = 0.1f;
+    formationSpeed = MIN_SPEED;
     this.formation = levels.nextLevel();
     this.state.getSoundManager().getEnemiesRespawnSound().play(1f);
+    this.state.getEventLog().eventLoadLevel(levels.getLevelName(), formation.getEnemies(), levels.getCurrentLevel());
   }
 
   private Sprite getSprite(Enemy enemy) {
@@ -184,6 +186,9 @@ public class GameStateManager implements Disposable, GameStepListener {
           // Add score only if player shot the projectile.
           if (projectile.getAuthor() instanceof Rocket) {
             score.addAndGet(e.getBounty());
+            state.getEventLog().enemyKilled(e, true);
+          } else {
+            state.getEventLog().enemyKilled(e, false);
           }
 
           Sound sound = destroySounds[(int) (Math.random() * destroySounds.length)];
@@ -282,6 +287,7 @@ public class GameStateManager implements Disposable, GameStepListener {
       Rocket rocket = state.getRocket();
       if (rocket.isCollision(e)) {
         rocket.kill();
+        state.getEventLog().playerKilled(true);
       }
     }
   }
@@ -292,4 +298,23 @@ public class GameStateManager implements Disposable, GameStepListener {
     loadNextLevelInProgress = true;
   }
 
+  public float getFormationSpeed() {
+    return formationSpeed;
+  }
+
+  public float getFormationMaxSpeed() {
+    return MAX_SPEED;
+  }
+
+  public float getFormationMinSpeed() {
+    return MIN_SPEED;
+  }
+
+  public EnemyFormation getEnemyFormation() {
+    return formation;
+  }
+
+  public WeaponProjectileManager getWeaponProjectileManager() {
+    return weaponProjectileManager;
+  }
 }

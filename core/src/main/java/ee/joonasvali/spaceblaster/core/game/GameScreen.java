@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import ee.joonasvali.spaceblaster.core.event.EventLog;
 import ee.joonasvali.spaceblaster.core.ParticleEffectManager;
 import ee.joonasvali.spaceblaster.core.SpaceBlasterGame;
 import ee.joonasvali.spaceblaster.core.game.difficulty.GameSettings;
@@ -52,13 +53,14 @@ public class GameScreen implements Screen, Disposable {
   private final Music music;
 
 
-  public GameScreen(SpaceBlasterGame game, FileHandle level, GameSettings gameSettings) {
+  public GameScreen(SpaceBlasterGame game, FileHandle episodeFile, GameSettings gameSettings) {
     this.game = game;
 
     int worldWidth = WORLD_WIDTH;
     int worldHeight = WORLD_HEIGHT;
 
     this.state = new GameState(worldWidth, worldHeight);
+    this.state.setEventLog(new EventLog(state));
 
     this.music = game.getSoundManager().createMusic();
     this.music.setVolume(MUSIC_VOLUME);
@@ -71,7 +73,7 @@ public class GameScreen implements Screen, Disposable {
     state.setLives(new AtomicInteger(INITIAL_LIVES));
     state.setPowerupManager(new PowerupManager(state));
     state.setParticleManager(new ParticleEffectManager());
-    state.setUi(new UIOverlay(game.getFontFactory(), state.getScore(), state.getLives()));
+    state.setUi(new UIOverlay(game.getFontFactory(), state.getEventLog(), state.getScore(), state.getLives()));
 
     state.setExplosionManager(new ExplosionManager());
     state.setWeaponProjectileManager(new WeaponProjectileManager(state));
@@ -82,14 +84,14 @@ public class GameScreen implements Screen, Disposable {
     inputMultiplexer.addProcessor(inputHandler);
 
     state.setEnemies(new GameStateManager(state));
-    LevelReader reader = new LevelReader(level);
+    LevelReader reader = new LevelReader(episodeFile);
     isValid = reader.isValid();
-    this.levelProvider = new LevelProvider(reader, worldWidth, worldHeight);
-    state.getEnemies().setLevelProvider(levelProvider);
+    this.levelProvider = new LevelProvider(reader, worldWidth, worldHeight, game.getEpisodeName());
+    state.getGameStateManager().setLevelProvider(levelProvider);
     state.setBackground(new Background(levelProvider.getBackgroundFileName(), worldWidth, worldHeight));
 
     speedController.registerGameStepListener(state.getWeaponProjectileManager());
-    speedController.registerGameStepListener(state.getEnemies());
+    speedController.registerGameStepListener(state.getGameStateManager());
     speedController.registerGameStepListener(state.getRocket());
     speedController.registerGameStepListener(state.getBackground());
     speedController.registerGameStepListener(state.getExplosionManager());
@@ -108,7 +110,7 @@ public class GameScreen implements Screen, Disposable {
     );
 
     createCamera();
-
+    state.getEventLog().eventStartGame(levelProvider.getEpisodeName(), gameSettings);
   }
 
   public boolean isValid() {
@@ -141,7 +143,7 @@ public class GameScreen implements Screen, Disposable {
       state.getExplosionManager().draw(batch);
       state.getWeaponProjectileManager().drawMissiles(batch);
       state.getPowerupManager().draw(batch);
-      state.getEnemies().drawEnemies(batch, delta);
+      state.getGameStateManager().drawEnemies(batch, delta);
       state.getRocket().draw(batch);
       state.getParticleManager().draw(batch, delta);
 
@@ -159,6 +161,7 @@ public class GameScreen implements Screen, Disposable {
   public void resize(int width, int height) {
     viewport.update(width, height);
     cam.position.set(WORLD_WIDTH / 2f, WORLD_HEIGHT / 2f, 0);
+    state.getEventLog().setMinMaxPlayerX(0, WORLD_WIDTH - Rocket.ROCKET_SIZE);
   }
 
   @Override
@@ -189,7 +192,7 @@ public class GameScreen implements Screen, Disposable {
     state.getRocket().dispose();
     state.getWeaponProjectileManager().dispose();
     state.getExplosionManager().dispose();
-    state.getEnemies().dispose();
+    state.getGameStateManager().dispose();
     state.getBackground().dispose();
     state.getUi().dispose();
     state.getParticleManager().dispose();

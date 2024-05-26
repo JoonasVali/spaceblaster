@@ -80,7 +80,7 @@
           <dependency>
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm</artifactId>
-            <version>RELEASE</version> <!-- Use newer version of ASM for java 10 support-->
+            <version>RELEASE</version>
           </dependency>
         </dependencies>
       </plugin>
@@ -90,5 +90,6 @@
   <modules>
     <module>core</module>
     <module>desktop</module>
+    <module>event</module>
   </modules>
 </project>

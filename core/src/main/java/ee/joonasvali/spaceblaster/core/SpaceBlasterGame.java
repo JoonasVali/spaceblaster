@@ -22,6 +22,8 @@ public class SpaceBlasterGame extends Game {
   private float elapsed;
   private Pixmap cursorImage;
 
+  private String episodeName;
+
   private boolean exit;
 
   private FontFactory fontFactory;
@@ -106,8 +108,9 @@ public class SpaceBlasterGame extends Game {
     exit = true;
   }
 
-  public void launchGame(FileHandle level, DifficultyLevel difficultyLevel) {
-    GameScreen screen = new GameScreen(this, level, difficultyLevel.getGameSettings());
+  public void launchGame(FileHandle episodeFile, DifficultyLevel difficultyLevel, String episodeName) {
+    this.episodeName = episodeName;
+    GameScreen screen = new GameScreen(this, episodeFile, difficultyLevel.getGameSettings());
     if (screen.isValid()) {
       setScreen(screen);
     } else {
@@ -120,8 +123,8 @@ public class SpaceBlasterGame extends Game {
     setScreen(new MainMenuScreen(this, new ChooseLevelsContent(this)));
   }
 
-  public void setChooseDifficultyScreen(FileHandle level) {
-    setScreen(new MainMenuScreen(this, new ChooseDifficultyContent(this, level)));
+  public void setChooseDifficultyScreen(FileHandle episodeFile, String episodeName) {
+    setScreen(new MainMenuScreen(this, new ChooseDifficultyContent(this, episodeFile, episodeName)));
   }
 
   @Override
@@ -136,5 +139,9 @@ public class SpaceBlasterGame extends Game {
 
   public void gotoCredits() {
     setScreen(new CreditsScreen(this));
+  }
+
+  public String getEpisodeName() {
+    return episodeName;
   }
 }
