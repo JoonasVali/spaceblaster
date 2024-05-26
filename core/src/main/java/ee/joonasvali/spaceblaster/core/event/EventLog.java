@@ -1,6 +1,5 @@
 package ee.joonasvali.spaceblaster.core.event;
 
-import com.badlogic.gdx.math.Rectangle;
 import ee.joonasvali.spaceblaster.core.game.GameState;
 import ee.joonasvali.spaceblaster.core.game.difficulty.GameSettings;
 import ee.joonasvali.spaceblaster.core.game.enemy.Enemy;
@@ -60,14 +59,15 @@ public class EventLog {
     // TODO generate event:
   }
 
-  public void eventStartGame(String episodeName, GameSettings gameSettings) {
+  public void eventStartGame(String episodeName, GameSettings gameSettings, int levelsTotal) {
     recalculateCurrentState();
     startTimeGame = System.currentTimeMillis();
     System.out.println("EventLog.eventStartGame");
     statistics.initializeGame(
         episodeName,
         gameSettings.getDifficulty(),
-        gameState.getLives().get()
+        gameState.getLives().get(),
+        levelsTotal
     );
     // TODO generate event:
   }
@@ -175,16 +175,22 @@ public class EventLog {
 
     EnemyFormation enemyFormation = gameState.getGameStateManager().getEnemyFormation();
     if (enemyFormation != null) {
-      float enemyPosition = enemyFormation.getX();
       float maxEnemyX = enemyFormation.getMaxX();
       float minEnemyX = enemyFormation.getMinX();
-      if (enemyPosition < minEnemyX + (maxEnemyX - minEnemyX) / 4f) {
+      float enemyRightSide = enemyFormation.getEnemies().stream().max(
+          (e1, e2) -> Float.compare(e1.getX(), e2.getX())
+      ).map(e -> e.getX() + e.getWidth()).orElse(0f);
+      float enemyLeftSide = enemyFormation.getEnemies().stream().min(
+          (e1, e2) -> Float.compare(e1.getX(), e2.getX())
+      ).map(Enemy::getX).orElse(0f);
+
+      if (enemyLeftSide < gameState.getWorldWidth() / 8f) {
         statistics.enemyPositionXOnScreen = PositionX.LEFT;
-      } else if (enemyPosition < minEnemyX + (maxEnemyX - minEnemyX) / 3f) {
-        statistics.enemyPositionXOnScreen = PositionX.SLIGHTLY_LEFT;
-      } else if (enemyPosition > maxEnemyX - (maxEnemyX - minEnemyX) / 4f) {
+      } else if (enemyRightSide > gameState.getWorldWidth() * 7f / 8f) {
         statistics.enemyPositionXOnScreen = PositionX.RIGHT;
-      } else if (enemyPosition > maxEnemyX - (maxEnemyX - minEnemyX) / 3f) {
+      } else if (enemyLeftSide < gameState.getWorldWidth() / 4f) {
+        statistics.enemyPositionXOnScreen = PositionX.SLIGHTLY_LEFT;
+      } else if (enemyRightSide > gameState.getWorldWidth() * 3f / 4f) {
         statistics.enemyPositionXOnScreen = PositionX.SLIGHTLY_RIGHT;
       } else {
         statistics.enemyPositionXOnScreen = PositionX.CENTER;
@@ -202,9 +208,9 @@ public class EventLog {
       if (closestEnemy != null) {
         // TODO verify this logic:
         float d = Math.abs(closestEnemy.getX() - playerPosX) + Math.abs(closestEnemy.getY() - playerPosY);
-        if (d < 100) {
+        if (d < 20) {
           statistics.enemyCloseness = EnemyCloseness.CLOSE;
-        } else if (d < 200) {
+        } else if (d < 40) {
           statistics.enemyCloseness = EnemyCloseness.MEDIUM;
         } else {
           statistics.enemyCloseness = EnemyCloseness.FAR;
@@ -214,10 +220,10 @@ public class EventLog {
       // Calculating statistics.playerIsUnderEnemyFormation:
       statistics.playerIsUnderEnemyFormation = true;
       float formationMinimumX = enemyFormation.getX();
-      float formationMaximumX = enemyFormation.getEnemies().stream().max((e1, e2) -> Float.compare(e1.getX(), e2.getX())).map(Rectangle::getX).orElse(0f);
-      if (playerPosX > formationMinimumX && playerPosX < formationMaximumX) {
-        statistics.playerIsUnderEnemyFormation = true;
-      }
+      float formationMaximumX = enemyFormation.getEnemies().stream().max(
+          (e1, e2) -> Float.compare(e1.getX(), e2.getX())
+      ).map(e -> e.getX() + e.getWidth()).orElse(0f);
+      statistics.playerIsUnderEnemyFormation = playerPosX + gameState.getRocket().getWidth() > formationMinimumX && playerPosX < formationMaximumX;
 
     } else {
       statistics.enemyPositionXOnScreen = PositionX.MISSING;
@@ -235,6 +241,19 @@ public class EventLog {
     statistics.shotsFiredLastThreeSeconds = playerShotsFiredRecently.size();
   }
 
+  public void setVictory() {
+    recalculateCurrentState();
+    System.out.println("EventLog.setVictory");
+    statistics.isVictory = true;
+    // TODO generate event:
+  }
+
+  public void setGameOver() {
+    recalculateCurrentState();
+    System.out.println("EventLog.setGameOver");
+    statistics.isDefeat = true;
+    // TODO generate event:
+  }
   private void retainLastThreeSecondsOfPlayerFiredEvents() {
     long currentTime = System.currentTimeMillis();
     playerShotsFiredRecently.entrySet().removeIf(e -> currentTime - e.getKey() > 3000);
@@ -249,5 +268,43 @@ public class EventLog {
     recalculateCurrentState();
     // This should be temporary method, not how events are exposed...
     return statistics;
+  }
+
+  public void powerUpCollected(Class<? extends WeaponProjectile> powerup) {
+    recalculateCurrentState();
+    System.out.println("EventLog.powerUpCollected");
+    statistics.powerUpsCollectedThisRoundCount++;
+    statistics.powerUpsCollectedTotalCount++;
+
+    if (powerup == GaussGunBullet.class) {
+      statistics.powerUpsGaussGunCollectedCount++;
+    } else if (powerup == Missile.class) {
+      statistics.powerUpsMissileCollectedCount++;
+    } else if (powerup == TripleShotBullet.class) {
+      statistics.powerUpsTripleShotCollectedCount++;
+    } else if (powerup == CannonBullet.class) {
+      statistics.powerUpsCannonCollectedCount++;
+    }
+    statistics.timeFromLastPowerupCollectedMs = 0L;
+    // TODO generate event:
+  }
+
+  public void powerUpMissed() {
+    recalculateCurrentState();
+    System.out.println("EventLog.powerUpMissed");
+    statistics.powerUpsMissedCount++;
+    statistics.timeFromLastPowerupMissedMs = 0L;
+    // TODO generate event:
+  }
+
+  public void enemyHit(Enemy e, boolean hitByPlayer) {
+    recalculateCurrentState();
+    System.out.println("EventLog.enemyHit " + e);
+    if (hitByPlayer) {
+      statistics.timeSinceLastHitMs = 0L;
+    } else {
+      statistics.enemiesHitEnemiesThisRoundCount++;
+    }
+    // TODO generate event:
   }
 }

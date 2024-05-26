@@ -169,4 +169,8 @@ public class LevelProvider implements Disposable {
   public int getCurrentLevel() {
     return nextLevel - 1;
   }
+
+  public int getLevelsTotal() {
+    return maxLevel;
+  }
 }

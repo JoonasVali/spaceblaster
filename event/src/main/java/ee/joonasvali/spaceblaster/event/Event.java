@@ -52,12 +52,14 @@ public class Event {
     this.enemiesStartedWithMissileCount = enemiesStartedWithMissileCount;
     this.enemiesStartedWithCannonCount = enemiesStartedWithCannonCount;
     this.enemiesStartedWithTripleShotCount = enemiesStartedWithTripleShotCount;
+    this.powerUpsCollectedThisRoundCount = 0;
   }
 
   public void initializeGame(
     String episodeName,
     GameDifficulty gameDifficulty,
-    int playerLivesOriginal
+    int playerLivesOriginal,
+    int totalRounds
   ) {
     this.episodeName = episodeName;
     this.gameDifficulty = gameDifficulty;
@@ -65,6 +67,7 @@ public class Event {
     this.playerLivesLeft = playerLivesOriginal;
     this.playerWeapon = PlayerWeapon.CANNON;
     this.playerPositionX = PositionX.CENTER;
+    this.totalRoundsCount = totalRounds;
   }
 
   public void recalculateTimes(long timePassedSinceLastEvent) {

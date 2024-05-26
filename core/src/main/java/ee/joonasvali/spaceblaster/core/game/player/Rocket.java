@@ -130,8 +130,9 @@ public class Rocket implements Disposable, GameStepListener {
       missile.ifPresent((m) -> {
         weaponProjectileManager.removeProjectile(m);
         explosionManager.createExplosion(m.getX(), m.getY(), m.getWidth(), m.getHeight());
-        kill();
-        state.getEventLog().playerKilled(false);
+        if (kill()) {
+          state.getEventLog().playerKilled(false);
+        }
       });
     }
 
@@ -140,6 +141,7 @@ public class Rocket implements Disposable, GameStepListener {
       state.getPowerupManager().remove(p.get());
       setNewRandomWeapon();
       state.getPowerupManager().playPowerupSound();
+      state.getEventLog().powerUpCollected(this.weaponClass);
     }
   }
 
@@ -177,6 +179,7 @@ public class Rocket implements Disposable, GameStepListener {
       effect = new RebirthEffect(200, 5);
     }
     this.weaponClass = DEFAULT_WEAPON_CLASS;
+    state.getEventLog().playerBorn();
   }
 
   public float getWidth() {
@@ -187,9 +190,9 @@ public class Rocket implements Disposable, GameStepListener {
     return rectangle.getHeight();
   }
 
-  public void kill() {
+  public boolean kill() {
     if (!alive || isInvincible()) {
-      return;
+      return false;
     }
     explosionManager.createExplosion(getX(), getY(), getWidth(), getHeight());
     state.getParticleManager().createParticleEmitter(ParticleEffectManager.EXPLOSION, getX() + getWidth() / 2, getY() + getHeight() / 2, 0);
@@ -199,7 +202,9 @@ public class Rocket implements Disposable, GameStepListener {
     lives.decrementAndGet();
     if (lives.get() <= 0) {
       state.getUi().displayGameOver();
+      state.getEventLog().setGameOver();
     }
+    return true;
   }
 
   @Override

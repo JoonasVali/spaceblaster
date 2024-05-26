@@ -187,8 +187,10 @@ public class GameStateManager implements Disposable, GameStepListener {
           if (projectile.getAuthor() instanceof Rocket) {
             score.addAndGet(e.getBounty());
             state.getEventLog().enemyKilled(e, true);
+            state.getEventLog().enemyHit(e, true);
           } else {
             state.getEventLog().enemyKilled(e, false);
+            state.getEventLog().enemyHit(e, false);
           }
 
           Sound sound = destroySounds[(int) (Math.random() * destroySounds.length)];
@@ -197,6 +199,13 @@ public class GameStateManager implements Disposable, GameStepListener {
         } else {
           Sound sound = damageSounds[(int) (Math.random() * damageSounds.length)];
           sound.play(0.4f + (float)(Math.random() * 0.15f));
+
+
+          if (projectile.getAuthor() instanceof Rocket) {
+            state.getEventLog().enemyHit(e, true);
+          } else {
+            state.getEventLog().enemyHit(e, false);
+          }
         }
         weaponProjectileManager.removeProjectile(m.get());
       }
@@ -222,6 +231,7 @@ public class GameStateManager implements Disposable, GameStepListener {
       } else {
         state.setVictory(true);
         state.getUi().displayVictory();
+        state.getEventLog().setVictory();
       }
     }
 
@@ -286,8 +296,9 @@ public class GameStateManager implements Disposable, GameStepListener {
     for (Enemy e : formation.getEnemies()) {
       Rocket rocket = state.getRocket();
       if (rocket.isCollision(e)) {
-        rocket.kill();
-        state.getEventLog().playerKilled(true);
+        if (rocket.kill()) {
+          state.getEventLog().playerKilled(true);
+        }
       }
     }
   }

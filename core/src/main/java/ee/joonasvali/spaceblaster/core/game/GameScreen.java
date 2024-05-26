@@ -110,7 +110,7 @@ public class GameScreen implements Screen, Disposable {
     );
 
     createCamera();
-    state.getEventLog().eventStartGame(levelProvider.getEpisodeName(), gameSettings);
+    state.getEventLog().eventStartGame(levelProvider.getEpisodeName(), gameSettings, levelProvider.getLevelsTotal());
   }
 
   public boolean isValid() {
