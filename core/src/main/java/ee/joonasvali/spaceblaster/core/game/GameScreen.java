@@ -101,6 +101,9 @@ public class GameScreen implements Screen, Disposable {
     Gdx.input.setInputProcessor(inputMultiplexer);
 
     inputHandler.addKeyBinding(Input.Keys.ESCAPE, game::gotoMainMenu);
+    inputHandler.addKeyBinding(Input.Keys.D,
+        () -> state.getUi().setShowEventLog(!state.getUi().isShowEventLog())
+    );
     inputHandler.addKeyBinding(
         Input.Keys.SPACE, () -> state.getRocket().doFire()
     );

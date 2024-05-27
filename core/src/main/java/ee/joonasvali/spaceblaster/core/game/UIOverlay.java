@@ -45,7 +45,7 @@ public class UIOverlay implements Disposable, GameStepListener {
   private final Texture texture;
   private final Sprite sprite;
 
-  private boolean showEventLog = true;
+  private boolean showEventLog = false;
 
   private Viewport viewport;
 
@@ -53,7 +53,6 @@ public class UIOverlay implements Disposable, GameStepListener {
   private final EventLog eventLog;
   private String eventLogText;
   private long lastEventLogRefresh;
-
   public UIOverlay(FontFactory fontFactory, EventLog eventLog, AtomicInteger score, AtomicInteger lives) {
     this.lives = lives;
     this.score = score;
@@ -184,6 +183,14 @@ public class UIOverlay implements Disposable, GameStepListener {
     if (textToDisplay != null) {
       textToDisplay.onStepEffect();
     }
+  }
+
+  public void setShowEventLog(boolean showEventLog) {
+    this.showEventLog = showEventLog;
+  }
+
+  public boolean isShowEventLog() {
+    return showEventLog;
   }
 
   public void displayText(String text, int timeToDisplay, int timeToFade) {
