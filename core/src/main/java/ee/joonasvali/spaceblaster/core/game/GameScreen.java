@@ -12,9 +12,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import ee.joonasvali.spaceblaster.core.event.EventLog;
+import ee.joonasvali.spaceblaster.core.event.ActiveEventLog;
 import ee.joonasvali.spaceblaster.core.ParticleEffectManager;
 import ee.joonasvali.spaceblaster.core.SpaceBlasterGame;
+import ee.joonasvali.spaceblaster.core.event.InactiveEventLog;
 import ee.joonasvali.spaceblaster.core.game.difficulty.GameSettings;
 import ee.joonasvali.spaceblaster.core.game.level.LevelProvider;
 import ee.joonasvali.spaceblaster.core.game.level.LevelReader;
@@ -60,7 +61,7 @@ public class GameScreen implements Screen, Disposable {
     int worldHeight = WORLD_HEIGHT;
 
     this.state = new GameState(worldWidth, worldHeight);
-    this.state.setEventLog(new EventLog(state));
+    this.state.setEventLog(game.getConfig().eventMode ? new ActiveEventLog(state) : new InactiveEventLog());
 
     this.music = game.getSoundManager().createMusic();
     this.music.setVolume(MUSIC_VOLUME);
@@ -102,7 +103,7 @@ public class GameScreen implements Screen, Disposable {
 
     inputHandler.addKeyBinding(Input.Keys.ESCAPE, game::gotoMainMenu);
     inputHandler.addKeyBinding(Input.Keys.D,
-        () -> state.getUi().setShowEventLog(!state.getUi().isShowEventLog())
+        () -> state.getUi().setShowEventLog(game.getConfig().eventMode && !state.getUi().isShowEventLog())
     );
     inputHandler.addKeyBinding(
         Input.Keys.SPACE, () -> state.getRocket().doFire()

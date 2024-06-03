@@ -28,9 +28,12 @@ public class SpaceBlasterGame extends Game {
 
   private FontFactory fontFactory;
 
+  private Config config;
+
   @Override
   public void create() {
     log.info("Starting game");
+    this.config = new ConfigReader(Gdx.files.internal("spaceblaster.yaml")).getConfig();
 
     this.soundManager = new SoundManager();
 
@@ -103,6 +106,9 @@ public class SpaceBlasterGame extends Game {
     return batch;
   }
 
+  public Config getConfig() {
+    return config;
+  }
 
   public void setExit() {
     exit = true;

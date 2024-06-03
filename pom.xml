@@ -54,6 +54,12 @@
         <classifier>sources</classifier>
         <scope>provided</scope>
       </dependency>
+
+      <dependency>
+        <groupId>org.yaml</groupId>
+        <artifactId>snakeyaml</artifactId>
+        <version>2.2</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
