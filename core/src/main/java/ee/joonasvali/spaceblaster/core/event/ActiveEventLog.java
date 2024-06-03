@@ -12,7 +12,8 @@ import ee.joonasvali.spaceblaster.core.game.weapons.TripleShotBullet;
 import ee.joonasvali.spaceblaster.core.game.weapons.WeaponProjectile;
 import ee.joonasvali.spaceblaster.event.EnemyCloseness;
 import ee.joonasvali.spaceblaster.event.EnemySpeed;
-import ee.joonasvali.spaceblaster.event.Event;
+import ee.joonasvali.spaceblaster.event.MovingDirection;
+import ee.joonasvali.spaceblaster.event.Statistics;
 import ee.joonasvali.spaceblaster.event.PlayerWeapon;
 import ee.joonasvali.spaceblaster.event.PositionX;
 
@@ -24,20 +25,20 @@ public class ActiveEventLog implements EventLog {
   // Timestamp -> Weapon class
   private final LinkedHashMap<Long, Class<? extends WeaponProjectile>> playerShotsFiredRecently = new LinkedHashMap<>();
 
-  private ArrayDeque<Event> log = new ArrayDeque<>();
+  private ArrayDeque<Statistics> log = new ArrayDeque<>();
   private GameState gameState;
-  private final Event statistics;
+  private final Statistics statistics;
   public ActiveEventLog(GameState gameState) {
     this.gameState = gameState;
-    this.statistics = new Event();
+    this.statistics = new Statistics();
   }
 
   @Override
   public void addEvent() {
-    Event event = new Event();
+    Statistics statistics = new Statistics();
 
 
-    log.add(event);
+    log.add(statistics);
   }
 
   private long startTimeLevel;
@@ -147,6 +148,7 @@ public class ActiveEventLog implements EventLog {
     statistics.playerLivesLeft = gameState.getLives().get();
     statistics.playerDead = !gameState.getRocket().isAlive();
     statistics.playerIsMoving = gameState.getRocket().isMoving();
+    statistics.playerInvincible = gameState.getRocket().isInvincible();
     float playerPosX = gameState.getRocket().getX();
 
     if (!statistics.playerDead) {
@@ -231,6 +233,7 @@ public class ActiveEventLog implements EventLog {
 
     } else {
       statistics.enemyPositionXOnScreen = PositionX.MISSING;
+      statistics.enemyMovingDirection = MovingDirection.NONE;
       statistics.playerIsUnderEnemyFormation = false;
     }
 
@@ -272,7 +275,7 @@ public class ActiveEventLog implements EventLog {
   }
 
   @Override
-  public Event getStatistics() {
+  public Statistics getStatistics() {
     recalculateCurrentState();
     // This should be temporary method, not how events are exposed...
     return statistics;
@@ -316,6 +319,14 @@ public class ActiveEventLog implements EventLog {
     } else {
       statistics.enemiesHitEnemiesThisRoundCount++;
     }
+    // TODO generate event:
+  }
+
+  @Override
+  public void setEnemyFormationMovement(MovingDirection movingDirection) {
+    recalculateCurrentState();
+    System.out.println("EventLog.setEnemyFormationMovement " + movingDirection);
+    statistics.enemyMovingDirection = movingDirection;
     // TODO generate event:
   }
 }

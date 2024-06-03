@@ -3,7 +3,8 @@ package ee.joonasvali.spaceblaster.core.event;
 import ee.joonasvali.spaceblaster.core.game.difficulty.GameSettings;
 import ee.joonasvali.spaceblaster.core.game.enemy.Enemy;
 import ee.joonasvali.spaceblaster.core.game.weapons.WeaponProjectile;
-import ee.joonasvali.spaceblaster.event.Event;
+import ee.joonasvali.spaceblaster.event.MovingDirection;
+import ee.joonasvali.spaceblaster.event.Statistics;
 
 import java.util.List;
 
@@ -28,11 +29,13 @@ public interface EventLog {
 
   void setMinMaxPlayerX(float minX, float maxX);
 
-  Event getStatistics();
+  Statistics getStatistics();
 
   void powerUpCollected(Class<? extends WeaponProjectile> powerup);
 
   void powerUpMissed();
 
   void enemyHit(Enemy e, boolean hitByPlayer);
+
+  void setEnemyFormationMovement(MovingDirection movingDirection);
 }

@@ -100,7 +100,7 @@ public class Rocket implements Disposable, GameStepListener {
     return this.rectangle.overlaps(rectangle);
   }
 
-
+  boolean isMoving = false;
   @Override
   public void onStepAction(GameSpeedController.Control control) {
     cooldown();
@@ -118,10 +118,13 @@ public class Rocket implements Disposable, GameStepListener {
       return;
     }
     float xMove = 0;
+    isMoving = true;
     if (xTarget < this.getX()) {
       xMove = -Math.min(ROCKET_SPEED, this.getX() - xTarget);
     } else if (xTarget > this.getX()) {
       xMove = Math.min(ROCKET_SPEED, xTarget - this.getX());
+    } else {
+      isMoving = false;
     }
     rectangle.x += xMove;
     sprite.setX(rectangle.getX());
@@ -157,7 +160,7 @@ public class Rocket implements Disposable, GameStepListener {
     }
   }
 
-  private boolean isInvincible() {
+  public boolean isInvincible() {
     return effect instanceof RebirthEffect;
   }
 
@@ -223,6 +226,6 @@ public class Rocket implements Disposable, GameStepListener {
   }
 
   public boolean isMoving() {
-    return xTarget != getX();
+    return isMoving;
   }
 }

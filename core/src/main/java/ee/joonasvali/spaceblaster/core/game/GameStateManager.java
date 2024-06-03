@@ -11,6 +11,7 @@ import ee.joonasvali.spaceblaster.core.game.level.LevelProvider;
 import ee.joonasvali.spaceblaster.core.game.player.Rocket;
 import ee.joonasvali.spaceblaster.core.game.weapons.WeaponProjectile;
 import ee.joonasvali.spaceblaster.core.game.weapons.WeaponProjectileManager;
+import ee.joonasvali.spaceblaster.event.MovingDirection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -162,8 +163,13 @@ public class GameStateManager implements Disposable, GameStepListener {
         birthCountdown -= BIRTH_RATE;
         formation.getRandomUnBorn().ifPresent(
             e -> {
+              boolean isFirstBorn = formation.getEnemies().stream().noneMatch(Enemy::isBorn);
               e.setBorn(true);
               state.getParticleManager().createParticleEmitter(ParticleEffectManager.BIRTH, getPositionProviderOf(e), 0);
+              // on first birth:
+              if (isFirstBorn) {
+                this.state.getEventLog().setEnemyFormationMovement(formation.isMovesLeft() ? MovingDirection.LEFT : MovingDirection.RIGHT);
+              }
             }
         );
       }
@@ -256,6 +262,7 @@ public class GameStateManager implements Disposable, GameStepListener {
     if (formation.isMovesLeft()) {
       if (formation.getMinX() <= 2) {
         formation.setMovesLeft(false);
+        state.getEventLog().setEnemyFormationMovement(MovingDirection.RIGHT);
         formation.setY(Math.max(bottomBorder, formation.getY() - FORMATION_DROP));
         formationSpeed += FORMATION_SPEED_INCREASE;
         formationSpeed = Math.min(MAX_SPEED, formationSpeed);
@@ -266,6 +273,7 @@ public class GameStateManager implements Disposable, GameStepListener {
     } else {
       if (formation.getMaxX() >= (98 - formation.getEnemySize())) {
         formation.setMovesLeft(true);
+        state.getEventLog().setEnemyFormationMovement(MovingDirection.LEFT);
         formation.setY(Math.max(bottomBorder, formation.getY() - FORMATION_DROP));
         formationSpeed += FORMATION_SPEED_INCREASE;
         formationSpeed = Math.min(MAX_SPEED, formationSpeed);

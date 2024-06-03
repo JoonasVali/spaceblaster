@@ -13,7 +13,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import ee.joonasvali.spaceblaster.core.FontFactory;
 import ee.joonasvali.spaceblaster.core.TimedText;
 import ee.joonasvali.spaceblaster.core.event.EventLog;
-import ee.joonasvali.spaceblaster.event.Event;
+import ee.joonasvali.spaceblaster.event.Statistics;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -98,7 +98,7 @@ public class UIOverlay implements Disposable, GameStepListener {
   private void refreshEventLogIfNeeded() {
     if (eventLogText == null || lastEventLogRefresh + 300 < System.currentTimeMillis()) {
       this.lastEventLogRefresh = System.currentTimeMillis();
-      Event stats = eventLog.getStatistics();
+      Statistics stats = eventLog.getStatistics();
       StringBuilder strb = new StringBuilder();
       strb.append("Level: ").append(stats.levelName).append("\n");
       strb.append("Episode: ").append(stats.episodeName).append("\n");
@@ -130,6 +130,7 @@ public class UIOverlay implements Disposable, GameStepListener {
       strb.append("Player under enemy:").append(stats.playerIsUnderEnemyFormation).append("\n");
       strb.append("Enemy bullet flying towards player:").append(stats.enemyBulletFlyingTowardsPlayer).append("\n");
       strb.append("Total rounds: ").append(stats.totalRoundsCount).append("\n");
+      strb.append("Enemies moving direction: ").append(stats.enemyMovingDirection).append("\n");
       strb.append("Enemies killed by player: ").append(stats.enemiesKilledThisRoundCount).append("\n");
       strb.append("Enemies killed enemies: ").append(stats.enemiesKilledEnemiesThisRoundCount).append("\n");
       strb.append("Enemies hit enemies: ").append(stats.enemiesHitEnemiesThisRoundCount).append("\n");

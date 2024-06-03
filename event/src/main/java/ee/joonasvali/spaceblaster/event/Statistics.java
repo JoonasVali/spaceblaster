@@ -1,6 +1,6 @@
 package ee.joonasvali.spaceblaster.event;
 
-public class Event {
+public class Statistics {
   /*
     Begin Round specific fields
   */
@@ -25,6 +25,7 @@ public class Event {
   public int enemiesStartedWithMissileCount;
   public int enemiesStartedWithCannonCount;
   public int enemiesStartedWithTripleShotCount;
+
   /*
     End Round specific fields
   */
@@ -53,6 +54,7 @@ public class Event {
     this.enemiesStartedWithCannonCount = enemiesStartedWithCannonCount;
     this.enemiesStartedWithTripleShotCount = enemiesStartedWithTripleShotCount;
     this.powerUpsCollectedThisRoundCount = 0;
+    this.enemyMovingDirection = MovingDirection.NONE;
   }
 
   public void initializeGame(
@@ -69,6 +71,7 @@ public class Event {
     this.playerPositionX = PositionX.CENTER;
     this.totalRoundsCount = totalRounds;
     this.gameStartTimestamp = System.currentTimeMillis();
+    this.enemyMovingDirection = MovingDirection.NONE;
   }
 
   public GameDifficulty gameDifficulty;
@@ -85,8 +88,7 @@ public class Event {
 
   public int playerScore;
 
-
-
+  public MovingDirection enemyMovingDirection;
   public int enemyTouchedPlayerDeathsCount;
 
   public int powerUpsCollectedThisRoundCount;
@@ -109,6 +111,7 @@ public class Event {
   public PositionX enemyPositionXOnScreen;
 
   public boolean playerDead;
+  public boolean playerInvincible;
   public boolean inBetweenRounds;
 
   public boolean enemyBulletFlyingTowardsPlayer;
