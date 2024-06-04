@@ -107,6 +107,9 @@ public class Rocket implements Disposable, GameStepListener {
     if (effect != null) {
       effect.onStepAction(control);
       if (!effect.isActive()) {
+        if (effect instanceof RebirthEffect) {
+          state.getEventLog().playerNoLongerInvincible();
+        }
         effect = null;
       }
     }
@@ -152,6 +155,7 @@ public class Rocket implements Disposable, GameStepListener {
     weaponCooldown = 0;
     Class<WeaponProjectile>[] wpClasses = weaponProjectileManager.getWeaponClasses(weaponClass);
     this.weaponClass = wpClasses[(int) (Math.random() * wpClasses.length)];
+    state.getEventLog().setWeapon();
   }
 
   private void cooldown() {
@@ -179,10 +183,10 @@ public class Rocket implements Disposable, GameStepListener {
   private void rebirth() {
     if (lives.get() > 0) {
       alive = true;
+      this.weaponClass = DEFAULT_WEAPON_CLASS;
       effect = new RebirthEffect(200, 5);
+      state.getEventLog().playerBorn();
     }
-    this.weaponClass = DEFAULT_WEAPON_CLASS;
-    state.getEventLog().playerBorn();
   }
 
   public float getWidth() {

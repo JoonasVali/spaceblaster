@@ -120,4 +120,56 @@ public class Statistics {
   public boolean isVictory;
   public boolean isDefeat;
 
+  protected void copyTo(Event event) {
+    event.episodeName = this.episodeName;
+    event.levelName = this.levelName;
+    event.roundStartTimestamp = this.roundStartTimestamp;
+    event.roundsFinishedCount = this.roundsFinishedCount;
+    event.enemiesLeftThisRoundCount = this.enemiesLeftThisRoundCount;
+    event.enemiesKilledThisRoundCount = this.enemiesKilledThisRoundCount;
+    event.enemiesHitEnemiesThisRoundCount = this.enemiesHitEnemiesThisRoundCount;
+    event.enemiesKilledEnemiesThisRoundCount = this.enemiesKilledEnemiesThisRoundCount;
+    event.enemiesLeftWithGaussGunCount = this.enemiesLeftWithGaussGunCount;
+    event.enemiesLeftWithMissileCount = this.enemiesLeftWithMissileCount;
+    event.enemiesLeftWithCannonCount = this.enemiesLeftWithCannonCount;
+    event.enemiesLeftWithTripleShotCount = this.enemiesLeftWithTripleShotCount;
+    event.enemiesStartedWithGaussGunCount = this.enemiesStartedWithGaussGunCount;
+    event.enemiesStartedWithMissileCount = this.enemiesStartedWithMissileCount;
+    event.enemiesStartedWithCannonCount = this.enemiesStartedWithCannonCount;
+    event.enemiesStartedWithTripleShotCount = this.enemiesStartedWithTripleShotCount;
+    event.gameDifficulty = this.gameDifficulty;
+    event.gameStartTimestamp = this.gameStartTimestamp;
+    event.lastDeathTimestamp = this.lastDeathTimestamp;
+    event.lastKillTimestamp = this.lastKillTimestamp;
+    event.lastHitTimestamp = this.lastHitTimestamp;
+    event.totalRoundsCount = this.totalRoundsCount;
+    event.playerLivesLeft = this.playerLivesLeft;
+    event.playerLivesOriginal = this.playerLivesOriginal;
+    event.playerScore = this.playerScore;
+    event.enemyMovingDirection = this.enemyMovingDirection;
+    event.enemyTouchedPlayerDeathsCount = this.enemyTouchedPlayerDeathsCount;
+    event.powerUpsCollectedThisRoundCount = this.powerUpsCollectedThisRoundCount;
+    event.powerUpsCollectedTotalCount = this.powerUpsCollectedTotalCount;
+    event.powerUpsMissedCount = this.powerUpsMissedCount;
+    event.powerUpsGaussGunCollectedCount = this.powerUpsGaussGunCollectedCount;
+    event.powerUpsMissileCollectedCount = this.powerUpsMissileCollectedCount;
+    event.powerUpsTripleShotCollectedCount = this.powerUpsTripleShotCollectedCount;
+    event.powerUpsCannonCollectedCount = this.powerUpsCannonCollectedCount;
+    event.lastPowerupTimestamp = this.lastPowerupTimestamp;
+    event.lastPowerupMissedTimestamp = this.lastPowerupMissedTimestamp;
+    event.enemySpeed = this.enemySpeed;
+    event.enemyCloseness = this.enemyCloseness;
+    event.shotsFiredLastThreeSeconds = this.shotsFiredLastThreeSeconds;
+    event.playerWeapon = this.playerWeapon;
+    event.playerPositionX = this.playerPositionX;
+    event.enemyPositionXOnScreen = this.enemyPositionXOnScreen;
+    event.playerDead = this.playerDead;
+    event.playerInvincible = this.playerInvincible;
+    event.inBetweenRounds = this.inBetweenRounds;
+    event.enemyBulletFlyingTowardsPlayer = this.enemyBulletFlyingTowardsPlayer;
+    event.playerIsUnderEnemyFormation = this.playerIsUnderEnemyFormation;
+    event.playerIsMoving = this.playerIsMoving;
+    event.isVictory = this.isVictory;
+    event.isDefeat = this.isDefeat;
+  }
 }

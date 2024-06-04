@@ -12,6 +12,8 @@ import ee.joonasvali.spaceblaster.core.game.weapons.TripleShotBullet;
 import ee.joonasvali.spaceblaster.core.game.weapons.WeaponProjectile;
 import ee.joonasvali.spaceblaster.event.EnemyCloseness;
 import ee.joonasvali.spaceblaster.event.EnemySpeed;
+import ee.joonasvali.spaceblaster.event.Event;
+import ee.joonasvali.spaceblaster.event.EventType;
 import ee.joonasvali.spaceblaster.event.MovingDirection;
 import ee.joonasvali.spaceblaster.event.Statistics;
 import ee.joonasvali.spaceblaster.event.PlayerWeapon;
@@ -25,7 +27,7 @@ public class ActiveEventLog implements EventLog {
   // Timestamp -> Weapon class
   private final LinkedHashMap<Long, Class<? extends WeaponProjectile>> playerShotsFiredRecently = new LinkedHashMap<>();
 
-  private ArrayDeque<Statistics> log = new ArrayDeque<>();
+  private ArrayDeque<Event> log = new ArrayDeque<>();
   private GameState gameState;
   private final Statistics statistics;
   public ActiveEventLog(GameState gameState) {
@@ -33,15 +35,11 @@ public class ActiveEventLog implements EventLog {
     this.statistics = new Statistics();
   }
 
-  @Override
-  public void addEvent() {
+  private void addEvent(EventType eventType) {
     Statistics statistics = new Statistics();
-
-
-    log.add(statistics);
+    log.add(new Event(statistics, eventType));
+    System.out.println("Event: " + eventType + " " + log.peekLast().getTimestamp());
   }
-
-  private long startTimeLevel;
 
   private float minPlayerX;
   private float maxPlayerX;
@@ -49,7 +47,6 @@ public class ActiveEventLog implements EventLog {
   @Override
   public void eventLoadLevel(String levelName, List<Enemy> enemies, int currentLevel) {
     recalculateCurrentState();
-    System.out.println("EventLog.eventLoadLevel");
     statistics.initializeRound(levelName,
         Math.max(0, currentLevel + 1),
         (int) enemies.stream().filter(e -> e instanceof GaussEnemy).count(),
@@ -57,26 +54,27 @@ public class ActiveEventLog implements EventLog {
         (int) enemies.stream().filter(e -> e.getProjectileType() == CannonBullet.class).count(),
         (int) enemies.stream().filter(e -> e.getProjectileType() == TripleShotBullet.class).count()
     );
-    // TODO generate event:
+
+    addEvent(EventType.LOAD_LEVEL);
   }
 
   @Override
   public void eventStartGame(String episodeName, GameSettings gameSettings, int levelsTotal) {
     recalculateCurrentState();
-    System.out.println("EventLog.eventStartGame");
+
     statistics.initializeGame(
         episodeName,
         gameSettings.getDifficulty(),
         gameState.getLives().get(),
         levelsTotal
     );
-    // TODO generate event:
+    addEvent(EventType.START_GAME);
   }
 
   @Override
   public void enemyKilled(Enemy enemy, boolean killedByPlayer) {
     recalculateCurrentState();
-    System.out.println("EventLog.enemyKilled: " + killedByPlayer);
+
     if (!killedByPlayer) {
       statistics.enemiesKilledEnemiesThisRoundCount++;
     } else {
@@ -95,13 +93,12 @@ public class ActiveEventLog implements EventLog {
     }
 
     statistics.lastKillTimestamp = System.currentTimeMillis();
-    // TODO generate event:
+    addEvent(EventType.ENEMY_KILLED);
   }
 
   @Override
   public void playerKilled(boolean killedByTouchingEnemy) {
     recalculateCurrentState();
-    System.out.println("EventLog.playerKilled");
 
     statistics.lastDeathTimestamp = System.currentTimeMillis();
     if (killedByTouchingEnemy) {
@@ -109,28 +106,25 @@ public class ActiveEventLog implements EventLog {
     }
 
 
-    // TODO generate event:
-
+    addEvent(EventType.PLAYER_KILLED);
   }
 
   @Override
   public void playerFired(Class<? extends WeaponProjectile> weaponClass) {
     // This isn't an event itself, so no recalculaion is needed here...
     playerShotsFiredRecently.put(System.currentTimeMillis(), weaponClass);
-    System.out.println("EventLog.playerFired " + weaponClass);
   }
 
   @Override
   public void playerBorn() {
     recalculateCurrentState();
-    System.out.println("EventLog.playerBorn");
     // Player weapon:
     setWeapon();
 
-    // TODO generate event:
+    addEvent(EventType.PLAYER_BORN);
   }
 
-  private void setWeapon() {
+  public void setWeapon() {
     var weapon = gameState.getRocket().getWeaponClass();
     if (weapon == CannonBullet.class) {
       statistics.playerWeapon = PlayerWeapon.CANNON;
@@ -141,6 +135,12 @@ public class ActiveEventLog implements EventLog {
     } else if (weapon == GaussGunBullet.class) {
       statistics.playerWeapon = PlayerWeapon.GAUSS_GUN;
     }
+  }
+
+  @Override
+  public void playerNoLongerInvincible() {
+    recalculateCurrentState();
+    addEvent(EventType.PLAYER_NO_LONGER_INVINCIBLE);
   }
 
   private void recalculateCurrentState() {
@@ -251,17 +251,17 @@ public class ActiveEventLog implements EventLog {
   @Override
   public void setVictory() {
     recalculateCurrentState();
-    System.out.println("EventLog.setVictory");
+
     statistics.isVictory = true;
-    // TODO generate event:
+    addEvent(EventType.VICTORY);
   }
 
   @Override
   public void setGameOver() {
     recalculateCurrentState();
-    System.out.println("EventLog.setGameOver");
+
     statistics.isDefeat = true;
-    // TODO generate event:
+    addEvent(EventType.GAME_OVER);
   }
   private void retainLastThreeSecondsOfPlayerFiredEvents() {
     long currentTime = System.currentTimeMillis();
@@ -284,7 +284,7 @@ public class ActiveEventLog implements EventLog {
   @Override
   public void powerUpCollected(Class<? extends WeaponProjectile> powerup) {
     recalculateCurrentState();
-    System.out.println("EventLog.powerUpCollected");
+
     statistics.powerUpsCollectedThisRoundCount++;
     statistics.powerUpsCollectedTotalCount++;
 
@@ -298,35 +298,48 @@ public class ActiveEventLog implements EventLog {
       statistics.powerUpsCannonCollectedCount++;
     }
     statistics.lastPowerupTimestamp = System.currentTimeMillis();
-    // TODO generate event:
+    addEvent(EventType.POWERUP_COLLECTED);
   }
 
   @Override
   public void powerUpMissed() {
     recalculateCurrentState();
-    System.out.println("EventLog.powerUpMissed");
+
     statistics.powerUpsMissedCount++;
     statistics.lastPowerupMissedTimestamp = System.currentTimeMillis();
-    // TODO generate event:
+    addEvent(EventType.POWERUP_MISSED);
+  }
+
+  @Override
+  public void powerUpCreated() {
+    recalculateCurrentState();
+
+    addEvent(EventType.POWERUP_CREATED);
   }
 
   @Override
   public void enemyHit(Enemy e, boolean hitByPlayer) {
     recalculateCurrentState();
-    System.out.println("EventLog.enemyHit " + e);
+
     if (hitByPlayer) {
       statistics.lastHitTimestamp = System.currentTimeMillis();
     } else {
       statistics.enemiesHitEnemiesThisRoundCount++;
     }
-    // TODO generate event:
+    addEvent(EventType.ENEMY_HIT);
   }
 
   @Override
   public void setEnemyFormationMovement(MovingDirection movingDirection) {
     recalculateCurrentState();
-    System.out.println("EventLog.setEnemyFormationMovement " + movingDirection);
+
+    boolean changed = statistics.enemyMovingDirection != MovingDirection.NONE &&
+        movingDirection != MovingDirection.NONE &&
+        statistics.enemyMovingDirection != movingDirection;
+
     statistics.enemyMovingDirection = movingDirection;
-    // TODO generate event:
+    if (changed) {
+      addEvent(EventType.ENEMY_FORMATION_CHANGES_MOVEMENT_DIRECTION);
+    }
   }
 }

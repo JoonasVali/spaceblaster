@@ -10,11 +10,6 @@ import java.util.List;
 
 public class InactiveEventLog implements EventLog {
   @Override
-  public void addEvent() {
-
-  }
-
-  @Override
   public void eventLoadLevel(String levelName, List<Enemy> enemies, int currentLevel) {
 
   }
@@ -75,12 +70,27 @@ public class InactiveEventLog implements EventLog {
   }
 
   @Override
+  public void powerUpCreated() {
+
+  }
+
+  @Override
   public void enemyHit(Enemy e, boolean hitByPlayer) {
 
   }
 
   @Override
   public void setEnemyFormationMovement(MovingDirection movingDirection) {
+
+  }
+
+  @Override
+  public void setWeapon() {
+
+  }
+
+  @Override
+  public void playerNoLongerInvincible() {
 
   }
 }

@@ -9,8 +9,6 @@ import ee.joonasvali.spaceblaster.event.Statistics;
 import java.util.List;
 
 public interface EventLog {
-  void addEvent();
-
   void eventLoadLevel(String levelName, List<Enemy> enemies, int currentLevel);
 
   void eventStartGame(String episodeName, GameSettings gameSettings, int levelsTotal);
@@ -35,7 +33,13 @@ public interface EventLog {
 
   void powerUpMissed();
 
+  void powerUpCreated();
+
   void enemyHit(Enemy e, boolean hitByPlayer);
 
   void setEnemyFormationMovement(MovingDirection movingDirection);
+
+  void setWeapon();
+
+  void playerNoLongerInvincible();
 }
