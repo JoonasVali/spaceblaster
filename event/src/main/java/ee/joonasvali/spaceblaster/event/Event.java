@@ -2,12 +2,12 @@ package ee.joonasvali.spaceblaster.event;
 
 public class Event extends Statistics {
 
-  private EventType type;
-  private long timestamp;
+  public EventType type;
+  public long eventTimestamp;
 
   public Event(Statistics statistics, EventType type) {
     this.type = type;
-    this.timestamp = System.currentTimeMillis();
+    this.eventTimestamp = System.currentTimeMillis();
     statistics.copyTo(this);
   }
 
@@ -15,12 +15,12 @@ public class Event extends Statistics {
     return type;
   }
 
-  public long getTimestamp() {
-    return timestamp;
+  public long getEventTimestamp() {
+    return eventTimestamp;
   }
 
   @Override
   public String toString() {
-    return "Event " + type + " " + timestamp;
+    return "Event " + type + " " + eventTimestamp;
   }
 }

@@ -1,5 +1,6 @@
 package ee.joonasvali.spaceblaster.core.event;
 
+import ee.joonasvali.spaceblaster.core.CreditsScreen;
 import ee.joonasvali.spaceblaster.core.game.GameState;
 import ee.joonasvali.spaceblaster.core.game.difficulty.GameSettings;
 import ee.joonasvali.spaceblaster.core.game.enemy.Enemy;
@@ -14,31 +15,53 @@ import ee.joonasvali.spaceblaster.event.EnemyCloseness;
 import ee.joonasvali.spaceblaster.event.EnemySpeed;
 import ee.joonasvali.spaceblaster.event.Event;
 import ee.joonasvali.spaceblaster.event.EventType;
+import ee.joonasvali.spaceblaster.event.EventWriter;
 import ee.joonasvali.spaceblaster.event.MovingDirection;
-import ee.joonasvali.spaceblaster.event.Statistics;
 import ee.joonasvali.spaceblaster.event.PlayerWeapon;
 import ee.joonasvali.spaceblaster.event.PositionX;
+import ee.joonasvali.spaceblaster.event.Statistics;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.ArrayDeque;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 public class ActiveEventLog implements EventLog {
+  private final Logger log = LoggerFactory.getLogger(ActiveEventLog.class);
   // Timestamp -> Weapon class
   private final LinkedHashMap<Long, Class<? extends WeaponProjectile>> playerShotsFiredRecently = new LinkedHashMap<>();
-
-  private ArrayDeque<Event> log = new ArrayDeque<>();
   private GameState gameState;
   private final Statistics statistics;
-  public ActiveEventLog(GameState gameState) {
+
+  private final EventWriter eventWriter;
+  private final OutputStream outputStream;
+  public ActiveEventLog(GameState gameState, String eventLogFolder) {
     this.gameState = gameState;
     this.statistics = new Statistics();
+    Path path = Paths.get(eventLogFolder, "events-" + System.currentTimeMillis() + ".yml");
+
+    EventWriter eventWriter = null;
+    OutputStream outputStream = null;
+    try {
+      Files.createDirectories(path.getParent());
+      outputStream = Files.newOutputStream(path);
+      eventWriter = new EventWriter(outputStream);
+    } catch (IOException e) {
+      log.error("Failed to create event log file", e);
+    }
+    this.outputStream = outputStream;
+    this.eventWriter = eventWriter;
   }
 
   private void addEvent(EventType eventType) {
-    Statistics statistics = new Statistics();
-    log.add(new Event(statistics, eventType));
-    System.out.println("Event: " + eventType + " " + log.peekLast().getTimestamp());
+    if (this.eventWriter != null) {
+      eventWriter.write(new Event(statistics, eventType));
+    }
   }
 
   private float minPlayerX;
@@ -141,6 +164,30 @@ public class ActiveEventLog implements EventLog {
   public void playerNoLongerInvincible() {
     recalculateCurrentState();
     addEvent(EventType.PLAYER_NO_LONGER_INVINCIBLE);
+  }
+
+  @Override
+  public void dispose() {
+    InterruptedException ex = null;
+    if (eventWriter != null) {
+      eventWriter.dispose();
+      try {
+        eventWriter.waitUntilDisposed();
+      } catch (InterruptedException e) {
+        ex = e;
+      }
+    }
+
+    if (outputStream != null) {
+      try {
+        outputStream.close();
+      } catch (IOException e) {
+        log.error("Failed to close event log file", e);
+      }
+    }
+    if (ex != null) {
+      Thread.currentThread().interrupt();
+    }
   }
 
   private void recalculateCurrentState() {

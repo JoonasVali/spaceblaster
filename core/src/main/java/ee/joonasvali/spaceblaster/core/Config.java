@@ -5,4 +5,5 @@ package ee.joonasvali.spaceblaster.core;
  */
 public class Config {
   public boolean eventMode;
+  public String eventLogFolder;
 }

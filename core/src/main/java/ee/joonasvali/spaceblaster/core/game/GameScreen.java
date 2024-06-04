@@ -21,6 +21,7 @@ import ee.joonasvali.spaceblaster.core.game.level.LevelProvider;
 import ee.joonasvali.spaceblaster.core.game.level.LevelReader;
 import ee.joonasvali.spaceblaster.core.game.player.Rocket;
 import ee.joonasvali.spaceblaster.core.game.weapons.WeaponProjectileManager;
+import ee.joonasvali.spaceblaster.event.EventWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +54,6 @@ public class GameScreen implements Screen, Disposable {
   private final GameState state;
   private final Music music;
 
-
   public GameScreen(SpaceBlasterGame game, FileHandle episodeFile, GameSettings gameSettings) {
     this.game = game;
 
@@ -61,7 +61,9 @@ public class GameScreen implements Screen, Disposable {
     int worldHeight = WORLD_HEIGHT;
 
     this.state = new GameState(worldWidth, worldHeight);
-    this.state.setEventLog(game.getConfig().eventMode ? new ActiveEventLog(state) : new InactiveEventLog());
+
+
+    this.state.setEventLog(game.getConfig().eventMode ? new ActiveEventLog(state, game.getConfig().eventLogFolder) : new InactiveEventLog());
 
     this.music = game.getSoundManager().createMusic();
     this.music.setVolume(MUSIC_VOLUME);
@@ -202,6 +204,7 @@ public class GameScreen implements Screen, Disposable {
     state.getParticleManager().dispose();
     state.getPowerupManager().dispose();
     levelProvider.dispose();
+    state.getEventLog().dispose();
   }
 
 

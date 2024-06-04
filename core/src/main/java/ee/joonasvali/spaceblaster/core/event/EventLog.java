@@ -42,4 +42,6 @@ public interface EventLog {
   void setWeapon();
 
   void playerNoLongerInvincible();
+
+  void dispose();
 }

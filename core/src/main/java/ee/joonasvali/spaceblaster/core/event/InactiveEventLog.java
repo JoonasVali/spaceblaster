@@ -93,4 +93,9 @@ public class InactiveEventLog implements EventLog {
   public void playerNoLongerInvincible() {
 
   }
+
+  @Override
+  public void dispose() {
+
+  }
 }

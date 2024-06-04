@@ -4,27 +4,27 @@ public class Statistics {
   /*
     Begin Round specific fields
   */
-  public String levelName;
-  public String episodeName;
+  public volatile String levelName;
+  public volatile String episodeName;
 
-  public long roundStartTimestamp;
-  public int roundsFinishedCount;
+  public volatile long roundStartTimestamp;
+  public volatile int roundsFinishedCount;
 
-  public int enemiesLeftThisRoundCount;
+  public volatile int enemiesLeftThisRoundCount;
 
-  public int enemiesKilledThisRoundCount;
-  public int enemiesHitEnemiesThisRoundCount;
-  public int enemiesKilledEnemiesThisRoundCount;
+  public volatile int enemiesKilledThisRoundCount;
+  public volatile int enemiesHitEnemiesThisRoundCount;
+  public volatile int enemiesKilledEnemiesThisRoundCount;
 
-  public int enemiesLeftWithGaussGunCount;
-  public int enemiesLeftWithMissileCount;
-  public int enemiesLeftWithCannonCount;
-  public int enemiesLeftWithTripleShotCount;
+  public volatile int enemiesLeftWithGaussGunCount;
+  public volatile int enemiesLeftWithMissileCount;
+  public volatile int enemiesLeftWithCannonCount;
+  public volatile int enemiesLeftWithTripleShotCount;
 
-  public int enemiesStartedWithGaussGunCount;
-  public int enemiesStartedWithMissileCount;
-  public int enemiesStartedWithCannonCount;
-  public int enemiesStartedWithTripleShotCount;
+  public volatile int enemiesStartedWithGaussGunCount;
+  public volatile int enemiesStartedWithMissileCount;
+  public volatile int enemiesStartedWithCannonCount;
+  public volatile int enemiesStartedWithTripleShotCount;
 
   /*
     End Round specific fields
@@ -74,51 +74,51 @@ public class Statistics {
     this.enemyMovingDirection = MovingDirection.NONE;
   }
 
-  public GameDifficulty gameDifficulty;
+  public volatile GameDifficulty gameDifficulty;
 
 
-  public long gameStartTimestamp;
-  public Long lastDeathTimestamp;
-  public Long lastKillTimestamp;
-  public Long lastHitTimestamp;
-  public int totalRoundsCount;
+  public volatile long gameStartTimestamp;
+  public volatile Long lastDeathTimestamp;
+  public volatile Long lastKillTimestamp;
+  public volatile Long lastHitTimestamp;
+  public volatile int totalRoundsCount;
 
-  public int playerLivesLeft;
-  public int playerLivesOriginal;
+  public volatile int playerLivesLeft;
+  public volatile int playerLivesOriginal;
 
-  public int playerScore;
+  public volatile int playerScore;
 
-  public MovingDirection enemyMovingDirection;
-  public int enemyTouchedPlayerDeathsCount;
+  public volatile MovingDirection enemyMovingDirection;
+  public volatile int enemyTouchedPlayerDeathsCount;
 
-  public int powerUpsCollectedThisRoundCount;
-  public int powerUpsCollectedTotalCount;
-  public int powerUpsMissedCount;
-  public int powerUpsGaussGunCollectedCount;
-  public int powerUpsMissileCollectedCount;
-  public int powerUpsTripleShotCollectedCount;
-  public int powerUpsCannonCollectedCount;
+  public volatile int powerUpsCollectedThisRoundCount;
+  public volatile int powerUpsCollectedTotalCount;
+  public volatile int powerUpsMissedCount;
+  public volatile int powerUpsGaussGunCollectedCount;
+  public volatile int powerUpsMissileCollectedCount;
+  public volatile int powerUpsTripleShotCollectedCount;
+  public volatile int powerUpsCannonCollectedCount;
 
-  public Long lastPowerupTimestamp;
-  public Long lastPowerupMissedTimestamp;
+  public volatile Long lastPowerupTimestamp;
+  public volatile Long lastPowerupMissedTimestamp;
 
-  public EnemySpeed enemySpeed;
-  public EnemyCloseness enemyCloseness;
+  public volatile EnemySpeed enemySpeed;
+  public volatile EnemyCloseness enemyCloseness;
 
-  public int shotsFiredLastThreeSeconds;
-  public PlayerWeapon playerWeapon;
-  public PositionX playerPositionX;
-  public PositionX enemyPositionXOnScreen;
+  public volatile int shotsFiredLastThreeSeconds;
+  public volatile PlayerWeapon playerWeapon;
+  public volatile PositionX playerPositionX;
+  public volatile PositionX enemyPositionXOnScreen;
 
-  public boolean playerDead;
-  public boolean playerInvincible;
-  public boolean inBetweenRounds;
+  public volatile boolean playerDead;
+  public volatile boolean playerInvincible;
+  public volatile boolean inBetweenRounds;
 
-  public boolean enemyBulletFlyingTowardsPlayer;
-  public boolean playerIsUnderEnemyFormation;
-  public boolean playerIsMoving;
-  public boolean isVictory;
-  public boolean isDefeat;
+  public volatile boolean enemyBulletFlyingTowardsPlayer;
+  public volatile boolean playerIsUnderEnemyFormation;
+  public volatile boolean playerIsMoving;
+  public volatile boolean isVictory;
+  public volatile boolean isDefeat;
 
   protected void copyTo(Event event) {
     event.episodeName = this.episodeName;
