@@ -71,7 +71,7 @@ public class ActiveEventLog implements EventLog {
   public void eventLoadLevel(String levelName, List<Enemy> enemies, int currentLevel) {
     recalculateCurrentState();
     statistics.initializeRound(levelName,
-        Math.max(0, currentLevel + 1),
+        Math.max(0, currentLevel),
         (int) enemies.stream().filter(e -> e instanceof GaussEnemy).count(),
         (int) enemies.stream().filter(e -> e.getProjectileType() == Missile.class).count(),
         (int) enemies.stream().filter(e -> e.getProjectileType() == CannonBullet.class).count(),
@@ -300,6 +300,7 @@ public class ActiveEventLog implements EventLog {
     recalculateCurrentState();
 
     statistics.isVictory = true;
+    statistics.roundsFinishedCount = statistics.totalRoundsCount;
     addEvent(EventType.VICTORY);
   }
 
