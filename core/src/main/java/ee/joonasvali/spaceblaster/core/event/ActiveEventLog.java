@@ -27,6 +27,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayDeque;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -38,6 +39,7 @@ public class ActiveEventLog implements EventLog {
   private final Statistics statistics;
 
   private final EventWriter eventWriter;
+  private final ArrayDeque<EventType> queuedEvents = new ArrayDeque<>();
   private final OutputStream outputStream;
   public ActiveEventLog(GameState gameState, String eventLogFolder) {
     this.gameState = gameState;
@@ -189,6 +191,16 @@ public class ActiveEventLog implements EventLog {
     }
   }
 
+  @Override
+  public boolean isActive() {
+    return true;
+  }
+
+  @Override
+  public void trigger() {
+    recalculateCurrentState();
+  }
+
   private void recalculateCurrentState() {
     statistics.playerScore = gameState.getScore().get();
     statistics.playerLivesLeft = gameState.getLives().get();
@@ -289,16 +301,28 @@ public class ActiveEventLog implements EventLog {
         p.x < playerPosX + gameState.getRocket().getWidth() && p.x > playerPosX && p.getAuthor() != gameState.getRocket() && p.y > playerPosY
     ).sorted((o1, o2) -> Float.compare(Math.abs(o1.y - playerPosY), Math.abs(o2.y - playerPosY))).findAny();
 
+    Closeness previousBulletCloseness = statistics.enemyBulletFlyingTowardsPlayerDistance;
     statistics.enemyBulletFlyingTowardsPlayerDistance = projectileFlyingTowardsPlayer.map(
         weaponProjectile ->
-            Math.abs(weaponProjectile.y - (playerPosY + gameState.getRocket().getHeight())) < gameState.getRocket().getHeight()
+            Math.abs(weaponProjectile.y - (playerPosY + gameState.getRocket().getHeight())) < gameState.getRocket().getHeight() * 1.5f
         ? Closeness.CLOSE
         : Closeness.FAR
     ).orElse(null);
 
+    if (previousBulletCloseness == Closeness.CLOSE && statistics.enemyBulletFlyingTowardsPlayerDistance == null && gameState.getRocket().isAlive()) {
+      queueEvent(EventType.PLAYER_NARROWLY_ESCAPED_INCOMING_BULLET);
+    }
 
     retainLastThreeSecondsOfPlayerFiredEvents();
     statistics.shotsFiredLastThreeSeconds = playerShotsFiredRecently.size();
+
+    // Make sure event queue is cleared as a last thing.
+    queuedEvents.forEach(this::addEvent);
+    queuedEvents.clear();
+  }
+
+  private void queueEvent(EventType eventType) {
+    queuedEvents.add(eventType);
   }
 
   @Override

@@ -32,6 +32,9 @@ public class Rocket implements Disposable, GameStepListener {
   public static final float ROCKET_FIRE_ANGLE_VARIATION = 3;
   private final Sprite sprite;
   private final Rectangle rectangle;
+
+  // In event mode calculate event state if the projectile is in the event horizon.
+  private final Rectangle eventHorizonRectangle;
   private final Texture texture;
   private final WeaponProjectileManager weaponProjectileManager;
   private final ExplosionManager explosionManager;
@@ -60,6 +63,7 @@ public class Rocket implements Disposable, GameStepListener {
     };
 
     rectangle = new Rectangle(0, 0, ROCKET_SIZE, ROCKET_SIZE);
+    eventHorizonRectangle = new Rectangle(-ROCKET_SIZE, -ROCKET_SIZE, ROCKET_SIZE * 3, ROCKET_SIZE * 3);
     sprite = new Sprite(texture, 1, 1, 31, 31);
     sprite.setSize(ROCKET_SIZE, ROCKET_SIZE);
 
@@ -133,13 +137,20 @@ public class Rocket implements Disposable, GameStepListener {
     sprite.setX(rectangle.getX());
     if (!isInvincible()) {
       Optional<WeaponProjectile> missile = weaponProjectileManager.projectileCollisionWith(rectangle, this);
-      missile.ifPresent((m) -> {
+      if (missile.isPresent()) {
+        WeaponProjectile m = missile.get();
         weaponProjectileManager.removeProjectile(m);
         explosionManager.createExplosion(m.getX(), m.getY(), m.getWidth(), m.getHeight());
         if (kill()) {
           state.getEventLog().playerKilled(false);
         }
-      });
+      } else if (state.getEventLog().isActive()) {
+        eventHorizonRectangle.x = rectangle.x - ROCKET_SIZE;
+        eventHorizonRectangle.y = rectangle.y - ROCKET_SIZE;
+        if (weaponProjectileManager.projectileCollisionWith(eventHorizonRectangle, this).isPresent()) {
+          state.getEventLog().trigger();
+        }
+      }
     }
 
     Optional<Powerup> p = state.getPowerupManager().collisionWith(rectangle);

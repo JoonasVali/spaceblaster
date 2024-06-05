@@ -98,4 +98,14 @@ public class InactiveEventLog implements EventLog {
   public void dispose() {
 
   }
+
+  @Override
+  public boolean isActive() {
+    return false;
+  }
+
+  @Override
+  public void trigger() {
+
+  }
 }
