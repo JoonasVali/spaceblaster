@@ -63,7 +63,6 @@
     </dependencies>
   </dependencyManagement>
 
-
   <repositories>
     <repository>
       <id>gdx-releases</id>

@@ -10,6 +10,7 @@
   </parent>
 
   <artifactId>event</artifactId>
+  <name>SpaceBlaster Event</name>
 
   <properties>
     <maven.compiler.source>12</maven.compiler.source>

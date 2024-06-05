@@ -10,7 +10,7 @@
 
   <artifactId>spaceblaster-core</artifactId>
   <packaging>jar</packaging>
-  <name>MyDemoGame Core</name>
+  <name>SpaceBlaster Core</name>
   <dependencies>
     <dependency>
       <groupId>ee.joonasvali.spaceblaster</groupId>
