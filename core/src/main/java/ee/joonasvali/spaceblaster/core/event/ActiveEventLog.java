@@ -1,6 +1,5 @@
 package ee.joonasvali.spaceblaster.core.event;
 
-import ee.joonasvali.spaceblaster.core.CreditsScreen;
 import ee.joonasvali.spaceblaster.core.game.GameState;
 import ee.joonasvali.spaceblaster.core.game.difficulty.GameSettings;
 import ee.joonasvali.spaceblaster.core.game.enemy.Enemy;
@@ -11,7 +10,7 @@ import ee.joonasvali.spaceblaster.core.game.weapons.GaussGunBullet;
 import ee.joonasvali.spaceblaster.core.game.weapons.Missile;
 import ee.joonasvali.spaceblaster.core.game.weapons.TripleShotBullet;
 import ee.joonasvali.spaceblaster.core.game.weapons.WeaponProjectile;
-import ee.joonasvali.spaceblaster.event.EnemyCloseness;
+import ee.joonasvali.spaceblaster.event.Closeness;
 import ee.joonasvali.spaceblaster.event.EnemySpeed;
 import ee.joonasvali.spaceblaster.event.Event;
 import ee.joonasvali.spaceblaster.event.EventType;
@@ -197,6 +196,7 @@ public class ActiveEventLog implements EventLog {
     statistics.playerIsMoving = gameState.getRocket().isMoving();
     statistics.playerInvincible = gameState.getRocket().isInvincible();
     float playerPosX = gameState.getRocket().getX();
+    float playerPosY = gameState.getRocket().getY();
 
     if (!statistics.playerDead) {
       PositionX pos = PositionX.CENTER;
@@ -251,7 +251,6 @@ public class ActiveEventLog implements EventLog {
       }
 
       // Calculating enemyCloseness:
-      float playerPosY = gameState.getRocket().getY();
       Enemy closestEnemy = enemyFormation.getEnemies().stream()
           .min((e1, e2) -> {
             float d1 = Math.abs(e1.getX() - playerPosX) + Math.abs(e1.getY() - playerPosY);
@@ -262,11 +261,11 @@ public class ActiveEventLog implements EventLog {
       if (closestEnemy != null) {
         float d = Math.abs(closestEnemy.getX() - playerPosX) + Math.abs(closestEnemy.getY() - playerPosY);
         if (d < 20) {
-          statistics.enemyCloseness = EnemyCloseness.CLOSE;
+          statistics.enemyCloseness = Closeness.CLOSE;
         } else if (d < 40) {
-          statistics.enemyCloseness = EnemyCloseness.MEDIUM;
+          statistics.enemyCloseness = Closeness.MEDIUM;
         } else {
-          statistics.enemyCloseness = EnemyCloseness.FAR;
+          statistics.enemyCloseness = Closeness.FAR;
         }
       }
 
@@ -286,9 +285,16 @@ public class ActiveEventLog implements EventLog {
 
     statistics.inBetweenRounds = enemyFormation == null || enemyFormation.getEnemies().isEmpty();
 
-    statistics.enemyBulletFlyingTowardsPlayer = gameState.getGameStateManager().getWeaponProjectileManager().getProjectiles().stream().anyMatch(p ->
-        p.x < playerPosX + gameState.getRocket().getWidth() && p.x > playerPosX
-    );
+    var projectileFlyingTowardsPlayer = gameState.getGameStateManager().getWeaponProjectileManager().getProjectiles().stream().filter(p ->
+        p.x < playerPosX + gameState.getRocket().getWidth() && p.x > playerPosX && p.getAuthor() != gameState.getRocket() && p.y > playerPosY
+    ).sorted((o1, o2) -> Float.compare(Math.abs(o1.y - playerPosY), Math.abs(o2.y - playerPosY))).findAny();
+
+    statistics.enemyBulletFlyingTowardsPlayerDistance = projectileFlyingTowardsPlayer.map(
+        weaponProjectile ->
+            Math.abs(weaponProjectile.y - (playerPosY + gameState.getRocket().getHeight())) < gameState.getRocket().getHeight()
+        ? Closeness.CLOSE
+        : Closeness.FAR
+    ).orElse(null);
 
 
     retainLastThreeSecondsOfPlayerFiredEvents();

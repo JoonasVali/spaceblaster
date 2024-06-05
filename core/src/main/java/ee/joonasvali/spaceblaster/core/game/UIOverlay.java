@@ -128,7 +128,7 @@ public class UIOverlay implements Disposable, GameStepListener {
       strb.append("Time since last hit: ").append(timestampToSeconds(stats.lastHitTimestamp)).append("\n");
       strb.append("Enemy touched player deaths: ").append(stats.enemyTouchedPlayerDeathsCount).append("\n");
       strb.append("Player under enemy:").append(stats.playerIsUnderEnemyFormation).append("\n");
-      strb.append("Enemy bullet flying towards player:").append(stats.enemyBulletFlyingTowardsPlayer).append("\n");
+      strb.append("Distance of bullet: ").append(stats.enemyBulletFlyingTowardsPlayerDistance).append("\n");
       strb.append("Total rounds: ").append(stats.totalRoundsCount).append("\n");
       strb.append("Enemies moving direction: ").append(stats.enemyMovingDirection).append("\n");
       strb.append("Enemies killed by player: ").append(stats.enemiesKilledThisRoundCount).append("\n");

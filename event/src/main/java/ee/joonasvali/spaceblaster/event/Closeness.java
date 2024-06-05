@@ -1,5 +1,5 @@
 package ee.joonasvali.spaceblaster.event;
 
-public enum EnemyCloseness {
+public enum Closeness {
   CLOSE, MEDIUM, FAR
 }

@@ -103,7 +103,7 @@ public class Statistics {
   public volatile Long lastPowerupMissedTimestamp;
 
   public volatile EnemySpeed enemySpeed;
-  public volatile EnemyCloseness enemyCloseness;
+  public volatile Closeness enemyCloseness;
 
   public volatile int shotsFiredLastThreeSeconds;
   public volatile PlayerWeapon playerWeapon;
@@ -113,8 +113,7 @@ public class Statistics {
   public volatile boolean playerDead;
   public volatile boolean playerInvincible;
   public volatile boolean inBetweenRounds;
-
-  public volatile boolean enemyBulletFlyingTowardsPlayer;
+  public volatile Closeness enemyBulletFlyingTowardsPlayerDistance;
   public volatile boolean playerIsUnderEnemyFormation;
   public volatile boolean playerIsMoving;
   public volatile boolean isVictory;
@@ -166,7 +165,7 @@ public class Statistics {
     event.playerDead = this.playerDead;
     event.playerInvincible = this.playerInvincible;
     event.inBetweenRounds = this.inBetweenRounds;
-    event.enemyBulletFlyingTowardsPlayer = this.enemyBulletFlyingTowardsPlayer;
+    event.enemyBulletFlyingTowardsPlayerDistance = this.enemyBulletFlyingTowardsPlayerDistance;
     event.playerIsUnderEnemyFormation = this.playerIsUnderEnemyFormation;
     event.playerIsMoving = this.playerIsMoving;
     event.isVictory = this.isVictory;
