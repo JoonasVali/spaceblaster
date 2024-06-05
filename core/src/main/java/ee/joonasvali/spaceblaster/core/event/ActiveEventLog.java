@@ -72,7 +72,6 @@ public class ActiveEventLog implements EventLog {
   public void eventLoadLevel(String levelName, List<Enemy> enemies, int currentLevel) {
     recalculateCurrentState();
     statistics.initializeRound(levelName,
-        Math.max(0, currentLevel),
         (int) enemies.stream().filter(e -> e instanceof GaussEnemy).count(),
         (int) enemies.stream().filter(e -> e.getProjectileType() == Missile.class).count(),
         (int) enemies.stream().filter(e -> e.getProjectileType() == CannonBullet.class).count(),
@@ -117,7 +116,12 @@ public class ActiveEventLog implements EventLog {
     }
 
     statistics.lastKillTimestamp = System.currentTimeMillis();
-    addEvent(EventType.ENEMY_KILLED);
+
+    if (!killedByPlayer) {
+      addEvent(EventType.ENEMY_KILLED_BY_ENEMY);
+    } else {
+      addEvent(EventType.ENEMY_KILLED);
+    }
   }
 
   @Override
@@ -199,6 +203,14 @@ public class ActiveEventLog implements EventLog {
   @Override
   public void trigger() {
     recalculateCurrentState();
+  }
+
+  @Override
+  public void roundCompleted() {
+    recalculateCurrentState();
+
+    statistics.roundsFinishedCount++;
+    addEvent(EventType.ROUND_COMPLETED);
   }
 
   private void recalculateCurrentState() {

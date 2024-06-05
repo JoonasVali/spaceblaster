@@ -52,4 +52,5 @@ public interface EventLog {
    */
   void trigger();
 
+  void roundCompleted();
 }

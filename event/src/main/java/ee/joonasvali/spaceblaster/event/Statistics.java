@@ -32,7 +32,6 @@ public class Statistics {
 
   public void initializeRound(
     String levelName,
-    int roundsFinishedCount,
     int enemiesStartedWithGaussGunCount,
     int enemiesStartedWithMissileCount,
     int enemiesStartedWithCannonCount,
@@ -40,7 +39,6 @@ public class Statistics {
   ) {
     this.levelName = levelName;
     this.roundStartTimestamp = System.currentTimeMillis();
-    this.roundsFinishedCount = roundsFinishedCount;
     this.enemiesLeftThisRoundCount = enemiesStartedWithGaussGunCount + enemiesStartedWithMissileCount + enemiesStartedWithCannonCount + enemiesStartedWithTripleShotCount;
     this.enemiesKilledThisRoundCount = 0;
     this.enemiesHitEnemiesThisRoundCount = 0;

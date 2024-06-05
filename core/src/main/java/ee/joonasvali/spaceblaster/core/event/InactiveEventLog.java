@@ -108,4 +108,9 @@ public class InactiveEventLog implements EventLog {
   public void trigger() {
 
   }
+
+  @Override
+  public void roundCompleted() {
+
+  }
 }

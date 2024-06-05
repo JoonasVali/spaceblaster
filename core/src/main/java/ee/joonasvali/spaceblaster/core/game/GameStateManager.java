@@ -234,6 +234,7 @@ public class GameStateManager implements Disposable, GameStepListener {
     if (!loadNextLevelInProgress && formation.getEnemies().isEmpty() && !(state.isVictory() || state.isDefeat())) {
       if (levels.hasNextLevel()) {
         setLoadNextLevelAfterDelay(control);
+        state.getEventLog().roundCompleted();
       } else {
         state.setVictory(true);
         state.getUi().displayVictory();
