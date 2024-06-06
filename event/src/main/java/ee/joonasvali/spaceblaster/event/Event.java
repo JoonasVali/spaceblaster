@@ -5,6 +5,10 @@ public class Event extends Statistics {
   public EventType type;
   public long eventTimestamp;
 
+  public Event() {
+    // For loading from yaml
+  }
+
   public Event(Statistics statistics, EventType type) {
     this.type = type;
     this.eventTimestamp = System.currentTimeMillis();

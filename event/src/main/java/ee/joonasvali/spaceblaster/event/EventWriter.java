@@ -6,6 +6,8 @@ import java.io.BufferedWriter;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -21,7 +23,9 @@ public class EventWriter {
   }
 
   public void write(Event event) {
-    yaml.dump(event, this.writer);
+    List<Event> eventList = new ArrayList<>();
+    eventList.add(event);
+    yaml.dump(eventList, this.writer);
   }
 
   public void dispose() {
