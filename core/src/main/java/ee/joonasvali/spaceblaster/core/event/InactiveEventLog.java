@@ -30,11 +30,6 @@ public class InactiveEventLog implements EventLog {
   }
 
   @Override
-  public void playerFired(Class<? extends WeaponProjectile> weaponClass) {
-
-  }
-
-  @Override
   public void playerBorn() {
 
   }
@@ -111,6 +106,21 @@ public class InactiveEventLog implements EventLog {
 
   @Override
   public void roundCompleted() {
+
+  }
+
+  @Override
+  public void playerProjectileOutOfBounds(WeaponProjectile b) {
+
+  }
+
+  @Override
+  public void playerFired(WeaponProjectile weaponClass) {
+
+  }
+
+  @Override
+  public void playerProjectileCreated() {
 
   }
 }

@@ -1,5 +1,7 @@
 package ee.joonasvali.spaceblaster.core.game.weapons;
 
+import ee.joonasvali.spaceblaster.core.game.player.Rocket;
+
 public class TripleShotBullet extends WeaponProjectile {
   public static final int TIME_BEFORE_EXPLODE = 20;
   private final TripleShotBulletProvider provider;
@@ -25,6 +27,12 @@ public class TripleShotBullet extends WeaponProjectile {
       bullet = (TripleShotBullet) provider.getState().getWeaponProjectileManager()
           .createProjectileAt(TripleShotBullet.class, getAuthor(), this.getX(), this.getY(), this.getAngle() + 10);
       bullet.count = TIME_BEFORE_EXPLODE + 1;
+
+      if (getAuthor() instanceof Rocket) {
+        this.provider.getState().getEventLog().playerProjectileCreated();
+        this.provider.getState().getEventLog().playerProjectileCreated();
+      }
+
       this.provider.getSplitSound().play(0.3f);
     }
   }

@@ -28,19 +28,26 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 public class ActiveEventLog implements EventLog {
   private final Logger log = LoggerFactory.getLogger(ActiveEventLog.class);
   // Timestamp -> Weapon class
-  private final LinkedHashMap<Long, Class<? extends WeaponProjectile>> playerShotsFiredRecently = new LinkedHashMap<>();
+  private final LinkedHashMap<Long, WeaponProjectile> playerShotsFiredRecently = new LinkedHashMap<>();
+
+  private ArrayDeque<Long> playerBulletsHitEnemy = new ArrayDeque<>();
+  private ArrayDeque<Long> playerBulletsOutOfBounds = new ArrayDeque<>();
+  private ArrayDeque<Long> playerBulletFired = new ArrayDeque<>();
+
   private GameState gameState;
   private final Statistics statistics;
 
   private final EventWriter eventWriter;
   private final ArrayDeque<EventType> queuedEvents = new ArrayDeque<>();
   private final OutputStream outputStream;
+  private boolean isLocked;
   public ActiveEventLog(GameState gameState, String eventLogFolder) {
     this.gameState = gameState;
     this.statistics = new Statistics();
@@ -60,8 +67,13 @@ public class ActiveEventLog implements EventLog {
   }
 
   private void addEvent(EventType eventType) {
-    if (this.eventWriter != null) {
-      eventWriter.write(new Event(statistics, eventType));
+    if (!isLocked) {
+      if (this.eventWriter != null) {
+        eventWriter.write(new Event(statistics, eventType));
+      }
+    }
+    if (eventType == EventType.VICTORY || eventType == EventType.GAME_OVER) {
+      isLocked = true;
     }
   }
 
@@ -138,9 +150,15 @@ public class ActiveEventLog implements EventLog {
   }
 
   @Override
-  public void playerFired(Class<? extends WeaponProjectile> weaponClass) {
+  public void playerFired(WeaponProjectile projectile) {
     // This isn't an event itself, so no recalculaion is needed here...
-    playerShotsFiredRecently.put(System.currentTimeMillis(), weaponClass);
+    playerShotsFiredRecently.put(System.currentTimeMillis(), projectile);
+    playerProjectileCreated();
+  }
+
+  @Override
+  public void playerProjectileCreated() {
+    playerBulletFired.add(System.currentTimeMillis());
   }
 
   @Override
@@ -213,12 +231,18 @@ public class ActiveEventLog implements EventLog {
     addEvent(EventType.ROUND_COMPLETED);
   }
 
+  @Override
+  public void playerProjectileOutOfBounds(WeaponProjectile b) {
+    playerBulletsOutOfBounds.add(System.currentTimeMillis());
+  }
+
   private void recalculateCurrentState() {
     statistics.playerScore = gameState.getScore().get();
     statistics.playerLivesLeft = gameState.getLives().get();
     statistics.playerDead = !gameState.getRocket().isAlive();
     statistics.playerIsMoving = gameState.getRocket().isMoving();
     statistics.playerInvincible = gameState.getRocket().isInvincible();
+    statistics.playerFireHitRatio = !playerBulletFired.isEmpty() ? playerBulletsHitEnemy.size() / (float) playerBulletFired.size() : 0;
     float playerPosX = gameState.getRocket().getX();
     float playerPosY = gameState.getRocket().getY();
 
@@ -413,10 +437,12 @@ public class ActiveEventLog implements EventLog {
 
     if (hitByPlayer) {
       statistics.lastHitTimestamp = System.currentTimeMillis();
+      playerBulletsHitEnemy.add(System.currentTimeMillis());
     } else {
       statistics.enemiesHitEnemiesThisRoundCount++;
     }
     addEvent(EventType.ENEMY_HIT);
+
   }
 
   @Override

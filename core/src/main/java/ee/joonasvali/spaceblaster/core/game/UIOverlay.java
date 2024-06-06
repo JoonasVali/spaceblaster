@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import ee.joonasvali.spaceblaster.core.FontFactory;
 import ee.joonasvali.spaceblaster.core.TimedText;
+import ee.joonasvali.spaceblaster.core.event.ActiveEventLog;
 import ee.joonasvali.spaceblaster.core.event.EventLog;
 import ee.joonasvali.spaceblaster.event.Statistics;
 
@@ -107,6 +108,7 @@ public class UIOverlay implements Disposable, GameStepListener {
       strb.append("LivesOrig: ").append(stats.playerLivesOriginal).append("\n");
       strb.append("PlayerDead: ").append(stats.playerDead).append("\n");
       strb.append("PlayerMoving: ").append(stats.playerIsMoving).append("\n");
+      strb.append("PlayerFireHitRatio: ").append(stats.playerFireHitRatio).append("\n");
       strb.append("EnemyCloseness: ").append(stats.enemyCloseness).append("\n");
       strb.append("EnemySpeed: ").append(stats.enemySpeed).append("\n");
       strb.append("PlayerWeapon: ").append(stats.playerWeapon).append("\n");

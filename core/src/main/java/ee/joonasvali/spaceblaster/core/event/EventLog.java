@@ -17,7 +17,8 @@ public interface EventLog {
 
   void playerKilled(boolean killedByTouchingEnemy);
 
-  void playerFired(Class<? extends WeaponProjectile> weaponClass);
+  void playerFired(WeaponProjectile projectile);
+  void playerProjectileCreated();
 
   void playerBorn();
 
@@ -53,4 +54,6 @@ public interface EventLog {
   void trigger();
 
   void roundCompleted();
+  void playerProjectileOutOfBounds(WeaponProjectile b);
+
 }

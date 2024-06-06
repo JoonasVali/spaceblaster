@@ -9,6 +9,7 @@ import ee.joonasvali.spaceblaster.core.game.GameSpeedController;
 import ee.joonasvali.spaceblaster.core.game.GameState;
 import ee.joonasvali.spaceblaster.core.game.GameStepListener;
 import ee.joonasvali.spaceblaster.core.game.enemy.Enemy;
+import ee.joonasvali.spaceblaster.core.game.player.Rocket;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,7 +32,10 @@ public class WeaponProjectileManager implements Disposable, GameStepListener {
   private Class<WeaponProjectile>[] weaponClasses;
   private ParticleEffectManager particleManager;
 
+  private final GameState state;
+
   public WeaponProjectileManager(GameState state) {
+    this.state = state;
     this.particleManager = state.getParticleManager();
     this.worldWidth = state.getWorldWidth();
     this.worldHeight = state.getWorldHeight();
@@ -49,6 +53,11 @@ public class WeaponProjectileManager implements Disposable, GameStepListener {
         activeProjectiles.stream().filter(
             m -> m.getY() > worldHeight + 5 || m.getY() < -5 || m.getX() > worldWidth + 5 || m.getX() < -5
         ).collect(Collectors.toList());
+
+    if (!outOfBounds.isEmpty() && state.getEventLog().isActive()) {
+      outOfBounds.stream().filter((projectile) -> projectile.getAuthor() instanceof Rocket)
+          .forEach((b) -> state.getEventLog().playerProjectileOutOfBounds(b));
+    }
 
     outOfBounds.forEach(this::removeProjectile);
   }

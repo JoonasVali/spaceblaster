@@ -136,9 +136,9 @@ public class Rocket implements Disposable, GameStepListener {
     rectangle.x += xMove;
     sprite.setX(rectangle.getX());
     if (!isInvincible()) {
-      Optional<WeaponProjectile> missile = weaponProjectileManager.projectileCollisionWith(rectangle, this);
-      if (missile.isPresent()) {
-        WeaponProjectile m = missile.get();
+      Optional<WeaponProjectile> projectile = weaponProjectileManager.projectileCollisionWith(rectangle, this);
+      if (projectile.isPresent()) {
+        WeaponProjectile m = projectile.get();
         weaponProjectileManager.removeProjectile(m);
         explosionManager.createExplosion(m.getX(), m.getY(), m.getWidth(), m.getHeight());
         if (kill()) {
@@ -183,11 +183,11 @@ public class Rocket implements Disposable, GameStepListener {
     if (!alive || weaponCooldown > 0) {
       return;
     }
-    this.weaponProjectileManager.createProjectileAt(weaponClass,
+    WeaponProjectile projectile = this.weaponProjectileManager.createProjectileAt(weaponClass,
         this,this.getX() + Rocket.ROCKET_SIZE / 2, this.getY() + Rocket.ROCKET_SIZE / 2,
         (float) Math.random() * ROCKET_FIRE_ANGLE_VARIATION - ROCKET_FIRE_ANGLE_VARIATION / 2
     );
-    this.state.getEventLog().playerFired(weaponClass);
+    this.state.getEventLog().playerFired(projectile);
     this.weaponCooldown = weaponProjectileManager.getCooldown(weaponClass);
   }
 

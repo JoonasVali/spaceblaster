@@ -103,6 +103,8 @@ public class Statistics {
   public volatile EnemySpeed enemySpeed;
   public volatile Closeness enemyCloseness;
 
+  public volatile float playerFireHitRatio;
+
   public volatile int shotsFiredLastThreeSeconds;
   public volatile PlayerWeapon playerWeapon;
   public volatile PositionX playerPositionX;
@@ -143,6 +145,7 @@ public class Statistics {
     event.playerLivesLeft = this.playerLivesLeft;
     event.playerLivesOriginal = this.playerLivesOriginal;
     event.playerScore = this.playerScore;
+    event.playerFireHitRatio = this.playerFireHitRatio;
     event.enemyMovingDirection = this.enemyMovingDirection;
     event.enemyTouchedPlayerDeathsCount = this.enemyTouchedPlayerDeathsCount;
     event.powerUpsCollectedThisRoundCount = this.powerUpsCollectedThisRoundCount;

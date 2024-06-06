@@ -192,11 +192,11 @@ public class GameStateManager implements Disposable, GameStepListener {
           // Add score only if player shot the projectile.
           if (projectile.getAuthor() instanceof Rocket) {
             score.addAndGet(e.getBounty());
-            state.getEventLog().enemyKilled(e, true);
             state.getEventLog().enemyHit(e, true);
+            state.getEventLog().enemyKilled(e, true);
           } else {
-            state.getEventLog().enemyKilled(e, false);
             state.getEventLog().enemyHit(e, false);
+            state.getEventLog().enemyKilled(e, false);
           }
 
           Sound sound = destroySounds[(int) (Math.random() * destroySounds.length)];
