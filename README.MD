@@ -1,7 +1,7 @@
 ## Introduction: ##
-SpaceBlaster is a free unlicensed "Space Invaders" like game written in Java.
 
-I made it to get to know LibGDX a little better, and I'm hoping there will be at least one person who will benefit from my work. 
+SpaceBlaster is a free, unlicensed game inspired by "Space Invaders," developed in Java. It was created to explore 
+and learn more about the LibGDX framework.
 
 ![Image 1](https://i.imgur.com/NLSvNB4.jpg)
 ![Image 2](https://i.imgur.com/V8vM9rk.jpg)
@@ -11,17 +11,17 @@ https://www.youtube.com/watch?v=hDvjagaqedQ
 
 
 ## Contents: ##
-Currently the game contains:
+The game currently features:
 
-* Small range of enemy types with capability of adding more in the future without hassle
-* Small selection of weapons to get from enemies
-* Space Invader's like movement system
-* Life and health system
+* A modest variety of enemy types with easy future expandability
+* A limited selection of weapons obtainable from enemies
+* A movement system inspired by Space Invaders
+* A life and health system
 * Episodes and levels
-* Simplest and the most straight forward level editing capability (in text file)
-* Difficulty choice
+* Simple and straightforward level editing through text files
+* Difficulty settings
 * Menus
-* LibGDX particle system implementation for effects
+* Effects created using the LibGDX particle system
 
 The game bundles a Java Runtime Image with it on build, meaning the end user doesn't
 need to have Java installed on their machine, as long as they get the distribution for 
@@ -50,6 +50,18 @@ For example if I wanted to build Unix distribution on Windows machine :
 ```
 mvn clean package -Punix -Ddist.jdk=version=10,vendor=openjdk,platform=linux-x64
 ```
+
+### Event system
+
+As of June 2024, SpaceBlaster includes an event system that allows players to record their gameplay as events saved to 
+disk. These events provide an overview and timeline of the played game.
+
+To enable the event system:
+
+Edit the `spaceblaster.yaml` file in the root directory of the built game. Set `eventMode` to `true`.
+This will save the gameplay recordings to the eventlogs folder.
+
+The event system is meant to be used for experimental augmentation by AI.
 
 ### Can you exclude the bundled Java Runtime image? ###
 
