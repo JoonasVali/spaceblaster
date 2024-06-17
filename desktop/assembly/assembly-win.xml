@@ -15,8 +15,8 @@
   <fileSets>
 
     <fileSet>
-      <directory>${binfolder}/win</directory>
-      <outputDirectory>/</outputDirectory>
+      <directory>${binfolder}\win</directory>
+      <outputDirectory>\</outputDirectory>
       <!-- Causes maven placeholders to be replaced in the files -->
       <filtered>true</filtered>
       <includes>
@@ -26,8 +26,8 @@
     </fileSet>
 
     <fileSet>
-      <directory>${basedir}/levels</directory>
-      <outputDirectory>/levels</outputDirectory>
+      <directory>${basedir}\levels</directory>
+      <outputDirectory>\levels</outputDirectory>
       <includes>
         <include>**/*</include>
       </includes>
@@ -37,7 +37,7 @@
     <fileSet>
       <directory>${basedir}/doc</directory>
       <filtered>true</filtered> <!-- Causes maven placeholders to be replaced in the files -->
-      <outputDirectory>/</outputDirectory>
+      <outputDirectory>\</outputDirectory>
       <includes>
         <include>**/*</include>
       </includes>
@@ -45,9 +45,9 @@
     </fileSet>
 
     <fileSet>
-      <directory>${basedir}/configuration</directory>
+      <directory>${basedir}\configuration</directory>
       <filtered>true</filtered> <!-- Causes maven placeholders to be replaced in the files -->
-      <outputDirectory>/</outputDirectory>
+      <outputDirectory>\</outputDirectory>
       <includes>
         <include>**/*</include>
       </includes>
@@ -55,8 +55,8 @@
     </fileSet>
 
     <fileSet>
-      <directory>${basedir}/backgrounds</directory>
-      <outputDirectory>/backgrounds</outputDirectory>
+      <directory>${basedir}\backgrounds</directory>
+      <outputDirectory>\backgrounds</outputDirectory>
       <includes>
         <include>**/*</include>
       </includes>
