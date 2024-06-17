@@ -51,7 +51,14 @@ For example if I wanted to build Unix distribution on Windows machine :
 mvn clean package -Punix -Ddist.jdk=version=10,vendor=openjdk,platform=linux-x64
 ```
 
-### Event system
+### Can you exclude the bundled Java Runtime image? ###
+
+Yes, just remove or comment out the `create-runtime-image` execution from pom.xml in spaceblaster-desktop module.
+Then change the `run.sh` and `run.cmd` files under `bin` folder to invoke general `java` instead of java subfolder.
+This then works without bundled java, assuming computer knows where to find java. In that case you also don't need 
+to have toolchains configured and can create cross-platform version of the game on either OS.
+
+## Event system
 
 As of June 2024, SpaceBlaster includes an event system that allows players to record their gameplay as events saved to 
 disk. These events provide an overview and timeline of the played game.
@@ -59,16 +66,9 @@ disk. These events provide an overview and timeline of the played game.
 To enable the event system:
 
 Edit the `spaceblaster.yaml` file in the root directory of the built game. Set `eventMode` to `true`.
-This will save the gameplay recordings to the eventlogs folder.
+This will save the gameplay recordings to the `eventlogs` folder.
 
 The event system is meant to be used for experimental augmentation by AI.
-
-### Can you exclude the bundled Java Runtime image? ###
-
-Yes, just remove or comment out the `create-runtime-image` execution from pom.xml in spaceblaster-desktop module.
-Then change the `run.sh` and `run.cmd` files under `bin` folder to invoke general `java` instead of java subfolder.
-This then works without bundled java, assuming computer knows where to find java. In that case you also don't need 
-to have toolchains configured and can create cross-platform version of the game on either OS.
 
 ## LICENSE: ##
 
