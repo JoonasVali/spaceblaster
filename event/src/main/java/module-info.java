@@ -1,4 +1,4 @@
-module ee.joonasvali.spaceblaster.event {
+module com.github.joonasvali.spaceblaster.event {
   requires org.yaml.snakeyaml;
-  exports ee.joonasvali.spaceblaster.event;
+  exports com.github.joonasvali.spaceblaster.event;
 }

@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>ee.joonasvali.spaceblaster</groupId>
+    <groupId>com.github.joonasvali.spaceblaster</groupId>
     <artifactId>spaceblaster</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
@@ -13,10 +13,10 @@
   <name>SpaceBlaster Desktop</name>
 
   <properties>
-    <mainClass>ee.joonasvali.spaceblaster.java.SpaceBlasterDesktop</mainClass>
+    <mainClass>com.github.joonasvali.spaceblaster.java.SpaceBlasterDesktop</mainClass>
     <name>SpaceBlaster</name>
     <name.uppercase>SPACEBLASTER</name.uppercase>
-    <boot.class>ee.joonasvali.spaceblaster.java.SpaceBlasterDesktop</boot.class>
+    <boot.class>com.github.joonasvali.spaceblaster.java.SpaceBlasterDesktop</boot.class>
     <author>Joonas Vali</author>
     <timestamp>${maven.build.timestamp}</timestamp>
     <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
@@ -51,7 +51,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>ee.joonasvali.spaceblaster</groupId>
+      <groupId>com.github.joonasvali.spaceblaster</groupId>
       <artifactId>spaceblaster-core</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>

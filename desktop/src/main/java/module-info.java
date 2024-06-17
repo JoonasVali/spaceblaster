@@ -1,6 +1,6 @@
-module ee.joonasvali.spaceblaster.desktop {
+module com.github.joonasvali.spaceblaster.desktop {
   requires gdx.backend.lwjgl;
   requires java.desktop;
-  requires ee.joonasvali.spaceblaster.core;
+  requires com.github.joonasvali.spaceblaster.core;
 
 }
