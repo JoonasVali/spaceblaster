@@ -31,15 +31,16 @@ public class ChooseLevelsContent implements MenuContent {
     for (final FileHandle levelFile : files) {
       String name = levelFile.nameWithoutExtension();
       name = Character.toUpperCase(name.charAt(0)) + name.substring(1);
-      TextButton normal = new TextButton(name, skin);
-      normal.addListener(new ClickListener() {
+      TextButton button = new TextButton(name, skin);
+      String episodeName = name;
+      button.addListener(new ClickListener() {
         @Override
         public void clicked(InputEvent event, float x, float y) {
           playClick();
-          game.setChooseDifficultyScreen(levelFile);
+          game.setChooseDifficultyScreen(levelFile, episodeName);
         }
       });
-      table.add(normal).width(WIDTH).height(HEIGHT).pad(PADDING);
+      table.add(button).width(WIDTH).height(HEIGHT).pad(PADDING);
       table.row();
     }
 

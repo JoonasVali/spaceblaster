@@ -10,7 +10,7 @@
 
   <artifactId>spaceblaster-desktop</artifactId>
   <packaging>jar</packaging>
-  <name>MyDemoGame desktop</name>
+  <name>SpaceBlaster Desktop</name>
 
   <properties>
     <mainClass>ee.joonasvali.spaceblaster.java.SpaceBlasterDesktop</mainClass>

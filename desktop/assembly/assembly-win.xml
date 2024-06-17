@@ -45,6 +45,16 @@
     </fileSet>
 
     <fileSet>
+      <directory>${basedir}/configuration</directory>
+      <filtered>true</filtered> <!-- Causes maven placeholders to be replaced in the files -->
+      <outputDirectory>/</outputDirectory>
+      <includes>
+        <include>**/*</include>
+      </includes>
+      <lineEnding>windows</lineEnding>
+    </fileSet>
+
+    <fileSet>
       <directory>${basedir}/backgrounds</directory>
       <outputDirectory>/backgrounds</outputDirectory>
       <includes>

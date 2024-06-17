@@ -32,6 +32,9 @@ public class Rocket implements Disposable, GameStepListener {
   public static final float ROCKET_FIRE_ANGLE_VARIATION = 3;
   private final Sprite sprite;
   private final Rectangle rectangle;
+
+  // In event mode calculate event state if the projectile is in the event horizon.
+  private final Rectangle eventHorizonRectangle;
   private final Texture texture;
   private final WeaponProjectileManager weaponProjectileManager;
   private final ExplosionManager explosionManager;
@@ -60,6 +63,7 @@ public class Rocket implements Disposable, GameStepListener {
     };
 
     rectangle = new Rectangle(0, 0, ROCKET_SIZE, ROCKET_SIZE);
+    eventHorizonRectangle = new Rectangle(-ROCKET_SIZE, -ROCKET_SIZE, ROCKET_SIZE * 3, ROCKET_SIZE * 3);
     sprite = new Sprite(texture, 1, 1, 31, 31);
     sprite.setSize(ROCKET_SIZE, ROCKET_SIZE);
 
@@ -100,13 +104,16 @@ public class Rocket implements Disposable, GameStepListener {
     return this.rectangle.overlaps(rectangle);
   }
 
-
+  boolean isMoving = false;
   @Override
   public void onStepAction(GameSpeedController.Control control) {
     cooldown();
     if (effect != null) {
       effect.onStepAction(control);
       if (!effect.isActive()) {
+        if (effect instanceof RebirthEffect) {
+          state.getEventLog().playerNoLongerInvincible();
+        }
         effect = null;
       }
     }
@@ -118,20 +125,32 @@ public class Rocket implements Disposable, GameStepListener {
       return;
     }
     float xMove = 0;
+    isMoving = true;
     if (xTarget < this.getX()) {
       xMove = -Math.min(ROCKET_SPEED, this.getX() - xTarget);
     } else if (xTarget > this.getX()) {
       xMove = Math.min(ROCKET_SPEED, xTarget - this.getX());
+    } else {
+      isMoving = false;
     }
     rectangle.x += xMove;
     sprite.setX(rectangle.getX());
     if (!isInvincible()) {
-      Optional<WeaponProjectile> missile = weaponProjectileManager.projectileCollisionWith(rectangle, this);
-      missile.ifPresent((m) -> {
+      Optional<WeaponProjectile> projectile = weaponProjectileManager.projectileCollisionWith(rectangle, this);
+      if (projectile.isPresent()) {
+        WeaponProjectile m = projectile.get();
         weaponProjectileManager.removeProjectile(m);
         explosionManager.createExplosion(m.getX(), m.getY(), m.getWidth(), m.getHeight());
-        kill();
-      });
+        if (kill()) {
+          state.getEventLog().playerKilled(false);
+        }
+      } else if (state.getEventLog().isActive()) {
+        eventHorizonRectangle.x = rectangle.x - ROCKET_SIZE;
+        eventHorizonRectangle.y = rectangle.y - ROCKET_SIZE;
+        if (weaponProjectileManager.projectileCollisionWith(eventHorizonRectangle, this).isPresent()) {
+          state.getEventLog().trigger();
+        }
+      }
     }
 
     Optional<Powerup> p = state.getPowerupManager().collisionWith(rectangle);
@@ -139,6 +158,7 @@ public class Rocket implements Disposable, GameStepListener {
       state.getPowerupManager().remove(p.get());
       setNewRandomWeapon();
       state.getPowerupManager().playPowerupSound();
+      state.getEventLog().powerUpCollected(this.weaponClass);
     }
   }
 
@@ -146,6 +166,7 @@ public class Rocket implements Disposable, GameStepListener {
     weaponCooldown = 0;
     Class<WeaponProjectile>[] wpClasses = weaponProjectileManager.getWeaponClasses(weaponClass);
     this.weaponClass = wpClasses[(int) (Math.random() * wpClasses.length)];
+    state.getEventLog().setWeapon();
   }
 
   private void cooldown() {
@@ -154,7 +175,7 @@ public class Rocket implements Disposable, GameStepListener {
     }
   }
 
-  private boolean isInvincible() {
+  public boolean isInvincible() {
     return effect instanceof RebirthEffect;
   }
 
@@ -162,19 +183,21 @@ public class Rocket implements Disposable, GameStepListener {
     if (!alive || weaponCooldown > 0) {
       return;
     }
-    this.weaponProjectileManager.createProjectileAt(weaponClass,
+    WeaponProjectile projectile = this.weaponProjectileManager.createProjectileAt(weaponClass,
         this,this.getX() + Rocket.ROCKET_SIZE / 2, this.getY() + Rocket.ROCKET_SIZE / 2,
         (float) Math.random() * ROCKET_FIRE_ANGLE_VARIATION - ROCKET_FIRE_ANGLE_VARIATION / 2
     );
+    this.state.getEventLog().playerFired(projectile);
     this.weaponCooldown = weaponProjectileManager.getCooldown(weaponClass);
   }
 
   private void rebirth() {
     if (lives.get() > 0) {
       alive = true;
+      this.weaponClass = DEFAULT_WEAPON_CLASS;
       effect = new RebirthEffect(200, 5);
+      state.getEventLog().playerBorn();
     }
-    this.weaponClass = DEFAULT_WEAPON_CLASS;
   }
 
   public float getWidth() {
@@ -185,9 +208,9 @@ public class Rocket implements Disposable, GameStepListener {
     return rectangle.getHeight();
   }
 
-  public void kill() {
+  public boolean kill() {
     if (!alive || isInvincible()) {
-      return;
+      return false;
     }
     explosionManager.createExplosion(getX(), getY(), getWidth(), getHeight());
     state.getParticleManager().createParticleEmitter(ParticleEffectManager.EXPLOSION, getX() + getWidth() / 2, getY() + getHeight() / 2, 0);
@@ -197,7 +220,9 @@ public class Rocket implements Disposable, GameStepListener {
     lives.decrementAndGet();
     if (lives.get() <= 0) {
       state.getUi().displayGameOver();
+      state.getEventLog().setGameOver();
     }
+    return true;
   }
 
   @Override
@@ -205,5 +230,17 @@ public class Rocket implements Disposable, GameStepListener {
     if (effect != null) {
       effect.onStepEffect();
     }
+  }
+
+  public Class<? extends WeaponProjectile> getWeaponClass() {
+    return weaponClass;
+  }
+
+  public boolean isAlive() {
+    return alive;
+  }
+
+  public boolean isMoving() {
+    return isMoving;
   }
 }

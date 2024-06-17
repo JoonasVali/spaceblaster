@@ -18,11 +18,13 @@ public class ChooseDifficultyContent implements MenuContent {
   private static final int HEIGHT = 60;
   private static final int PADDING = 10;
   private final SpaceBlasterGame game;
-  private final FileHandle levelFile;
+  private final FileHandle episodeFile;
+  private final String episodeName;
 
-  public ChooseDifficultyContent(SpaceBlasterGame game, FileHandle levelFile) {
+  public ChooseDifficultyContent(SpaceBlasterGame game, FileHandle episodeFile, String episodeName) {
     this.game = game;
-    this.levelFile = levelFile;
+    this.episodeFile = episodeFile;
+    this.episodeName = episodeName;
   }
 
   @Override
@@ -34,7 +36,7 @@ public class ChooseDifficultyContent implements MenuContent {
         @Override
         public void clicked(InputEvent event, float x, float y) {
           playClick();
-          game.launchGame(levelFile, level);
+          game.launchGame(episodeFile, level, episodeName);
         }
       });
       table.add(easy).width(WIDTH).height(HEIGHT).pad(PADDING);

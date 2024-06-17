@@ -53,6 +53,7 @@ public class PowerupManager implements Disposable, GameStepListener {
     powerups.removeIf(p -> {
       if (p.getY() < -10) {
         pool.free(p);
+        state.getEventLog().powerUpMissed();
         return true;
       }
       return false;
@@ -67,6 +68,7 @@ public class PowerupManager implements Disposable, GameStepListener {
     p.setHeight(POWER_UP_HEIGHT);
     p.setSpeed(speed);
     powerups.add(p);
+    state.getEventLog().powerUpCreated();
   }
 
   public void draw(SpriteBatch batch) {

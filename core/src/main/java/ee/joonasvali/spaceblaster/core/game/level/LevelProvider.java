@@ -42,9 +42,12 @@ public class LevelProvider implements Disposable {
   private final float worldWidth;
   private final float worldHeight;
   private final LevelReader reader;
-  private String backgroundFileName;
+  private final String backgroundFileName;
+  private final String episodeName;
+  private String levelName;
 
-  public LevelProvider(LevelReader reader, float worldWidth, float worldHeight) {
+  public LevelProvider(LevelReader reader, float worldWidth, float worldHeight, String episodeName) {
+    this.episodeName = episodeName;
     this.reader = reader;
     this.worldWidth = worldWidth;
     this.worldHeight = worldHeight;
@@ -70,6 +73,7 @@ public class LevelProvider implements Disposable {
     LevelDescriptor levelDesc = reader.getLevel(nextLevel);
     log.info("loading level " + levelDesc.getName());
     formation = createLevel(levelDesc);
+    this.levelName = levelDesc.getName();
     nextLevel++;
     return formation;
   }
@@ -152,5 +156,21 @@ public class LevelProvider implements Disposable {
 
   public String getBackgroundFileName() {
     return backgroundFileName;
+  }
+
+  public String getEpisodeName() {
+    return episodeName;
+  }
+
+  public String getLevelName() {
+    return levelName;
+  }
+
+  public int getCurrentLevel() {
+    return nextLevel - 1;
+  }
+
+  public int getLevelsTotal() {
+    return maxLevel;
   }
 }
