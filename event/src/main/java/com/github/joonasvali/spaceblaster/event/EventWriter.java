@@ -11,21 +11,41 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 public class EventWriter {
   private final ExecutorService executor;
   private final Writer writer;
   private final Yaml yaml;
-  public EventWriter(OutputStream outputStream) {
+  private final NamedImageWriter imageWriter;
+  private final Consumer<Consumer<byte[]>> makeScrnshot;
+
+
+  public EventWriter(OutputStream outputStream, NamedImageWriter imageWriter, Consumer<Consumer<byte[]>> makeScrnshot) {
     yaml = new Yaml();
     executor = Executors.newSingleThreadExecutor();
     this.writer = new BufferedWriter(new OutputStreamWriter(outputStream));
+    this.imageWriter = imageWriter;
+    this.makeScrnshot = makeScrnshot;
   }
+
 
   public void write(Event event) {
     List<Event> eventList = new ArrayList<>();
     eventList.add(event);
     yaml.dump(eventList, this.writer);
+
+    try {
+      makeScrnshot.accept(screenshot -> executor.submit(() -> {
+        try {
+          imageWriter.writeImage(event.eventTimestamp + ".png", screenshot);
+        } catch (Exception ex) {
+          System.err.println("Failed to write image: " + ex.getMessage());
+        }
+      }));
+    } catch (Exception ex) {
+      System.err.println("Failed to flush writer: " + ex.getMessage());
+    }
   }
 
   public void dispose() {

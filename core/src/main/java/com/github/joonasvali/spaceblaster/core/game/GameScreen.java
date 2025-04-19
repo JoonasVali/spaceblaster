@@ -24,6 +24,7 @@ import com.github.joonasvali.spaceblaster.core.SpaceBlasterGame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.file.Paths;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -62,7 +63,7 @@ public class GameScreen implements Screen, Disposable {
     this.state = new GameState(worldWidth, worldHeight);
 
 
-    this.state.setEventLog(game.getConfig().eventMode ? new ActiveEventLog(state, game.getConfig().eventLogFolder) : new InactiveEventLog());
+    this.state.setEventLog(game.getConfig().eventMode ? new ActiveEventLog(state, Paths.get(game.getConfig().eventLogFolder)) : new InactiveEventLog());
 
     this.music = game.getSoundManager().createMusic();
     this.music.setVolume(MUSIC_VOLUME);

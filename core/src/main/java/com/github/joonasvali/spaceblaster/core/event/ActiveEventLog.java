@@ -1,5 +1,12 @@
 package com.github.joonasvali.spaceblaster.core.event;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.PixmapIO;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.joonasvali.spaceblaster.core.game.GameState;
 import com.github.joonasvali.spaceblaster.core.game.difficulty.GameSettings;
 import com.github.joonasvali.spaceblaster.core.game.enemy.Enemy;
@@ -22,8 +29,10 @@ import com.github.joonasvali.spaceblaster.event.Statistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -47,17 +56,24 @@ public class ActiveEventLog implements EventLog {
   private final ArrayDeque<EventType> queuedEvents = new ArrayDeque<>();
   private final OutputStream outputStream;
   private boolean isLocked;
-  public ActiveEventLog(GameState gameState, String eventLogFolder) {
+  public ActiveEventLog(GameState gameState, Path eventLogFolder) {
     this.gameState = gameState;
     this.statistics = new Statistics();
-    Path path = Paths.get(eventLogFolder, "events-" + System.currentTimeMillis() + ".yml");
+    Path path = eventLogFolder.resolve("events-" + System.currentTimeMillis() + ".yml");
 
     EventWriter eventWriter = null;
     OutputStream outputStream = null;
     try {
       Files.createDirectories(path.getParent());
       outputStream = Files.newOutputStream(path);
-      eventWriter = new EventWriter(outputStream);
+      eventWriter = new EventWriter(outputStream, new FileImageWriter(eventLogFolder), (screenshotConsumer) -> Gdx.app.postRunnable(() -> {
+        try {
+          byte[] scnshot = ActiveEventLog.this.captureScreenshot();
+          screenshotConsumer.accept(scnshot);
+        } catch (IOException e) {
+          throw new RuntimeException(e);
+        }
+      }));
     } catch (IOException e) {
       log.error("Failed to create event log file", e);
     }
@@ -91,6 +107,22 @@ public class ActiveEventLog implements EventLog {
 
     addEvent(EventType.LOAD_LEVEL);
   }
+
+
+  private byte[] captureScreenshot() {
+    int width = Gdx.graphics.getBackBufferWidth();
+    int height = Gdx.graphics.getBackBufferHeight();
+
+    Pixmap pixmap = Pixmap.createFromFrameBuffer(0, 0, width, height);
+    ByteBuffer buffer = PixmapIO.encodePNG(pixmap);
+    pixmap.dispose();
+
+    byte[] pngData = new byte[buffer.remaining()];
+    buffer.get(pngData);
+
+    return pngData;
+  }
+
 
   @Override
   public void eventStartGame(String episodeName, GameSettings gameSettings, int levelsTotal) {
