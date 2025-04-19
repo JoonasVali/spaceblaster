@@ -2,6 +2,7 @@ package com.github.joonasvali.spaceblaster.core.event;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.github.joonasvali.spaceblaster.core.game.GameState;
 import com.github.joonasvali.spaceblaster.core.game.difficulty.GameSettings;
 import com.github.joonasvali.spaceblaster.core.game.enemy.Enemy;
@@ -49,7 +50,7 @@ public class ActiveEventLog implements EventLog {
   private final OutputStream outputStream;
   private boolean isLocked;
 
-  public ActiveEventLog(GameState gameState, Path eventLogFolder, boolean screenShotsEnabled) {
+  public ActiveEventLog(GameState gameState, Viewport viewport, Path eventLogFolder, boolean screenShotsEnabled) {
     this.gameState = gameState;
     this.statistics = new Statistics();
     Path path = eventLogFolder.resolve("events-" + System.currentTimeMillis() + ".yml");
@@ -60,7 +61,7 @@ public class ActiveEventLog implements EventLog {
       Files.createDirectories(path.getParent());
       outputStream = Files.newOutputStream(path);
       eventWriter = new EventWriter<>(outputStream, new FileImageWriter(eventLogFolder), screenShotsEnabled ? (screenshotConsumer) -> Gdx.app.postRunnable(() -> {
-        Pixmap scnshot = ActiveEventLog.this.captureScreenshot();
+        Pixmap scnshot = ActiveEventLog.this.captureScreenshot(viewport);
         screenshotConsumer.accept(scnshot, scnshot::dispose);
       })  : null);
     } catch (IOException e) {
@@ -98,13 +99,13 @@ public class ActiveEventLog implements EventLog {
   }
 
 
-  private Pixmap captureScreenshot() {
-    int width = Gdx.graphics.getBackBufferWidth();
-    int height = Gdx.graphics.getBackBufferHeight();
+  private Pixmap captureScreenshot(Viewport viewport) {
+    int x = viewport.getScreenX();
+    int y = viewport.getScreenY();
+    int width = viewport.getScreenWidth();
+    int height = viewport.getScreenHeight();
 
-    Pixmap pixmap = Pixmap.createFromFrameBuffer(0, 0, width, height);
-
-    return pixmap;
+    return Pixmap.createFromFrameBuffer(x, y, width, height);
   }
 
 

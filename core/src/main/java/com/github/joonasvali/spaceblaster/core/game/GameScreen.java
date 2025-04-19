@@ -63,11 +63,14 @@ public class GameScreen implements Screen, Disposable {
     this.state = new GameState(worldWidth, worldHeight);
 
 
-    this.state.setEventLog(game.getConfig().eventMode ? new ActiveEventLog(state, Paths.get(game.getConfig().eventLogFolder), game.getConfig().eventModeScreenshotsEnabled) : new InactiveEventLog());
 
     this.music = game.getSoundManager().createMusic();
     this.music.setVolume(MUSIC_VOLUME);
     this.music.setLooping(true);
+
+
+    createCamera();
+    this.state.setEventLog(game.getConfig().eventMode ? new ActiveEventLog(state, viewport, Paths.get(game.getConfig().eventLogFolder), game.getConfig().eventModeScreenshotsEnabled) : new InactiveEventLog());
 
     state.setGameSettings(gameSettings);
 
@@ -115,7 +118,6 @@ public class GameScreen implements Screen, Disposable {
         Input.Buttons.LEFT, () -> state.getRocket().doFire()
     );
 
-    createCamera();
     state.getEventLog().eventStartGame(levelProvider.getEpisodeName(), gameSettings, levelProvider.getLevelsTotal());
   }
 
