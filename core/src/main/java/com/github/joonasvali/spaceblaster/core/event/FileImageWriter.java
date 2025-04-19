@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.zip.Deflater;
 
 public class FileImageWriter implements NamedImageWriter<Pixmap> {
   private final Logger log = LoggerFactory.getLogger(FileImageWriter.class);
@@ -29,7 +30,7 @@ public class FileImageWriter implements NamedImageWriter<Pixmap> {
     java.io.File file = filePath.toFile();
     FileHandle fileHandle = new FileHandle(file);
     // Write the Pixmap data to file as PNG using FileHandle
-    PixmapIO.writePNG(fileHandle, data);
+    PixmapIO.writePNG(fileHandle, data, Deflater.BEST_COMPRESSION, true);
     log.info("Image " + name + " written to disk.");
   }
 }

@@ -62,7 +62,7 @@ public class ActiveEventLog implements EventLog {
       outputStream = Files.newOutputStream(path);
       eventWriter = new EventWriter<>(outputStream, new FileImageWriter(eventLogFolder), (screenshotConsumer) -> Gdx.app.postRunnable(() -> {
         Pixmap scnshot = ActiveEventLog.this.captureScreenshot();
-        screenshotConsumer.accept(scnshot);
+        screenshotConsumer.accept(scnshot, scnshot::dispose);
       }));
     } catch (IOException e) {
       log.error("Failed to create event log file", e);
@@ -104,6 +104,7 @@ public class ActiveEventLog implements EventLog {
     int height = Gdx.graphics.getBackBufferHeight();
 
     Pixmap pixmap = Pixmap.createFromFrameBuffer(0, 0, width, height);
+
     return pixmap;
   }
 
@@ -206,14 +207,14 @@ public class ActiveEventLog implements EventLog {
 
   @Override
   public void dispose() {
-    InterruptedException ex = null;
     if (eventWriter != null) {
-      eventWriter.dispose();
       try {
-        eventWriter.waitUntilDisposed();
-      } catch (InterruptedException e) {
-        ex = e;
+        eventWriter.dispose();
+      } catch (IOException e) {
+        throw new RuntimeException(e);
       }
+
+      eventWriter.waitUntilDisposed();
     }
 
     if (outputStream != null) {
@@ -222,9 +223,6 @@ public class ActiveEventLog implements EventLog {
       } catch (IOException e) {
         log.error("Failed to close event log file", e);
       }
-    }
-    if (ex != null) {
-      Thread.currentThread().interrupt();
     }
   }
 

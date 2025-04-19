@@ -10,5 +10,5 @@ public interface NamedImageWriter<T> {
    * @param data
    * @throws IOException if an I/O error occurs during writing
    */
-  void writeImage(String name, T data) throws IOException;
+  void writeImage(String name, T data) throws IOException, InterruptedException;
 }
