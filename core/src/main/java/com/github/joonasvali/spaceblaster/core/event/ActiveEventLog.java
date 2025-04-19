@@ -1,12 +1,8 @@
 package com.github.joonasvali.spaceblaster.core.event;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.PixmapIO;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.github.joonasvali.spaceblaster.core.game.GameState;
 import com.github.joonasvali.spaceblaster.core.game.difficulty.GameSettings;
 import com.github.joonasvali.spaceblaster.core.game.enemy.Enemy;
@@ -29,13 +25,11 @@ import com.github.joonasvali.spaceblaster.event.Statistics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayDeque;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -66,13 +60,9 @@ public class ActiveEventLog implements EventLog {
     try {
       Files.createDirectories(path.getParent());
       outputStream = Files.newOutputStream(path);
-      eventWriter = new EventWriter(outputStream, new FileImageWriter(eventLogFolder), (screenshotConsumer) -> Gdx.app.postRunnable(() -> {
-        try {
-          byte[] scnshot = ActiveEventLog.this.captureScreenshot();
-          screenshotConsumer.accept(scnshot);
-        } catch (IOException e) {
-          throw new RuntimeException(e);
-        }
+      eventWriter = new EventWriter<>(outputStream, new FileImageWriter(eventLogFolder), (screenshotConsumer) -> Gdx.app.postRunnable(() -> {
+        Pixmap scnshot = ActiveEventLog.this.captureScreenshot();
+        screenshotConsumer.accept(scnshot);
       }));
     } catch (IOException e) {
       log.error("Failed to create event log file", e);
@@ -109,18 +99,12 @@ public class ActiveEventLog implements EventLog {
   }
 
 
-  private byte[] captureScreenshot() {
+  private Pixmap captureScreenshot() {
     int width = Gdx.graphics.getBackBufferWidth();
     int height = Gdx.graphics.getBackBufferHeight();
 
     Pixmap pixmap = Pixmap.createFromFrameBuffer(0, 0, width, height);
-    ByteBuffer buffer = PixmapIO.encodePNG(pixmap);
-    pixmap.dispose();
-
-    byte[] pngData = new byte[buffer.remaining()];
-    buffer.get(pngData);
-
-    return pngData;
+    return pixmap;
   }
 
 

@@ -13,15 +13,15 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-public class EventWriter {
+public class EventWriter<T> {
   private final ExecutorService executor;
   private final Writer writer;
   private final Yaml yaml;
   private final NamedImageWriter imageWriter;
-  private final Consumer<Consumer<byte[]>> makeScrnshot;
+  private final Consumer<Consumer<T>> makeScrnshot;
 
 
-  public EventWriter(OutputStream outputStream, NamedImageWriter imageWriter, Consumer<Consumer<byte[]>> makeScrnshot) {
+  public EventWriter(OutputStream outputStream, NamedImageWriter<T> imageWriter, Consumer<Consumer<T>> makeScrnshot) {
     yaml = new Yaml();
     executor = Executors.newSingleThreadExecutor();
     this.writer = new BufferedWriter(new OutputStreamWriter(outputStream));
@@ -38,7 +38,7 @@ public class EventWriter {
     try {
       makeScrnshot.accept(screenshot -> executor.submit(() -> {
         try {
-          imageWriter.writeImage(event.eventTimestamp + ".png", screenshot);
+          imageWriter.writeImage(String.valueOf(event.eventTimestamp), screenshot);
         } catch (Exception ex) {
           System.err.println("Failed to write image: " + ex.getMessage());
         }
