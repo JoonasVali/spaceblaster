@@ -5,5 +5,6 @@ package com.github.joonasvali.spaceblaster.core;
  */
 public class Config {
   public boolean eventMode;
+  public boolean eventModeScreenshotsEnabled;
   public String eventLogFolder;
 }

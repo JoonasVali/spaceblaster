@@ -1,2 +1,3 @@
 eventMode: false
+eventModeScreenshotsEnabled: false
 eventLogFolder: ./eventlogs

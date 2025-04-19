@@ -1,5 +1,8 @@
 package com.github.joonasvali.spaceblaster.core.event;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.github.joonasvali.spaceblaster.core.game.GameState;
 import com.github.joonasvali.spaceblaster.core.game.difficulty.GameSettings;
 import com.github.joonasvali.spaceblaster.core.game.enemy.Enemy;
@@ -26,7 +29,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayDeque;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -43,26 +45,37 @@ public class ActiveEventLog implements EventLog {
   private GameState gameState;
   private final Statistics statistics;
 
-  private final EventWriter eventWriter;
+  private final EventWriter<Pixmap> eventWriter;
   private final ArrayDeque<EventType> queuedEvents = new ArrayDeque<>();
   private final OutputStream outputStream;
   private boolean isLocked;
-  public ActiveEventLog(GameState gameState, String eventLogFolder) {
+
+  public ActiveEventLog(GameState gameState, Viewport viewport, Path eventLogFolder, boolean screenShotsEnabled) {
     this.gameState = gameState;
     this.statistics = new Statistics();
-    Path path = Paths.get(eventLogFolder, "events-" + System.currentTimeMillis() + ".yml");
+    Path path = eventLogFolder.resolve("events-" + System.currentTimeMillis() + ".yml");
 
-    EventWriter eventWriter = null;
+    EventWriter<Pixmap> eventWriter = null;
     OutputStream outputStream = null;
     try {
       Files.createDirectories(path.getParent());
       outputStream = Files.newOutputStream(path);
-      eventWriter = new EventWriter(outputStream);
+      eventWriter = new EventWriter<>(outputStream, new FileImageWriter(eventLogFolder), screenShotsEnabled ? (screenshotConsumer) -> Gdx.app.postRunnable(() -> {
+        Pixmap scnshot = ActiveEventLog.this.captureScreenshot(viewport);
+        screenshotConsumer.accept(scnshot, scnshot::dispose);
+      })  : null);
     } catch (IOException e) {
       log.error("Failed to create event log file", e);
     }
     this.outputStream = outputStream;
     this.eventWriter = eventWriter;
+  }
+
+  public int getQueuedScreenshotWriteCount() {
+    if (eventWriter != null) {
+      return eventWriter.getExecutorQueuedTaskCount();
+    }
+    return 0;
   }
 
   private void addEvent(EventType eventType) {
@@ -91,6 +104,17 @@ public class ActiveEventLog implements EventLog {
 
     addEvent(EventType.LOAD_LEVEL);
   }
+
+
+  private Pixmap captureScreenshot(Viewport viewport) {
+    int x = viewport.getScreenX();
+    int y = viewport.getScreenY();
+    int width = viewport.getScreenWidth();
+    int height = viewport.getScreenHeight();
+
+    return Pixmap.createFromFrameBuffer(x, y, width, height);
+  }
+
 
   @Override
   public void eventStartGame(String episodeName, GameSettings gameSettings, int levelsTotal) {
@@ -190,14 +214,14 @@ public class ActiveEventLog implements EventLog {
 
   @Override
   public void dispose() {
-    InterruptedException ex = null;
     if (eventWriter != null) {
-      eventWriter.dispose();
       try {
-        eventWriter.waitUntilDisposed();
-      } catch (InterruptedException e) {
-        ex = e;
+        eventWriter.dispose();
+      } catch (IOException e) {
+        throw new RuntimeException(e);
       }
+
+      eventWriter.waitUntilDisposed();
     }
 
     if (outputStream != null) {
@@ -206,9 +230,6 @@ public class ActiveEventLog implements EventLog {
       } catch (IOException e) {
         log.error("Failed to close event log file", e);
       }
-    }
-    if (ex != null) {
-      Thread.currentThread().interrupt();
     }
   }
 

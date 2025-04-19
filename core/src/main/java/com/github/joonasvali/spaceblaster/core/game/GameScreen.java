@@ -24,6 +24,7 @@ import com.github.joonasvali.spaceblaster.core.SpaceBlasterGame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.file.Paths;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -62,11 +63,14 @@ public class GameScreen implements Screen, Disposable {
     this.state = new GameState(worldWidth, worldHeight);
 
 
-    this.state.setEventLog(game.getConfig().eventMode ? new ActiveEventLog(state, game.getConfig().eventLogFolder) : new InactiveEventLog());
 
     this.music = game.getSoundManager().createMusic();
     this.music.setVolume(MUSIC_VOLUME);
     this.music.setLooping(true);
+
+
+    createCamera();
+    this.state.setEventLog(game.getConfig().eventMode ? new ActiveEventLog(state, viewport, Paths.get(game.getConfig().eventLogFolder), game.getConfig().eventModeScreenshotsEnabled) : new InactiveEventLog());
 
     state.setGameSettings(gameSettings);
 
@@ -102,7 +106,17 @@ public class GameScreen implements Screen, Disposable {
 
     Gdx.input.setInputProcessor(inputMultiplexer);
 
-    inputHandler.addKeyBinding(Input.Keys.ESCAPE, game::gotoMainMenu);
+    inputHandler.addKeyBinding(Input.Keys.ESCAPE, () -> {
+      if (state.getEventLog().isActive()) {
+        if (state.getEventLog().getQueuedScreenshotWriteCount() == 0) {
+          game.gotoMainMenu();
+        } else {
+          System.out.println("Waiting for screenshots to be written. " + state.getEventLog().getQueuedScreenshotWriteCount() + " screenshots queued.");
+        }
+      } else {
+        game.gotoMainMenu();
+      }
+    });
     inputHandler.addKeyBinding(Input.Keys.D,
         () -> state.getUi().setShowEventLog(game.getConfig().eventMode && !state.getUi().isShowEventLog())
     );
@@ -114,7 +128,6 @@ public class GameScreen implements Screen, Disposable {
         Input.Buttons.LEFT, () -> state.getRocket().doFire()
     );
 
-    createCamera();
     state.getEventLog().eventStartGame(levelProvider.getEpisodeName(), gameSettings, levelProvider.getLevelsTotal());
   }
 
