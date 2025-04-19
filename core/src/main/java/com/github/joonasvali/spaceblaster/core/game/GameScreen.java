@@ -63,7 +63,7 @@ public class GameScreen implements Screen, Disposable {
     this.state = new GameState(worldWidth, worldHeight);
 
 
-    this.state.setEventLog(game.getConfig().eventMode ? new ActiveEventLog(state, Paths.get(game.getConfig().eventLogFolder)) : new InactiveEventLog());
+    this.state.setEventLog(game.getConfig().eventMode ? new ActiveEventLog(state, Paths.get(game.getConfig().eventLogFolder), game.getConfig().eventModeScreenshotsEnabled) : new InactiveEventLog());
 
     this.music = game.getSoundManager().createMusic();
     this.music.setVolume(MUSIC_VOLUME);

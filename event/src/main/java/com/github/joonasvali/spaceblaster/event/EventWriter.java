@@ -33,9 +33,13 @@ public class EventWriter<T> {
                      NamedImageWriter<T> imageWriter,
                      Consumer<BiConsumer<T, Runnable>> makeScrnshot) {
     yaml = new Yaml();
-    executor = Executors.newFixedThreadPool(
-        Math.min(4, Runtime.getRuntime().availableProcessors())
-    );
+    if (makeScrnshot != null) {
+      executor = Executors.newFixedThreadPool(
+          Math.min(4, Runtime.getRuntime().availableProcessors())
+      );
+    } else {
+      executor = null;
+    }
     this.writer = new BufferedWriter(new OutputStreamWriter(outputStream));
     this.imageWriter = imageWriter;
     this.makeScrnshot = makeScrnshot;
@@ -46,21 +50,23 @@ public class EventWriter<T> {
     eventList.add(event);
     yaml.dump(eventList, this.writer);
 
-    try {
-      makeScrnshot.accept((screenshot, disposeScreenshot) -> executor.submit(() -> {
-        try {
-          imageWriter.writeImage(String.valueOf(event.eventTimestamp), screenshot);
-        } catch (InterruptedException ex) {
-          Thread.currentThread().interrupt();
-          System.err.println("Image writing interrupted: " + ex.getMessage());
-        } catch (IOException ex) {
-          System.err.println("Failed to write image: " + ex.getMessage());
-        } finally {
-          disposeScreenshot.run();
-        }
-      }));
-    } catch (Exception ex) {
-      System.err.println("Failed to schedule image write: " + ex.getMessage());
+    if (makeScrnshot != null) {
+      try {
+        makeScrnshot.accept((screenshot, disposeScreenshot) -> executor.submit(() -> {
+          try {
+            imageWriter.writeImage(String.valueOf(event.eventTimestamp), screenshot);
+          } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            System.err.println("Image writing interrupted: " + ex.getMessage());
+          } catch (IOException ex) {
+            System.err.println("Failed to write image: " + ex.getMessage());
+          } finally {
+            disposeScreenshot.run();
+          }
+        }));
+      } catch (Exception ex) {
+        System.err.println("Failed to schedule image write: " + ex.getMessage());
+      }
     }
   }
 
@@ -77,7 +83,9 @@ public class EventWriter<T> {
     }
 
     // Stop accepting new image tasks immediately
-    executor.shutdown();
+    if (executor != null) {
+      executor.shutdown();
+    }
   }
 
   /**
@@ -86,6 +94,9 @@ public class EventWriter<T> {
    * isn't yet shut down.
    */
   public void waitUntilDisposed() {
+    if (executor == null) {
+      return;
+    }
     // Ensure we have initiated shutdown
     executor.shutdown();
     try {

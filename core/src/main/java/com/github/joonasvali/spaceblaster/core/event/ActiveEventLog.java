@@ -2,7 +2,6 @@ package com.github.joonasvali.spaceblaster.core.event;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.PixmapIO;
 import com.github.joonasvali.spaceblaster.core.game.GameState;
 import com.github.joonasvali.spaceblaster.core.game.difficulty.GameSettings;
 import com.github.joonasvali.spaceblaster.core.game.enemy.Enemy;
@@ -27,7 +26,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayDeque;
@@ -46,24 +44,25 @@ public class ActiveEventLog implements EventLog {
   private GameState gameState;
   private final Statistics statistics;
 
-  private final EventWriter eventWriter;
+  private final EventWriter<Pixmap> eventWriter;
   private final ArrayDeque<EventType> queuedEvents = new ArrayDeque<>();
   private final OutputStream outputStream;
   private boolean isLocked;
-  public ActiveEventLog(GameState gameState, Path eventLogFolder) {
+
+  public ActiveEventLog(GameState gameState, Path eventLogFolder, boolean screenShotsEnabled) {
     this.gameState = gameState;
     this.statistics = new Statistics();
     Path path = eventLogFolder.resolve("events-" + System.currentTimeMillis() + ".yml");
 
-    EventWriter eventWriter = null;
+    EventWriter<Pixmap> eventWriter = null;
     OutputStream outputStream = null;
     try {
       Files.createDirectories(path.getParent());
       outputStream = Files.newOutputStream(path);
-      eventWriter = new EventWriter<>(outputStream, new FileImageWriter(eventLogFolder), (screenshotConsumer) -> Gdx.app.postRunnable(() -> {
+      eventWriter = new EventWriter<>(outputStream, new FileImageWriter(eventLogFolder), screenShotsEnabled ? (screenshotConsumer) -> Gdx.app.postRunnable(() -> {
         Pixmap scnshot = ActiveEventLog.this.captureScreenshot();
         screenshotConsumer.accept(scnshot, scnshot::dispose);
-      }));
+      })  : null);
     } catch (IOException e) {
       log.error("Failed to create event log file", e);
     }
