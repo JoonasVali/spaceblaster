@@ -100,6 +100,11 @@ public class InactiveEventLog implements EventLog {
   }
 
   @Override
+  public int getQueuedScreenshotWriteCount() {
+    return 0;
+  }
+
+  @Override
   public void trigger() {
 
   }

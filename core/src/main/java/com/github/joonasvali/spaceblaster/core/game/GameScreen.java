@@ -106,7 +106,17 @@ public class GameScreen implements Screen, Disposable {
 
     Gdx.input.setInputProcessor(inputMultiplexer);
 
-    inputHandler.addKeyBinding(Input.Keys.ESCAPE, game::gotoMainMenu);
+    inputHandler.addKeyBinding(Input.Keys.ESCAPE, () -> {
+      if (state.getEventLog().isActive()) {
+        if (state.getEventLog().getQueuedScreenshotWriteCount() == 0) {
+          game.gotoMainMenu();
+        } else {
+          System.out.println("Waiting for screenshots to be written. " + state.getEventLog().getQueuedScreenshotWriteCount() + " screenshots queued.");
+        }
+      } else {
+        game.gotoMainMenu();
+      }
+    });
     inputHandler.addKeyBinding(Input.Keys.D,
         () -> state.getUi().setShowEventLog(game.getConfig().eventMode && !state.getUi().isShowEventLog())
     );

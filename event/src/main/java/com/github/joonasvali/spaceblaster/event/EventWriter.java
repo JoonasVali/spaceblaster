@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -68,6 +69,13 @@ public class EventWriter<T> {
         System.err.println("Failed to schedule image write: " + ex.getMessage());
       }
     }
+  }
+
+  public int getExecutorQueuedTaskCount() {
+    if (executor == null) {
+      return 0;
+    }
+    return ((ThreadPoolExecutor) executor).getQueue().size();
   }
 
   /**

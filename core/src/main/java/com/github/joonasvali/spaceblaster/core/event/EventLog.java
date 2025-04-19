@@ -48,6 +48,8 @@ public interface EventLog {
 
   boolean isActive();
 
+  int getQueuedScreenshotWriteCount();
+
   /**
    * Make sure event log is aware and calculating its state internally even if there are no events at the moment.
    */

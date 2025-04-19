@@ -71,6 +71,13 @@ public class ActiveEventLog implements EventLog {
     this.eventWriter = eventWriter;
   }
 
+  public int getQueuedScreenshotWriteCount() {
+    if (eventWriter != null) {
+      return eventWriter.getExecutorQueuedTaskCount();
+    }
+    return 0;
+  }
+
   private void addEvent(EventType eventType) {
     if (!isLocked) {
       if (this.eventWriter != null) {
